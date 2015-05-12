@@ -15,6 +15,8 @@ PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC=EmbyServer             
 NAME=emby             
 SCRIPTNAME=/etc/init.d/$NAME
+export MONO_THREADS_PER_CPU=100
+export MONO_GC_PARAMS=nursery-size=64m
 
 # Source Emby configuration
 if [ -f /etc/default/$NAME ]; then
@@ -121,7 +123,7 @@ do_start()
     #   2 if daemon could not be started
     start-stop-daemon --start --quiet --make-pidfile --pidfile $PIDFILE \
         --background -d $DAEMON_PATH -c $USER \
-        --exec $DAEMON -- $DAEMON_ARGS $DAEMON_OPTS > /dev/null \
+        --exec $DAEMON -- --server $DAEMON_ARGS $DAEMON_OPTS > /dev/null \
         || return 2
     RETVAL="$?"
     [ "$RETVAL" = 2 ] && return 2

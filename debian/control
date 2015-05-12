@@ -1,0 +1,19 @@
+Source: emby
+Section: misc
+Priority: optional
+Maintainer: HurricaneHernandez <carlos@techbyte.ca>
+Build-Depends:	cli-common-dev (>= 0.7),
+		libmono-cil-dev (>= 4.0.0),
+		mono-devel (>= 4.0.0),
+		mono-xbuild (>= 4.0.0),
+		libsqlite3-dev (>= 3.7.2),
+                libmediainfo0 (>= 0.7.52),
+		libmagickwand-6.q8-2 (>= 8:6.9.0)
+Standards-Version: 3.9.4
+
+Package:emby
+Replaces: mediabrowser
+Breaks: mediabrowser
+Architecture: all
+Depends: ${shlibs:Depends}, ${cli:Depends}, ${misc:Depends}, libsqlite3-dev, sqlite3, libmagickwand-6.q8-2
+Description: Emby Server is a home media server built on top of other popular open source technologies such as Service Stack, jQuery, jQuery mobile, and Mono. It features a REST-based api with built-in documention to facilitate client development. We also have client libraries for our api to enable rapid development.

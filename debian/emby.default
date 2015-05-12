@@ -1,0 +1,24 @@
+# Defaults for emby initscript
+# sourced by /etc/init.d/emby
+# installed at /etc/default/emby by the maintainer scripts
+
+#
+# This is a POSIX shell fragment
+#
+
+# Additional options that are passed to the Daemon.
+## EB_USER=         #$RUN_AS, username to run emby under, the default is emby
+## EB_HOME=         #$APP_PATH, the location of MediaBrowser.Server.Mono.exe, the default is /opt/emby
+## EB_DATA=         #$DATA_DIR, the location of Emby data, cache, logs, the default is /usr/lib/emby
+## EB_PIDFILE=      #$PID_FILE, the location of emby.pid, the default is /var/run/emby/emby.pid
+## EB_EXEC=         #$EB_EXEC, the name of the Emby Server exectuable, the default is MediaBrowser.Server.Mono.exe
+## EB_OPTS=         #$EB_OPTS, options passed to the EmbyServer executable, the default is -programdata $EB_DATA, make EB_DATA inert
+## MONO_BIN=        #$MONO_BIN, the location oth mono binary, the default is /usr/bin/mono
+##
+## EXAMPLE if want to run as different user
+## add EB_USER=username to /etc/default/emby
+## otherwise default emby is used
+
+EB_USER="emby"
+EB_HOME="/opt/emby"
+EB_DATA="/var/lib/emby"

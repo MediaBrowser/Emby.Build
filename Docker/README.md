@@ -1,4 +1,4 @@
-#docker MBServer
+#docker Emby Server
 
 ## Description:
 
@@ -26,11 +26,11 @@ TimeZone. (i.e America/Edmonton)
 
 ### `MB_USER_ID`
 
-User ID mediabrowser should run under, default is 99 for unRAID compatiability.
+User ID emby should run under, default is 99 for unRAID compatiability.
 
 ### `MB_GROUP_ID`
 
-Group ID mediabrowser should run under, default is 100 for unRAID compatiability.
+Group ID emby should run under, default is 100 for unRAID compatiability.
 
 ## Docker run command:
 
@@ -41,8 +41,8 @@ docker run -d --net=host -v /*your_config_location*:/config -v /*your_media_loca
 
 ## Other info:
 
-### Restarting mediabrowser
+### Restarting emby
 
 ```
-docker exec mbserver sv restart emby
+docker exec EmbyServer sv restart emby
 ```	

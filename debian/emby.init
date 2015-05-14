@@ -24,7 +24,6 @@ if [ -f /etc/default/$NAME ]; then
 else
     echo "/etc/default/${NAME} not found using default settings.";
 fi
-
 ## Don't edit this file
 ## Edit user configuation in /etc/default/emby to change
 ##
@@ -57,10 +56,18 @@ DAEMON_PATH=${EB_HOME-/opt/emby}
 DAEMON=${MONO_BIN-/usr/bin/mono}
 
 # Name of executable for application
-DAEMON_ARGS=${EB_EXEC-MediaBrowser.Server.Mono.exe}
+DAEMON_ARGS=${EB_EXEC---server MediaBrowser.Server.Mono.exe}
+
+# ffmpeg
+FFMPEG_BIN=$(which ffmpeg)
+[ -n "$FFMPEG_BIN" ] && FFMPEG_OPTS="-ffmpeg $FFMPEG_BIN" 
+
+# ffprobe
+FFPROBE_BIN=$(which ffprobe)
+[ -n "$FFPROBE_BIN" ] && FFPROBE_OPTS="-ffprobe $FFPROBE_BIN" 
 
 # Emby options
-DAEMON_OPTS=${EB_OPTS-"-programdata $PROGRAMDATA"}                
+DAEMON_OPTS=${EB_OPTS-"-programdata $PROGRAMDATA $FFMPEG_OPTS $FFPROBE_OPTS"}                
 
 ##
 
@@ -123,7 +130,7 @@ do_start()
     #   2 if daemon could not be started
     start-stop-daemon --start --quiet --make-pidfile --pidfile $PIDFILE \
         --background -d $DAEMON_PATH -c $USER \
-        --exec $DAEMON -- --server $DAEMON_ARGS $DAEMON_OPTS > /dev/null \
+        --exec $DAEMON -- $DAEMON_ARGS $DAEMON_OPTS > /dev/null \
         || return 2
     RETVAL="$?"
     [ "$RETVAL" = 2 ] && return 2
@@ -173,15 +180,15 @@ if [ -e $PIDFILE ]; then
 fi
 
 # Set right permission for directories
-HOME_CURRENT_USER=`ls -lad $DAEMON_PATH | awk 'print $3'`
-DATA_CURRENT_USER=`ls -lad $PROGRAMDATA | awk 'print $3'`
+HOME_CURRENT_USER=`ls -lad $DAEMON_PATH | awk '{print $3}'`
+DATA_CURRENT_USER=`ls -lad $PROGRAMDATA | awk '{print $3}'`
 
-if [ $HOME_CURRENT_USER != $USER ]; then
-    chown -R $USER $DAEMON_PATH
+if [ "$HOME_CURRENT_USER" != "$USER" ]; then
+    chown -R "$USER $DAEMON_PATH"
 fi
 
-if [ $DATA_CURRENT_USER != $USER ]; then
-    chown -R $USER $PROGRAMDATA
+if [ "$DATA_CURRENT_USER" != "$USER" ]; then
+    chown -R "$USER" "$PROGRAMDATA"
 fi
 
 case "$1" in

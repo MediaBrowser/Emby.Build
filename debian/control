@@ -2,7 +2,7 @@ Source: emby
 Section: misc
 Priority: optional
 Maintainer: HurricaneHernandez <carlos@techbyte.ca>
-Build-Depends:  Build-Depends: debhelper (>= 9),	
+Build-Depends:  debhelper (>= 9),	
                 cli-common-dev (>= 0.7),
 		libmono-cil-dev (>= 4.0.0),
 		mono-devel (>= 4.0.0),

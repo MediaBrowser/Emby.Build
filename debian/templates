@@ -8,7 +8,7 @@ Description: Emby permission info:
 Template: emby/user
 Type: string
 Description: Username to run Emby as:
- The user that emby will run as, if left blank the user "emby" will be used.
+ The user that emby will run as.
 
 Template: emby/old-running
 Type: note

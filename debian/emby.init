@@ -184,7 +184,7 @@ HOME_CURRENT_USER=`ls -lad $DAEMON_PATH | awk '{print $3}'`
 DATA_CURRENT_USER=`ls -lad $PROGRAMDATA | awk '{print $3}'`
 
 if [ "$HOME_CURRENT_USER" != "$USER" ]; then
-    chown -R "$USER $DAEMON_PATH"
+    chown -R "$USER" "$DAEMON_PATH"
 fi
 
 if [ "$DATA_CURRENT_USER" != "$USER" ]; then

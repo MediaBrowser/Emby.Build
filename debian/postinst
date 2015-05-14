@@ -16,6 +16,7 @@ set -e
 #          <conflicting-package> <version>
 # for details, see http://www.debian.org/doc/debian-policy/ or
 # the debian-policy package
+DEFAULT_FILE=/etc/defaults/emby
 PROGRAMDATA=/var/lib/emby
 
 case "$1" in
@@ -42,25 +43,28 @@ case "$1" in
     fi
 
     # ensure /var/lib/emby has appropriate permissions
-    [ ! -d /var/lib/emby ] && mkdir /var/lib/emby
-    chown -R emby:emby /var/lib/emby
+    if [ ! -d /var/lib/emby ]; then
+        mkdir /var/lib/emby
+        chown -R emby:emby /var/lib/emby
+    fi
     # ensure app path ahs appropriate permissions
     chown -R emby:emby /opt/emby
 
     # for debconf
     . /usr/share/debconf/confmodule
     # let the user know about emby and permissions
-    db_input low emby/permissions || true
+    db_input high emby/permissions || true
     db_go || true
 
     # user?
-    db_input low emby/user || true
+    db_set emby/user emby
+    db_input high emby/user || true
     db_go || true
 
     db_get emby/user
     dbuser="$RET"
 
-    [ -n $dbuser ] && sed -i "s#(EB_USER.*=).*#\1\"$dbuser\"#" $DEFAULT_FILE
+    [ -n "$dbuser" ] && sed -i "s#\(EB_USER.*=\).*#\1\"$dbuser\"#" $DEFAULT_FILE
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)

@@ -32,7 +32,23 @@ groupmod -g $GROUP_ID users
 usermod -u $USER_ID nobody
 usermod -g $GROUP_ID nobody
 usermod -d /home nobody
-chown -R nobody:users /opt/mediabrowser/ /config/ /home/
+
+# Set right permission for directories
+USER="nobody"
+HOME_PATH=/opt/emby
+PROGRAMDATA=/config
+HOME_CURRENT_USER=`ls -lad $HOME_PATH | awk '{print $3}'`
+DATA_CURRENT_USER=`ls -lad $PROGRAMDATA | awk '{print $3}'`
+
+if [ "$HOME_CURRENT_USER" != "$USER" ]; then
+    chown -R "${USER}:users $DAEMON_PATH"
+fi
+
+if [ "$DATA_CURRENT_USER" != "$USER" ]; then
+    chown -R "$USER":users "$PROGRAMDATA"
+fi
+
+chown -R nobody:users /home/
 EOT
 
 # Emby Server
@@ -41,9 +57,8 @@ cat <<'EOT' > /etc/service/emby/run
 #!/bin/bash
 umask 000
 
-chown -R nobody:users /opt/emby/
 cd /opt/emby/
-exec /sbin/setuser nobody mono /opt/emby/MediaBrowser.Server.Mono.exe \
+exec env MONO_THREADS_PER_CPU=100 MONO_GC_PARAMS=nursery-size=64m /sbin/setuser nobody mono --server /opt/emby/MediaBrowser.Server.Mono.exe \
                                 -programdata /config \
                                 -ffmpeg $(which ffmpeg) \
                                 -ffprobe $(which ffprobe)
@@ -57,7 +72,7 @@ chmod -R +x /etc/service/ /etc/my_init.d/
 
 # Repositories
 apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 637D1286 
-echo 'deb http://ppa.launchpad.net/apps-z/emby/ubuntu trusty main' > /etc/apt/sources.list.d/mediabrowser.list 
+echo 'deb http://ppa.launchpad.net/apps-z/emby/ubuntu trusty main' > /etc/apt/sources.list.d/emby.list 
 echo 'deb http://us.archive.ubuntu.com/ubuntu/ trusty main universe multiverse restricted' > /etc/apt/sources.list
 echo 'deb http://us.archive.ubuntu.com/ubuntu/ trusty-updates main universe multiverse restricted' >> /etc/apt/sources.list
 add-apt-repository ppa:mc3man/trusty-media
@@ -76,7 +91,7 @@ apt-get install -qy --force-yes mono-runtime \
                                 imagemagick-6.q8 \
                                 libmagickwand-6.q8-2 \
                                 libmagickcore-6.q8-2 \
-                                mediabrowser 
+                                emby 
 
 #########################################
 ##                 CLEANUP             ##

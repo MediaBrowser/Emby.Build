@@ -162,7 +162,6 @@ fi
 
 if [ ! -d $PROGRAMDATA ]; then
     mkdir -p $PROGRAMDATA
-    chown $USER $PROGRAMDATA
 fi
 
 if [ -e $PIDFILE ]; then
@@ -171,6 +170,18 @@ if [ -e $PIDFILE ]; then
         echo "Removing stale $PIDFILE"
         rm $PIDFILE
     fi
+fi
+
+# Set right permission for directories
+HOME_CURRENT_USER=`ls -lad $DAEMON_PATH | awk 'print $3'`
+DATA_CURRENT_USER=`ls -lad $PROGRAMDATA | awk 'print $3'`
+
+if [ $HOME_CURRENT_USER != $USER ]; then
+    chown -R $USER $DAEMON_PATH
+fi
+
+if [ $DATA_CURRENT_USER != $USER ]; then
+    chown -R $USER $PROGRAMDATA
 fi
 
 case "$1" in

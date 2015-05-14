@@ -46,6 +46,21 @@ case "$1" in
     chown -R emby:emby /var/lib/emby
     # ensure app path ahs appropriate permissions
     chown -R emby:emby /opt/emby
+
+    # for debconf
+    . /usr/share/debconf/confmodule
+    # let the user know about emby and permissions
+    db_input low emby/permissions || true
+    db_go || true
+
+    # user?
+    db_input low emby/user || true
+    db_go || true
+
+    db_get emby/user
+    dbuser="$RET"
+
+    [ -n $dbuser ] && sed -i "s#(EB_USER.*=).*#\1\"$dbuser\"#" $DEFAULT_FILE
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)

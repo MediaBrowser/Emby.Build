@@ -33,7 +33,7 @@ case "$1" in
                     /etc/init.d/emby stop
                 fi
             fi
-            kill -USR1 $EMBY_PID
+            kill -USR1 $EMBY_PID 2>&1 /dev/null || true
             sleep 1
             [ -f /var/run/emby.pid ] && rm /var/run/emby.pid
             if ps -p $EMBY_PID > /dev/null; then
@@ -57,7 +57,7 @@ case "$1" in
                     /etc/init.d/emby stop
                 fi
             fi
-            kill -USR1 $MB_PID
+            kill -USR1 $MB_PID 2>&1 /dev/null || true
             sleep 1
             [ -f /var/run/emby.pid ] && rm /var/run/emby.pid
             if ps -p $MB_PID > /dev/null; then

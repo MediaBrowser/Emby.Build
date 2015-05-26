@@ -35,7 +35,7 @@ Group ID emby should run under, default is 100 for unRAID compatiability.
 ## Docker run command:
 
 ```
-docker run -d --net=host -v /*your_config_location*:/config -v /*your_media_location*:/media -e TZ=<TIMEZONE> --name=EmbyServer emby/emby
+docker run -d --net=host -v /*your_config_location*:/config -v /*your_media_location*:/media -e TZ=<TIMEZONE> --name=EmbyServer emby/embyserver
 
 ```
 

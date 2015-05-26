@@ -1,4 +1,4 @@
-#docker Emby Server
+# ![Alt text](https://raw.githubusercontent.com/MediaBrowser/Emby.Resources/master/images/Logos/logo.png "")
 
 ## Description:
 

@@ -71,8 +71,8 @@ chmod -R +x /etc/service/ /etc/my_init.d/
 #########################################
 
 # Repositories
-apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 637D1286 
-echo 'deb http://ppa.launchpad.net/apps-z/emby/ubuntu trusty main' > /etc/apt/sources.list.d/emby.list 
+wget -qO - http://download.opensuse.org/repositories/home:emby/xUbuntu_14.04/Release.key | apt-key add -
+echo 'deb http://download.opensuse.org/repositories/home:/emby/xUbuntu_14.04/ /' >> /etc/apt/sources.list.d/emby.list
 echo 'deb http://us.archive.ubuntu.com/ubuntu/ trusty main universe multiverse restricted' > /etc/apt/sources.list
 echo 'deb http://us.archive.ubuntu.com/ubuntu/ trusty-updates main universe multiverse restricted' >> /etc/apt/sources.list
 add-apt-repository ppa:mc3man/trusty-media

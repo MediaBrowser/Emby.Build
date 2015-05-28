@@ -56,7 +56,7 @@ DAEMON_PATH=${EB_HOME-/opt/emby}
 DAEMON=${MONO_BIN-/usr/bin/mono}
 
 # Name of executable for application
-DAEMON_ARGS=${EB_EXEC---server MediaBrowser.Server.Mono.exe}
+DAEMON_ARGS=${EB_EXEC-MediaBrowser.Server.Mono.exe}
 
 # ffmpeg
 FFMPEG_BIN=$(which ffmpeg)
@@ -137,6 +137,13 @@ do_start()
     # create a pidfile, not used but provided for monitoring apps
     [ -w $PIDFILE ] && \
         pgrep -f -x -u $USER "$DAEMON $DAEMON_ARGS.*" > $PIDFILE
+    sleep 20
+    PID=`pgrep -f -x -u $USER "$DAEMON $DAEMON_ARGS.*"`
+    if [ -z "$PID" ]; then
+		log_failure_msg "$DESC: started but exited rightaway, please check logs in ${PROGRAMDATA}/logs"
+		rm $PIDFILE
+		return 2
+	fi
     return "$RETVAL"
 }
 

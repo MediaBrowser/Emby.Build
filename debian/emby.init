@@ -140,10 +140,10 @@ do_start()
     sleep 20
     PID=`pgrep -f -x -u $USER "$DAEMON $DAEMON_ARGS.*"`
     if [ -z "$PID" ]; then
-		log_failure_msg "$DESC: started but exited rightaway, please check logs in ${PROGRAMDATA}/logs"
-		rm $PIDFILE
-		return 2
-	fi
+        log_failure_msg "$DESC: started but exited rightaway, please check logs in ${PROGRAMDATA}/logs"
+        rm $PIDFILE
+        return 2
+    fi
     return "$RETVAL"
 }
 

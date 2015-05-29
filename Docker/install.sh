@@ -69,6 +69,9 @@ chmod -R +x /etc/service/ /etc/my_init.d/
 #########################################
 ##    REPOSITORIES AND DEPENDENCIES    ##
 #########################################
+# Install repos
+apt-get update -qq
+apt-get install -qy --force-yes wget
 
 # Repositories
 wget -qO - http://download.opensuse.org/repositories/home:emby/xUbuntu_14.04/Release.key | apt-key add -
@@ -91,7 +94,7 @@ apt-get install -qy --force-yes mono-runtime \
                                 imagemagick-6.q8 \
                                 libmagickwand-6.q8-2 \
                                 libmagickcore-6.q8-2 \
-                                emby 
+                                emby-server 
 
 #########################################
 ##                 CLEANUP             ##

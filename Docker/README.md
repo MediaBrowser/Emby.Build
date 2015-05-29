@@ -4,12 +4,10 @@
 
 This is a Dockerfile for "Emby Server" - (http://emby.media/)
 
-## Build from docker file:
+## How to use:
 
 ```
-git clone --depth=1 https://github.com/MediaBrowser/MediaBrowser.git 
-rd MediaBrowser/Docker
-docker build --rm=true -t mbserver . 
+docker run -d --net=host -v /*your_config_location*:/config -v /*your_media_location*:/media -e TZ=<TIMEZONE> --name=EmbyServer emby/embyserver
 ```
 
 ## Volumes:
@@ -32,12 +30,6 @@ User ID emby should run under, default is 99 for unRAID compatiability.
 
 Group ID emby should run under, default is 100 for unRAID compatiability.
 
-## Docker run command:
-
-```
-docker run -d --net=host -v /*your_config_location*:/config -v /*your_media_location*:/media -e TZ=<TIMEZONE> --name=EmbyServer emby/embyserver
-
-```
 
 ## Other info:
 

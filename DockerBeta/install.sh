@@ -35,7 +35,7 @@ usermod -d /home nobody
 
 # Set right permission for directories
 USER="nobody"
-HOME_PATH=/opt/emby
+HOME_PATH=/opt/emby-server
 PROGRAMDATA=/config
 HOME_CURRENT_USER=`ls -lad $HOME_PATH | awk '{print $3}'`
 DATA_CURRENT_USER=`ls -lad $PROGRAMDATA | awk '{print $3}'`
@@ -57,8 +57,8 @@ cat <<'EOT' > /etc/service/emby/run
 #!/bin/bash
 umask 000
 
-cd /opt/emby/
-exec env MONO_THREADS_PER_CPU=100 MONO_GC_PARAMS=nursery-size=64m /sbin/setuser nobody mono --server /opt/emby/MediaBrowser.Server.Mono.exe \
+cd /opt/emby-server/
+exec env MONO_THREADS_PER_CPU=100 MONO_GC_PARAMS=nursery-size=64m /sbin/setuser nobody mono /opt/emby-server/MediaBrowser.Server.Mono.exe \
                                 -programdata /config \
                                 -ffmpeg $(which ffmpeg) \
                                 -ffprobe $(which ffprobe)

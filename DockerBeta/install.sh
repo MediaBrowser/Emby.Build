@@ -28,6 +28,7 @@ fi
 # Adjust UID and GID of nobody with environmet variables
 USER_ID=${MB_USER_ID:-99}
 GROUP_ID=${MB_GROUP_ID:-100}
+AUTO_UPDATE=${AUTO_UPDATES_ON=-false}
 groupmod -g $GROUP_ID users
 usermod -u $USER_ID nobody
 usermod -g $GROUP_ID nobody
@@ -48,7 +49,13 @@ if [ "$DATA_CURRENT_USER" != "$USER" ]; then
     chown -R "$USER":users "$PROGRAMDATA"
 fi
 
+# Check if user wants auto updates
+if [ "$AUTO_UPDATE" = "true" ]; then
+    echo "* 3 * * * /Update.sh" > /etc/cron.d/cron.conf
+fi
+
 chown -R nobody:users /home/
+chmod +x /Update.sh
 EOT
 
 # Emby Server

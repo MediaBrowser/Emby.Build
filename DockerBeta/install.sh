@@ -58,6 +58,16 @@ chown -R nobody:users /home/
 chmod +x /Update.sh
 EOT
 
+# Updates
+cat <<'EOT' > /Update.sh
+#!/bin/bash
+#!/bin/bash
+sv stop emby
+apt-get update -qq
+apt-get install --only-upgrade -qy --force-yes mono-runtime emby-server
+sv start emby
+EOT
+
 # Emby Server
 mkdir -p /etc/service/emby
 cat <<'EOT' > /etc/service/emby/run

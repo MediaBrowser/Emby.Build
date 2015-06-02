@@ -7,7 +7,7 @@ This is a Dockerfile for "Emby Server Beta" - (http://emby.media/)
 ## How to use:
 
 ```
-docker run -d --net=host -v /*your_config_location*:/config -v /*your_media_location*:/media -e TZ=<TIMEZONE> --name=EmbyServer emby/embyserver
+docker run -d --net=host -v /*your_config_location*:/config -v /*your_media_location*:/media -e TZ=<TIMEZONE> --name=EmbyServer emby/embyserver-beta
 ```
 
 ## Volumes:
@@ -21,6 +21,10 @@ Configuration files and state of MediaBrowser Server folder. (i.e. /opt/appdata/
 ### `TZ`
 
 TimeZone. (i.e America/Edmonton)
+
+### `AUTO_UPDATES_ON`
+
+Valid value are true or false. If set to true, the container will attempt to update at 3am every morning.
 
 ### `MB_USER_ID`
 

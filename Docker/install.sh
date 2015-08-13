@@ -36,7 +36,7 @@ usermod -d /home nobody
 
 # Set right permission for directories
 USER="nobody"
-HOME_PATH=/opt/emby-server
+HOME_PATH=/usr/lib/emby-server
 PROGRAMDATA=/config
 HOME_CURRENT_USER=`ls -lad $HOME_PATH | awk '{print $3}'`
 DATA_CURRENT_USER=`ls -lad $PROGRAMDATA | awk '{print $3}'`
@@ -56,11 +56,30 @@ fi
 
 chown -R nobody:users /home/
 chmod +x /Update.sh
+chmod +x /Restart.sh
 EOT
+
+# Sudoers 
+cat <<'EOT' > /etc/sudoers.d/emby
+#Allow emby to start, stop and restart itself
+nobody ALL=(ALL) NOPASSWD: /usr/bin/sv *
+#Allow the server to mount iso images
+nobody ALL=(ALL) NOPASSWD: /bin/mount
+nobody ALL=(ALL) NOPASSWD: /bin/umount
+
+Defaults:nobody !requiretty
+EOT
+
+# Restart
+cat <<'EOT' > /Restart.sh
+#!/bin/bash
+
+sudo sv restart emby
+EOT
+
 
 # Updates
 cat <<'EOT' > /Update.sh
-#!/bin/bash
 #!/bin/bash
 sv stop emby
 apt-get update -qq
@@ -74,11 +93,13 @@ cat <<'EOT' > /etc/service/emby/run
 #!/bin/bash
 umask 000
 
-cd /opt/emby-server/
-exec env MONO_THREADS_PER_CPU=100 MONO_GC_PARAMS=nursery-size=64m /sbin/setuser nobody mono-sgen /opt/emby-server/MediaBrowser.Server.Mono.exe \
+cd /usr/lib/emby-server/
+exec env MONO_THREADS_PER_CPU=100 MONO_GC_PARAMS=nursery-size=64m /sbin/setuser nobody mono-sgen /usr/lib/emby-server/MediaBrowser.Server.Mono.exe \
                                 -programdata /config \
                                 -ffmpeg $(which ffmpeg) \
-                                -ffprobe $(which ffprobe)
+                                -ffprobe $(which ffprobe) \
+				-restartpath "/Restart.sh" \
+				-restartargs ""
 EOT
 
 chmod -R +x /etc/service/ /etc/my_init.d/
@@ -111,6 +132,7 @@ apt-get install -qy --force-yes mono-runtime \
                                 imagemagick-6.q8 \
                                 libmagickwand-6.q8-2 \
                                 libmagickcore-6.q8-2 \
+				sudo \
                                 emby-server 
 
 #########################################

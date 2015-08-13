@@ -14,7 +14,7 @@ docker run -d --net=host -v /*your_config_location*:/config -v /*your_media_loca
 
 #### `/config`
 
-Configuration files and state of MediaBrowser Server folder. (i.e. /opt/appdata/emby)
+Configuration files and state of MediaBrowser Server folder. (i.e. /opt/appdata/emby or /mnt/cache/.appdata/emby)
 
 ## Environment Variables:
 

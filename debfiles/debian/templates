@@ -1,16 +1,16 @@
-Template: emby/permissions
+Template: emby-server-beta/permissions
 Type: note
-Description: Emby permission info:
+_Description: Emby permission info:
  Emby by default runs under a user named "emby". 
  Please ensure that the user emby has read and write access to any folders
  you wish to add to your library. Otherwise please run emby under a different user.
 
-Template: emby/user
+Template: emby-server-beta/user
 Type: string
-Description: Username to run Emby as:
+_Description: Username to run Emby as:
  The user that emby will run as.
 
-Template: emby/old-running
+Template: emby-server-beta/old-running
 Type: note
-Description: Emby still running
+_Description: Emby still running
  Emby is currently running. Please close it and try again.

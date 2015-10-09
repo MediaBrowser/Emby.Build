@@ -1,25 +1,12 @@
 all: build
 
-XSOCK=/tmp/.X11-unix
-XAUTH=/tmp/.docker.xauth
 
 ENV_VARS= \
 	--env="USER_UID=$(shell id -u)" \
-	--env="USER_GID=$(shell id -g)" \
-	--env="DISPLAY" \
-	--env="XAUTHORITY=${XAUTH}"
-
-VOLUMES= \
-	--volume=${XSOCK}:${XSOCK} \
-	--volume=${XAUTH}:${XAUTH}
+	--env="USER_GID=$(shell id -g)"
 
 ENV_INSTL_USER=\
 	--env="VIRT_MANAGER_USER=${USER}"
-
-ifdef VIRT_MANAGER_DATA
-ENV_INSTL_DATA= \
-	--env="VIRT_MANAGER_DATA=${VIRT_MANAGER_DATA}"
-endif
 
 help:
 	@echo ""
@@ -45,9 +32,7 @@ install uninstall: build
 		${ENV_INSTL_USER} \
 		${USER}/virt-manager:latest $@
 
-virt-manager bash:
-	@touch ${XAUTH}
-	@auth nlist :0 | sed -e 's/^..../ffff/' | xauth -f ${XAUTH} nmerge -
+emby-deb bash:
 	docker run -it --rm \
 		${ENV_VARS} \
 		${VOLUMES} \

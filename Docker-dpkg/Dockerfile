@@ -1,9 +1,8 @@
-FROM sameersbn/ubuntu:14.04.20150825
+FROM hurricane/jessie
 
 RUN apt-get update \
  && apt-get install -y virt-manager ssh-client ssh-askpass \
-		hicolor-icon-theme libcanberra-gtk3-module \
- && update-locale LANG=C.UTF-8 LC_MESSAGES=POSIX
+		hicolor-icon-theme libcanberra-gtk3-module
 
 COPY scripts/ /var/cache/virt-manager/
 COPY entrypoint.sh /sbin/entrypoint.sh

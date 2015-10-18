@@ -3,6 +3,43 @@
 FROM phusion/baseimage:0.9.16
 MAINTAINER Carlos Hernandez <carlos@techbyte.ca>
 
+
+#########################################
+##    REPOSITORIES AND DEPENDENCIES    ##
+#########################################
+# these are done first because they are unlikely to change.
+# this helps the docker layers work for you on future rebuilds
+
+# install wget so we can get setu the repos
+RUN apt-get update -qq && apt-get install -qy --force-yes wget && apt-get clean -y
+
+
+# Repositories
+RUN wget -qO - http://download.opensuse.org/repositories/home:emby/xUbuntu_14.04/Release.key | apt-key add - && \
+    echo 'deb http://download.opensuse.org/repositories/home:/emby/xUbuntu_14.04/ /' >> /etc/apt/sources.list.d/emby.list && \
+    echo 'deb http://us.archive.ubuntu.com/ubuntu/ trusty main universe multiverse restricted' > /etc/apt/sources.list && \
+    echo 'deb http://us.archive.ubuntu.com/ubuntu/ trusty-updates main universe multiverse restricted' >> /etc/apt/sources.list && \
+    add-apt-repository ppa:mc3man/trusty-media
+
+# Use mirrors
+# sed -i -e "s#http://[^\s]*archive.ubuntu[^\s]* #mirror://mirrors.ubuntu.com/mirrors.txt #g" /etc/apt/sources.list
+
+# Install Dependencies
+RUN apt-get update -qq && apt-get clean -y
+RUN apt-get install -qy --force-yes mono-runtime \
+                                mediainfo \
+                                libsqlite3-dev \
+                                libc6-dev \
+                                ffmpeg \
+                                imagemagick-6.q8 \
+                                libmagickwand-6.q8-2 \
+                                libmagickcore-6.q8-2 \
+                                sudo \
+                                emby-server && \
+    apt-get clean -y
+
+
+
 #########################################
 ##        ENVIRONMENTAL CONFIG         ##
 #########################################

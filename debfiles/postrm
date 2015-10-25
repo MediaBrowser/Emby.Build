@@ -33,9 +33,11 @@ case "$1" in
         [ -f /etc/init.d/emby ] rm /etc/init.d/emby
         [ -f /etc/init.d/emby-server ] rm /etc/init.d/emby-server
         [ -f /etc/init.d/emby-server-beta ] rm /etc/init.d/emby-server-beta
+        [ -f /etc/init.d/emby-server-dev ] rm /etc/init.d/emby-server-dev
         [ -f /etc/init.d/mediabrowser ] rm /etc/init.d/mediabrowser
         [ -f /etc/init/emby-server ] rm /etc/init/emby-server
         [ -f /etc/init/emby-server-beta ] rm /etc/init/emby-server-beta
+        [ -f /etc/init/emby-server-dev ] rm /etc/init/emby-server-dev
         [ -f /etc/emby-server.conf ] rm /etc/emby-server.conf
         [ -f /usr/bin/emby-server ] rm /usr/bin/emby-server
         [ -f /etc/sudoers.d/emby ] rm /etc/sudoers.d/emby

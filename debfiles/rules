@@ -25,4 +25,3 @@ override_dh_clideps:
 override_dh_installinit:
 	# use "emby-server" as our service name, not "emby-server-beta"
 	dh_installinit --name=emby-server
-

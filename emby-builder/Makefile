@@ -6,7 +6,10 @@ VOLUMES = \
 
 ENV_VARS= \
 	--env="USER_UID=$(shell id -u)" \
-	--env="USER_GID=$(shell id -g)"
+	--env="USER_GID=$(shell id -g)" \
+	--env="BUILD_USER=${USER}"
+
+DIST="debian/jessie"
 
 help:
 	@echo ""
@@ -24,7 +27,7 @@ clean:
 	@docker rmi `docker images  | grep "${USER}/emby-builder" | awk '{print $$3}'` > /dev/null 2>&1 || exit 0
 
 build:
-	@docker build --rm=true --tag=${USER}/emby-builder .
+	@docker build --rm=true --tag=${USER}/emby-builder -f ./${DIST}/Dockerfile .
 
 emby-server emby-server-beta emby-server-dev bash: build
 	@echo "Building ${1} package."

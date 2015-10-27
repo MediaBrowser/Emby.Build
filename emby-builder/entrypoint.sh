@@ -41,7 +41,9 @@ build_emby() {
   download_source
   create_changelog
   build_package
-  #install_package
+  install_package
+  test_package
+  deliver_package
 }
 
 prep_debfiles() {
@@ -49,7 +51,7 @@ prep_debfiles() {
   sed -i -e s%"Package: emby-server"%"Package: ${PACKAGE_NAME}"%1 /var/cache/debfiles/control
   sed -i -e s%"Source: emby-server"%"Source: ${PACKAGE_NAME}"%1 /var/cache/debfiles/control
   # update conflicts, breaks and replaces
-  conflicting_packages="$(clean_packages $PACKAGE_NAME)"
+  conflicting_packages="$(get_conflicts $PACKAGE_NAME)"
   sed -i -e s%"\(Replaces: \).*$"%"\1${conflicting_packages}"%1 /var/cache/debfiles/control
   sed -i -e s%"\(Breaks: \).*$"%"\1${conflicting_packages}"%1 /var/cache/debfiles/control
   sed -i -e s%"\(Conflicts: \).*$"%"\1${conflicting_packages}"%1 /var/cache/debfiles/control
@@ -84,7 +86,7 @@ download_source() {
 }
 
 create_changelog() {
-  DEBFULLNAME="HurricaneHrndz <hurricanehrndz@techbyte.ca>" \
+  DEBFULLNAME="HurricaneHrndz" \
     NAME="HurricaneHrndz" \
     DEBEMAIL="hurricanehrndz@techbyte.ca" \
     dch --create -v $VERSION --package $PACKAGE_NAME "Automatic build."
@@ -99,7 +101,25 @@ install_package() {
   dpkg -i /var/cache/*.deb
 }
 
-clean_packages() {
+test_package() {
+    /usr/bin/emby-server start &
+	PID=$?
+	sleep 5
+	result=$(curl -sL -w "%{http_code}" "http://localhost:8096" -o /dev/null)
+	if [ "$result" == "200" ]; then
+		echo "Package was built successfully."
+	else
+		echo "Package is deffective."
+	fi
+    CPIDS=$(pgrep -P $PID)
+    sleep 2 && kill -KILL $CPIDS
+}
+
+delivery_package() {
+	cp /var/cache/*.deb /pkg
+}
+
+get_conflicts() {
   result=""
   for emby_package in "${EMBY_PACKAGES[@]}"
   do
@@ -109,6 +129,7 @@ clean_packages() {
   done
   echo "${result%, }"
 }
+
 
 PACKAGE_NAME=$1
 create_user

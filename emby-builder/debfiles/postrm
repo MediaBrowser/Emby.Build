@@ -1,6 +1,5 @@
 #!/bin/sh
 set -e
-set -u
 
 NAME=emby-server
 CONF_FILE=/etc/${NAME}.conf
@@ -14,8 +13,6 @@ fi
 # Source Emby server user configuration overrides
 if [ -f $CONF_FILE ]; then
   . $CONF_FILE
-else
-  echo "${CONF_FILE} not found using default settings.";
 fi
 
 # Data directory where Emby database, cache and logs are stored

@@ -40,9 +40,8 @@ build_emby() {
   prep_debfiles
   download_source
   create_changelog
-  cd /var/cache/emby-source
-  export DEBFULLNAME="HurricanHrndz <hurricanehrndz@techbyte.ca>"
-  gbp buildpackage --git-ignore-branch --git-ignore-new --git-builder=debuild -i.git -I.git -uc -us -b
+  build_package
+  #install_package
 }
 
 prep_debfiles() {
@@ -85,7 +84,19 @@ download_source() {
 }
 
 create_changelog() {
-	dch --create -v $VERSION --package $PACKAGE_NAME "Automatic build."
+  DEBFULLNAME="HurricaneHrndz <hurricanehrndz@techbyte.ca>" \
+    NAME="HurricaneHrndz" \
+    DEBEMAIL="hurricanehrndz@techbyte.ca" \
+    dch --create -v $VERSION --package $PACKAGE_NAME "Automatic build."
+}
+
+build_package() {
+  cd /var/cache/emby-source
+  gbp buildpackage --git-ignore-branch --git-ignore-new --git-builder=debuild -i.git -I.git -uc -us -b
+}
+
+install_package() {
+  dpkg -i /var/cache/*.deb
 }
 
 clean_packages() {

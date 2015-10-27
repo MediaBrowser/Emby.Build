@@ -2,14 +2,17 @@ all: build
 
 current_dir := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 VOLUMES = \
-    --volume=$(current_dir):/pkg
+		  --volume=$(current_dir):/pkg
 
-ENV_VARS= \
-	--env="USER_UID=$(shell id -u)" \
-	--env="USER_GID=$(shell id -g)" \
-	--env="BUILD_USER=${USER}"
+ENV_VARS = \
+		   --env="USER_UID=$(shell id -u)" \
+		   --env="USER_GID=$(shell id -g)" \
+		   --env="BUILD_USER=${USER}"
 
-DIST="debian/jessie"
+PORTS = \
+		-p 8096:8096
+
+DIST = "debian/jessie"
 
 help:
 	@echo ""
@@ -32,6 +35,7 @@ build:
 emby-server emby-server-beta emby-server-dev bash: build
 	@echo "Building ${1} package."
 	@docker run -it --rm \
+		${PORTS} \
 		${ENV_VARS} \
 		${VOLUMES} \
 		${USER}/emby-builder:latest $@

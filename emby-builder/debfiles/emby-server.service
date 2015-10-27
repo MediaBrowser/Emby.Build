@@ -11,4 +11,3 @@ ExecStopPost=/usr/bin/emby-server clear
 
 [Install]
 WantedBy=multi-user.target
-

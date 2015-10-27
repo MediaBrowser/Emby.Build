@@ -15,9 +15,9 @@ LOG_FILE=/var/log/${NAME}.log
 
 # Source Emby server user configuration overrides
 if [ -f $CONF_FILE ]; then
-    . $CONF_FILE
+  . $CONF_FILE
 else
-    echo "${CONF_FILE} not found using default settings.";
+  echo "${CONF_FILE} not found using default settings.";
 fi
 
 # Run as username
@@ -48,17 +48,17 @@ MONO_EXEC_OPTS=$MONO_OPTS
 
 # ffmpeg
 FFMPEG_BIN=$(which ffmpeg)
-[ -n "$FFMPEG_BIN" ] && FFMPEG_OPTS="-ffmpeg $FFMPEG_BIN" 
+[ -n "$FFMPEG_BIN" ] && FFMPEG_OPTS="-ffmpeg $FFMPEG_BIN"
 
 # ffprobe
 FFPROBE_BIN=$(which ffprobe)
-[ -n "$FFPROBE_BIN" ] && FFPROBE_OPTS="-ffprobe $FFPROBE_BIN" 
+[ -n "$FFPROBE_BIN" ] && FFPROBE_OPTS="-ffprobe $FFPROBE_BIN"
 
 # restart function
 RESTART_OPTS="-restartpath ${EMBY_PATH}/restart.sh"
 
 # Emby options
-EMBY_OPTS="$PROGRAMDATA_OPT $FFMPEG_OPTS $FFPROBE_OPTS $RESTART_OPTS $EMBY_ADD_OPTS"               
+EMBY_OPTS="$PROGRAMDATA_OPT $FFMPEG_OPTS $FFPROBE_OPTS $RESTART_OPTS $EMBY_ADD_OPTS"
 
 PID_PATH=`dirname $PIDFILE`
 
@@ -67,27 +67,27 @@ PID_PATH=`dirname $PIDFILE`
 
 # Create programdata  directory if not exist and ensure the emby user can write to it
 if [ ! -d $PROGRAMDATA ]; then
-    mkdir -p $PROGRAMDATA
+  mkdir -p $PROGRAMDATA
 fi
 
 # Set right permission for directories
 DATA_CURRENT_USER=`ls -lad $PROGRAMDATA | awk '{print $3}'`
 
 if [ "$DATA_CURRENT_USER" != "$USER" ]; then
-    chown -R $USER.$GROUP $PROGRAMDATA
+  chown -R $USER.$GROUP $PROGRAMDATA
 fi
 
 case "$1" in
-    start)
-        echo $$ > $PIDFILE
-        exec su -s /bin/sh -c 'exec "$0" "$@"' $USER -- \
-        env $MONO_EXEC_ENV $MONO_EXEC $MONO_EXEC_OPTS $EMBY_EXEC $EMBY_OPTS > $LOG_FILE 2>&1  
-        ;;
-    clear)
+  start)
+    echo $$ > $PIDFILE
+    exec su -s /bin/sh -c 'exec "$0" "$@"' $USER -- \
+    env $MONO_EXEC_ENV $MONO_EXEC $MONO_EXEC_OPTS $EMBY_EXEC $EMBY_OPTS > $LOG_FILE 2>&1
+    ;;
+  clear)
     [ -e $PIDFILE ] && rm -rf $PIDFILE
-        ;;
-    *)
-        echo "Usage: $SCRIPTNAME {start|clear}" >&2
-        exit 3
+    ;;
+  *)
+    echo "Usage: $SCRIPTNAME {start|clear}" >&2
+    exit 3
     ;;
 esac

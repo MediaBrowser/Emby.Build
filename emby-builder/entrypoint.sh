@@ -38,12 +38,12 @@ create_user() {
 
 build_emby() {
   prep_debfiles
-  download_source
-  create_changelog
-  build_package
-  install_package
-  test_package
-  deliver_package
+  prep_source
+  exec sudo --preserve-env -u ${BUILD_USER} create_changelog
+  exec sudo --preserve-env -u ${BUILD_USER} build_package
+  exec sudo --preserve-env -u ${BUILD_USER} install_package
+  exec sudo --preserve-env -u ${BUILD_USER} test_package
+  exec sudo --preserve-env -u ${BUILD_USER} deliver_package
 }
 
 prep_debfiles() {
@@ -66,9 +66,7 @@ prep_debfiles() {
   sed -i -e s%"emby-server source"%"${PACKAGE_NAME} source"%g /var/cache/debfiles/source.lintian-overrides
 }
 
-download_source() {
-	mkdir -p /var/cache/emby-source
-	git clone https://github.com/MediaBrowser/Emby.git /var/cache/emby-source
+prep_source() {
 	if [ "$PACKAGE_NAME" == "emby-server-dev" ] || [ "$PACKAGE_NAME" == "emby-server-beta" ]; then
 		cd /var/cache/emby-source && git checkout dev
 	fi
@@ -83,6 +81,7 @@ download_source() {
 		VERSION=${VERSION}.git${COMMIT}
 	fi
 	mv /var/cache/debfiles /var/cache/emby-source/debian
+	chown -R $USER_UID:$USER_GID /var/cache/emby-source
 }
 
 create_changelog() {
@@ -104,9 +103,10 @@ install_package() {
 test_package() {
     /usr/bin/emby-server start &
 	PID=$?
-	sleep 5
-	result=$(curl -sL -w "%{http_code}" "http://localhost:8096" -o /dev/null)
-	if [ "$result" == "200" ]; then
+    sleep 120
+	http_result="0"
+	http_result=$(curl -sL -w "%{http_code}" "http://localhost:8096" -o /dev/null)
+	if [ "$http_result" == "200" ]; then
 		echo "Package was built successfully."
 	else
 		echo "Package is deffective."
@@ -115,8 +115,16 @@ test_package() {
     sleep 2 && kill -KILL $CPIDS
 }
 
-delivery_package() {
+deliver_package() {
 	cp /var/cache/*.deb /pkg
+	# create obs files
+	mkdir -p /pkg/obs
+	mv /var/cache/emby-source/debian/emby /pkg/obs/debian.emby
+	mv /var/cache/emby-source/debian/emby-server.conf /pkg/obs/debian.emby-server.conf
+	mv /var/cache/emby-source/debian/${PACKAGE_NAME}.emby-server.service /pkg/obs/debian.${PACKAGE_NAME}.emby-server.service
+	mv /var/cache/emby-source/debian/${PACKAGE_NAME}.emby-server.default /pkg/obs/debian.${PACKAGE_NAME}.emby-server.default
+	mv /var/cache/emby-source/debian/restart.sh /pkg/obs/debian.restart.sh
+	tar -cvzf /pkg/obs/debian.tar.gz /var/cache/emby-source/debian
 }
 
 get_conflicts() {
@@ -147,5 +155,3 @@ case "$PACKAGE_NAME" in
     exec $@
     ;;
 esac
-
-exec bash

@@ -35,7 +35,9 @@ RUN apt-get update \
 	debhelper \
 	libmono-cil-dev \
 	cli-common-dev \
-	sqlite3
+	sqlite3 \
+ && mkdir -p /var/cache/emby-source \
+ && git clone https://github.com/MediaBrowser/Emby.git /var/cache/emby-source
 
 # copy entrypoint script
 COPY entrypoint.sh /sbin/entrypoint.sh

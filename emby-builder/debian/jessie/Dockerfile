@@ -36,7 +36,8 @@ RUN apt-get update \
 	libsqlite3-dev \
 	debhelper \
 	libmono-cil-dev \
-	cli-common-dev
+	cli-common-dev \
+	sqlite3
 
 # copy entrypoint script
 COPY entrypoint.sh /sbin/entrypoint.sh

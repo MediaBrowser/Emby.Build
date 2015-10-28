@@ -31,7 +31,7 @@ RUN apt-get update \
     wget \
 	mono-xbuild \
 	mono-devel \
-	libmediainfo0v5 \
+	libmediainfo0 \
 	po-debconf \
 	libsqlite3-dev \
 	debhelper \

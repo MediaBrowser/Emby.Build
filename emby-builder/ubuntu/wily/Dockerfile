@@ -44,5 +44,7 @@ RUN apt-get update \
 COPY entrypoint.sh /sbin/entrypoint.sh
 # copy debian files
 COPY debfiles/ /var/cache/debfiles
+# copy scripts
+COPY scripts/ /var/cache/scripts
 
 ENTRYPOINT ["/sbin/entrypoint.sh"]

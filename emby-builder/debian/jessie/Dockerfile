@@ -36,11 +36,15 @@ RUN apt-get update \
 	libsqlite3-dev \
 	debhelper \
 	libmono-cil-dev \
-	cli-common-dev
+	cli-common-dev \
+ && mkdir -p /var/cache/emby-source \
+ && git clone https://github.com/MediaBrowser/Emby.git /var/cache/emby-source
 
 # copy entrypoint script
 COPY entrypoint.sh /sbin/entrypoint.sh
 # copy debian files
 COPY debfiles/ /var/cache/debfiles
+# copy scripts
+COPY scripts/ /var/cache/scripts
 
 ENTRYPOINT ["/sbin/entrypoint.sh"]

@@ -1,54 +1,16 @@
 #!/bin/bash
 set -e
 
-USER_UID=${USER_UID:-1000}
-USER_GID=${USER_GID:-1000}
-BUILD_USER=${BUILD_USER:-build_user}
-
 EMBY_PACKAGES=(mediabrowser emby emby-server-beta emby-server-dev emby-server)
 PACKAGE_NAME=""
 VERSION=""
 COMMIT=""
 
-
-create_user() {
-  # ensure home directory is owned by user
-  # and that the profile files exist
-  if [[ -d /home/${BUILD_USER} ]]; then
-    chown ${USER_UID}:${USER_GID} /home/${BUILD_USER}
-    # copy user files from /etc/skel
-    cp /etc/skel/.bashrc /home/${BUILD_USER}
-    cp /etc/skel/.bash_logout /home/${BUILD_USER}
-    cp /etc/skel/.profile /home/${BUILD_USER}
-    chown ${USER_UID}:${USER_GID} \
-    /home/${BUILD_USER}/.bashrc \
-    /home/${BUILD_USER}/.profile \
-    /home/${BUILD_USER}/.bash_logout
-  fi
-  # create group with USER_GID
-  if ! getent group ${BUILD_USER} >/dev/null; then
-    groupadd -f -g ${USER_GID} ${BUILD_USER} > /dev/null 2>&1
-  fi
-  # create user with USER_UID
-  if ! getent passwd ${BUILD_USER} >/dev/null; then
-    adduser --disabled-login --uid ${USER_UID} --gid ${USER_GID} \
-      --gecos 'Containerized App User' ${BUILD_USER}
-  fi
-}
-
 build_emby() {
   prep_debfiles
   prep_source
-  export -f create_changelog
-  sudo --preserve-env -u ${BUILD_USER} bash -c "$create_changelog"
-  export -f build_package
-  sudo --preserve-env -u ${BUILD_USER} bash -c "$build_package"
-  export -f install_package
-  sudo --preserve-env -u ${BUILD_USER} bash -c "$install_package"
-  export -f test_package
-  sudo --preserve-env -u ${BUILD_USER} bash -c "$test_package"
-  export -f deliver_package
-  sudo --preserve-env -u ${BUILD_USER} bash -c "$deliver_package"
+  create_changelog
+  build_package
 }
 
 prep_debfiles() {
@@ -85,8 +47,8 @@ prep_source() {
 		COMMIT=$(git log -n 1 --pretty=format:"%h")
 		VERSION=${VERSION}.git${COMMIT}
 	fi
+  # debianize source
 	mv /var/cache/debfiles /var/cache/emby-source/debian
-	chown -R $USER_UID:$USER_GID /var/cache/emby-source
 }
 
 create_changelog() {
@@ -99,37 +61,6 @@ create_changelog() {
 build_package() {
   cd /var/cache/emby-source
   gbp buildpackage --git-ignore-branch --git-ignore-new --git-builder=debuild -i.git -I.git -uc -us -b
-}
-
-install_package() {
-  dpkg -i /var/cache/*.deb
-}
-
-test_package() {
-    /usr/bin/emby-server start &
-	PID=$?
-    sleep 120
-	http_result="0"
-	http_result=$(curl -sL -w "%{http_code}" "http://localhost:8096" -o /dev/null)
-	if [ "$http_result" == "200" ]; then
-		echo "Package was built successfully."
-	else
-		echo "Package is deffective."
-	fi
-    CPIDS=$(pgrep -P $PID)
-    sleep 2 && kill -KILL $CPIDS
-}
-
-deliver_package() {
-	cp /var/cache/*.deb /pkg
-	# create obs files
-	mkdir -p /pkg/obs
-	mv /var/cache/emby-source/debian/emby /pkg/obs/debian.emby
-	mv /var/cache/emby-source/debian/emby-server.conf /pkg/obs/debian.emby-server.conf
-	mv /var/cache/emby-source/debian/${PACKAGE_NAME}.emby-server.service /pkg/obs/debian.${PACKAGE_NAME}.emby-server.service
-	mv /var/cache/emby-source/debian/${PACKAGE_NAME}.emby-server.default /pkg/obs/debian.${PACKAGE_NAME}.emby-server.default
-	mv /var/cache/emby-source/debian/restart.sh /pkg/obs/debian.restart.sh
-	tar -cvzf /pkg/obs/debian.tar.gz /var/cache/emby-source/debian
 }
 
 get_conflicts() {
@@ -145,7 +76,6 @@ get_conflicts() {
 
 
 PACKAGE_NAME=$1
-create_user
 case "$PACKAGE_NAME" in
   emby-server)
     build_emby $PACKAGE_NAME

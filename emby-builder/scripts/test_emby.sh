@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-dpkg -i /var/cache/*.deb
+dpkg -i /var/cache/buildarea/*.deb
 /usr/bin/emby-server start &
 PID=$?
   sleep 120

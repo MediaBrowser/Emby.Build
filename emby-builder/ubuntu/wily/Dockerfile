@@ -30,20 +30,18 @@ RUN apt-get update \
     wget \
 	mono-xbuild \
 	mono-devel \
-	libmediainfo0 \
+	libmediainfo0v5 \
 	po-debconf \
 	libsqlite3-dev \
 	debhelper \
 	libmono-cil-dev \
 	cli-common-dev \
-	sqlite3 \
- && mkdir -p /var/cache/emby-source \
- && git clone https://github.com/MediaBrowser/Emby.git /var/cache/emby-source
+	sqlite3
 
 # copy entrypoint script
 COPY entrypoint.sh /sbin/entrypoint.sh
 # copy debian files
-COPY debfiles/ /var/cache/debfiles
+COPY debfiles/ /var/cache/buildarea/debfiles
 # copy scripts
 COPY scripts/ /var/cache/scripts
 

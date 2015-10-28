@@ -33,7 +33,7 @@ build:
 	@docker build --rm=true --tag=${USER}/emby-builder -f ./${DIST}/Dockerfile .
 
 emby-server emby-server-beta emby-server-dev bash: build
-	@echo "Building ${1} package."
+	@echo "Starting container to build $1 package."
 	@docker run -it --rm \
 		${PORTS} \
 		${ENV_VARS} \

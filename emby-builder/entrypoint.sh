@@ -37,14 +37,14 @@ build_emby() {
   /var/cache/scripts/test_emby.sh
   test_result=$?
   if [ "$test_result" == "0" ]; then
-    sudo  --preserve-env -u $BUILD_USER /var/cache/scripts/deliver_deb.sh
+    sudo  --preserve-env -u $BUILD_USER /var/cache/scripts/deliver_deb.sh $PACKAGE_NAME
   fi
 }
 
 prep_debfiles() {
   # make sure $BUILD_USER owns files
-	chown -R $USER_UID:$USER_GID /var/cache/emby-source
-	chown -R $USER_UID:$USER_GID /var/cache/debfiles
+  mkdir -p /var/cache/buildarea/emby-source
+	chown -R $USER_UID:$USER_GID /var/cache/buildarea
 }
 
 PACKAGE_NAME=$1

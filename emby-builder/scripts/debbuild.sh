@@ -7,7 +7,6 @@ VERSION=""
 COMMIT=""
 
 build_emby() {
-  prep_debfiles
   prep_source
   create_changelog
   build_package
@@ -35,20 +34,25 @@ prep_debfiles() {
 
 prep_source() {
   git clone https://github.com/MediaBrowser/Emby.git /var/cache/buildarea/emby-source
+  cd /var/cache/buildarea/emby-source
   if [ "$PACKAGE_NAME" == "emby-server-dev" ] || [ "$PACKAGE_NAME" == "emby-server-beta" ]; then
-    cd /var/cache/buildarea/emby-source && git checkout dev
+    git checkout dev
   fi
-  COMMIT=$(git --no-pager log --oneline --all  | grep -e '^.\{7\}\s3.*'|head -1|awk '{print $1}')
-  VERSION=$(git --no-pager log --oneline --all  | grep -e '^.\{7\}\s3.*'|head -1|awk '{print $2}')
   # add short commit hash to beta and dev.
   if [ "$PACKAGE_NAME" == "emby-server-beta" ]; then
-    cd /var/cache/buildarea/emby-source && git checkout $COMMIT
+    COMMIT=$(git --no-pager log --oneline --all  | grep -e '^.\{7\}\s3.*'|head -1|awk '{print $1}')
+    VERSION=$(git --no-pager log --oneline --all  | grep -e '^.\{7\}\s3.*'|head -1|awk '{print $2}')
+    # switch to the last beta release
+    git checkout $COMMIT
     VERSION=${VERSION}.git${COMMIT}
   elif [ "$PACKAGE_NAME" == "emby-server-dev" ]; then
     COMMIT=$(git log -n 1 --pretty=format:"%h")
     VERSION=${VERSION}.git${COMMIT}
+  else
+    VERSION=$(git --no-pager log master --oneline --all  | grep -e '^.\{7\}\s3.*'|head -1|awk '{print $2}')
   fi
   # debianize source
+  prep_debfiles
   mv /var/cache/buildarea/debfiles /var/cache/buildarea/emby-source/debian
 }
 

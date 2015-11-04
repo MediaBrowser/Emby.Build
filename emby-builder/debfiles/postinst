@@ -22,7 +22,7 @@ case "$1" in
   configure)
     # create emby group if it does not exist
     if ! getent group emby > /dev/null; then
-      addgroup --quiet --system emby
+      addgroup --quiet --system emby > /dev/null 2>&1
     fi
 
     # Get emby's home directory
@@ -35,7 +35,7 @@ case "$1" in
     # create emby user if it does not exist
     if ! getent passwd emby > /dev/null; then
       adduser --system --ingroup emby --home "$PROGRAMDATA" emby \
-        --gecos "Emby Server default user"
+        --gecos "Emby Server default user" > /dev/null 2>&1
     fi
 
     # ensure $PROGRAMDATA has appropriate permissions

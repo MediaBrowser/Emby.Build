@@ -55,6 +55,18 @@ prep_source() {
   # debianize source
   prep_debfiles
   mv /var/cache/buildarea/debfiles /var/cache/buildarea/emby-source/debian
+  produce_obsfiles
+}
+
+produce_obsfiles() {
+# deliver deb files for obs
+mkdir -p /pkg/obs
+cp /var/cache/buildarea/emby-source/debian/emby /pkg/obs/debian.emby
+cp /var/cache/buildarea/emby-source/debian/emby-server.conf /pkg/obs/debian.emby-server.conf
+cp /var/cache/buildarea/emby-source/debian/${PACKAGE_NAME}.emby-server.service /pkg/obs/debian.${PACKAGE_NAME}.emby-server.service
+cp /var/cache/buildarea/emby-source/debian/${PACKAGE_NAME}.emby-server.default /pkg/obs/debian.${PACKAGE_NAME}.emby-server.default
+cp /var/cache/buildarea/emby-source/debian/restart.sh /pkg/obs/debian.restart.sh
+tar -cvzf /pkg/obs/debian.tar.gz debian
 }
 
 create_changelog() {

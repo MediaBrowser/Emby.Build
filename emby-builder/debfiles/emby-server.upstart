@@ -12,7 +12,7 @@ kill timeout 20
 script
 	set -x
 	echo "Starting $UPSTART_JOB"
-	
+
 	# Log file
 	logger -t "$0" "DEBUG: `set`"
 	exec /usr/bin/emby-server start

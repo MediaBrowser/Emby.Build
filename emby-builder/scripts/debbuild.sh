@@ -46,6 +46,7 @@ prep_source() {
     git checkout $COMMIT
     VERSION=${VERSION}.git${COMMIT}
   elif [ "$PACKAGE_NAME" == "emby-server-dev" ]; then
+    VERSION=$(git --no-pager log --oneline --all  | grep -e '^.\{7\}\s3.*'|head -1|awk '{print $2}')
     COMMIT=$(git log -n 1 --pretty=format:"%h")
     VERSION=${VERSION}.git${COMMIT}
   else

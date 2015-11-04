@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 
 USER_UID=${USER_UID:-1000}
 USER_GID=${USER_GID:-1000}
@@ -37,7 +36,11 @@ build_emby() {
   /var/cache/scripts/test_emby.sh
   test_result=$?
   if [ "$test_result" == "0" ]; then
+    echo "Package was build successfully."
     sudo  --preserve-env -u $BUILD_USER /var/cache/scripts/deliver_deb.sh $PACKAGE_NAME
+  else
+    echo "Package was built, but test install failed, emby-server build is deffective."
+    echo "Package will not be copied to destination."
   fi
 }
 

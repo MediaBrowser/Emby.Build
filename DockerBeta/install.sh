@@ -75,7 +75,7 @@ cat <<'EOT' > /etc/service/emby/run
 umask 000
 
 cd /opt/emby-server/
-exec env MONO_THREADS_PER_CPU=100 MONO_GC_PARAMS=nursery-size=64m /sbin/setuser nobody mono-sgen /opt/emby-server/MediaBrowser.Server.Mono.exe \
+exec env MONO_THREADS_PER_CPU=100 MONO_GC_PARAMS=nursery-size=64m /sbin/setuser nobody mono-sgen /usr/lib/emby-server/bin/MediaBrowser.Server.Mono.exe \
                                 -programdata /config \
                                 -ffmpeg $(which ffmpeg) \
                                 -ffprobe $(which ffprobe)
@@ -111,7 +111,7 @@ apt-get install -qy --force-yes mono-runtime \
                                 imagemagick-6.q8 \
                                 libmagickwand-6.q8-2 \
                                 libmagickcore-6.q8-2 \
-                                emby-server-beta 
+                                emby-server-beta
 
 #########################################
 ##                 CLEANUP             ##

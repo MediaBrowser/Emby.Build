@@ -1,6 +1,6 @@
 # Emby Server
 # Contributors: gfjardim <gfjardim@gmail.com>
-FROM phusion/baseimage:0.9.16
+FROM phusion/baseimage:0.9.17
 MAINTAINER Carlos Hernandez <carlos@techbyte.ca>
 
 #########################################
@@ -16,9 +16,12 @@ CMD ["/sbin/my_init"]
 ##         RUN INSTALL SCRIPT          ##
 #########################################
 COPY ./install.sh /tmp/
-RUN chmod +x /tmp/install.sh && /tmp/install.sh && rm /tmp/install.sh
+RUN chmod +x /tmp/install.sh \
+ && sleep 3 \
+ && /tmp/install.sh \
+ && rm /tmp/install.sh
 #########################################
 ##         EXPORTS AND VOLUMES         ##
 #########################################
-VOLUME /config 
+VOLUME /config
 EXPOSE 8096 8920 7359/udp 1900/udp

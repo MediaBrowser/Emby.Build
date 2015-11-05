@@ -8,7 +8,6 @@ COMMIT=""
 
 build_emby() {
   prep_source
-  create_changelog
   build_package
 }
 
@@ -55,6 +54,7 @@ prep_source() {
   # debianize source
   prep_debfiles
   mv /var/cache/buildarea/debfiles /var/cache/buildarea/emby-source/debian
+  create_changelog
   produce_obsfiles
 }
 
@@ -66,7 +66,13 @@ cp /var/cache/buildarea/emby-source/debian/emby-server.conf /pkg/obs/debian.emby
 cp /var/cache/buildarea/emby-source/debian/${PACKAGE_NAME}.emby-server.service /pkg/obs/debian.${PACKAGE_NAME}.emby-server.service
 cp /var/cache/buildarea/emby-source/debian/${PACKAGE_NAME}.emby-server.default /pkg/obs/debian.${PACKAGE_NAME}.emby-server.default
 cp /var/cache/buildarea/emby-source/debian/restart.sh /pkg/obs/debian.restart.sh
-tar -cvzf /pkg/obs/debian.tar.gz debian
+
+tar --exclude=emby \
+  --exclude=emby-server.conf \
+  --exclude=${PACKAGE_NAME}.emby-server.default \
+  --exclude=${PACKAGE_NAME}.emby-server.service \
+  --exclude=restart.sh \
+  -zcvf /pkg/obs/debian.tar.gz debian
 }
 
 create_changelog() {

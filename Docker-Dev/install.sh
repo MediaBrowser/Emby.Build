@@ -36,14 +36,9 @@ usermod -d /home nobody
 
 # Set right permission for directories
 USER="nobody"
-HOME_PATH=/opt/emby-server
 PROGRAMDATA=/config
 HOME_CURRENT_USER=`ls -lad $HOME_PATH | awk '{print $3}'`
 DATA_CURRENT_USER=`ls -lad $PROGRAMDATA | awk '{print $3}'`
-
-if [ "$HOME_CURRENT_USER" != "$USER" ]; then
-    chown -R "${USER}:users $DAEMON_PATH"
-fi
 
 if [ "$DATA_CURRENT_USER" != "$USER" ]; then
     chown -R "$USER":users "$PROGRAMDATA"
@@ -92,7 +87,7 @@ apt-get install -qy --force-yes wget
 
 # Repositories
 wget -qO - http://download.opensuse.org/repositories/home:emby/xUbuntu_14.04/Release.key | apt-key add -
-echo 'deb http://download.opensuse.org/repositories/home:/emby/xUbuntu_14.04/ /' >> /etc/apt/sources.list.d/emby-server-beta.list
+echo 'deb http://download.opensuse.org/repositories/home:/emby/xUbuntu_14.04/ /' >> /etc/apt/sources.list.d/emby-server-dev.list
 echo 'deb http://us.archive.ubuntu.com/ubuntu/ trusty main universe multiverse restricted' > /etc/apt/sources.list
 echo 'deb http://us.archive.ubuntu.com/ubuntu/ trusty-updates main universe multiverse restricted' >> /etc/apt/sources.list
 add-apt-repository ppa:mc3man/trusty-media
@@ -111,7 +106,7 @@ apt-get install -qy --force-yes mono-runtime \
                                 imagemagick-6.q8 \
                                 libmagickwand-6.q8-2 \
                                 libmagickcore-6.q8-2 \
-                                emby-server-beta
+                                emby-server-dev
 
 #########################################
 ##                 CLEANUP             ##

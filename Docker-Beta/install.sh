@@ -36,14 +36,9 @@ usermod -d /home nobody
 
 # Set right permission for directories
 USER="nobody"
-HOME_PATH=/opt/emby-server
 PROGRAMDATA=/config
 HOME_CURRENT_USER=`ls -lad $HOME_PATH | awk '{print $3}'`
 DATA_CURRENT_USER=`ls -lad $PROGRAMDATA | awk '{print $3}'`
-
-if [ "$HOME_CURRENT_USER" != "$USER" ]; then
-    chown -R "${USER}:users $DAEMON_PATH"
-fi
 
 if [ "$DATA_CURRENT_USER" != "$USER" ]; then
     chown -R "$USER":users "$PROGRAMDATA"
@@ -64,7 +59,7 @@ cat <<'EOT' > /Update.sh
 #!/bin/bash
 sv stop emby
 apt-get update -qq
-apt-get install --only-upgrade -qy --force-yes mono-runtime emby-server
+apt-get install --only-upgrade -qy --force-yes mono-runtime emby-server-beta
 sv start emby
 EOT
 
@@ -75,7 +70,7 @@ cat <<'EOT' > /etc/service/emby/run
 umask 000
 
 cd /opt/emby-server/
-exec env MONO_THREADS_PER_CPU=100 MONO_GC_PARAMS=nursery-size=64m /sbin/setuser nobody mono-sgen /opt/emby-server/MediaBrowser.Server.Mono.exe \
+exec env MONO_THREADS_PER_CPU=100 MONO_GC_PARAMS=nursery-size=64m /sbin/setuser nobody mono-sgen /usr/lib/emby-server/bin/MediaBrowser.Server.Mono.exe \
                                 -programdata /config \
                                 -ffmpeg $(which ffmpeg) \
                                 -ffprobe $(which ffprobe)
@@ -111,7 +106,7 @@ apt-get install -qy --force-yes mono-runtime \
                                 imagemagick-6.q8 \
                                 libmagickwand-6.q8-2 \
                                 libmagickcore-6.q8-2 \
-                                emby-server-beta 
+                                emby-server-beta
 
 #########################################
 ##                 CLEANUP             ##

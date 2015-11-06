@@ -36,7 +36,7 @@ build_emby() {
   /var/cache/scripts/test_emby.sh
   test_result=$?
   if [ "$test_result" == "0" ]; then
-    echo "Package was build successfully."
+    echo "Package was built successfully."
     sudo  --preserve-env -u $BUILD_USER /var/cache/scripts/deliver_deb.sh $PACKAGE_NAME
   else
     echo "Package was built, but test install failed, emby-server build is deffective."

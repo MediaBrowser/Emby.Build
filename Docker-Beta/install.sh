@@ -59,7 +59,7 @@ cat <<'EOT' > /Update.sh
 #!/bin/bash
 sv stop emby
 apt-get update -qq
-apt-get install --only-upgrade -qy --force-yes mono-runtime emby-server
+apt-get install --only-upgrade -qy --force-yes mono-runtime emby-server-beta
 sv start emby
 EOT
 

@@ -105,40 +105,8 @@ EOT
 chmod -R +x /etc/service/ /etc/my_init.d/
 
 #########################################
-##    REPOSITORIES AND DEPENDENCIES    ##
-#########################################
-# Install repos
-apt-get update -qq
-apt-get install -qy --force-yes wget
-
-# Repositories
-wget -qO - http://download.opensuse.org/repositories/home:emby/xUbuntu_14.04/Release.key | apt-key add -
-echo 'deb http://download.opensuse.org/repositories/home:/emby/xUbuntu_14.04/ /' >> /etc/apt/sources.list.d/emby.list
-echo 'deb http://us.archive.ubuntu.com/ubuntu/ trusty main universe multiverse restricted' > /etc/apt/sources.list
-echo 'deb http://us.archive.ubuntu.com/ubuntu/ trusty-updates main universe multiverse restricted' >> /etc/apt/sources.list
-add-apt-repository ppa:mc3man/trusty-media
-
-# Use mirrors
-# sed -i -e "s#http://[^\s]*archive.ubuntu[^\s]* #mirror://mirrors.ubuntu.com/mirrors.txt #g" /etc/apt/sources.list
-
-# Install Dependencies
-apt-get update -qq
-apt-get install -qy --force-yes mono-runtime \
-                                mediainfo \
-                                wget \
-                                libsqlite3-dev \
-                                libc6-dev \
-                                ffmpeg \
-                                imagemagick-6.q8 \
-                                libmagickwand-6.q8-2 \
-                                libmagickcore-6.q8-2 \
-				sudo \
-                                emby-server 
-
-#########################################
 ##                 CLEANUP             ##
 #########################################
 
 # Clean APT install files
-apt-get clean -y
 rm -rf /var/lib/apt/lists/* /var/cache/* /var/tmp/*

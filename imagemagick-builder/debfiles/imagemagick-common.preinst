@@ -1,0 +1,24 @@
+#!/bin/sh
+
+set -e 
+
+# remove after squeeze + 2
+dpkg-maintscript-helper rm_conffile \
+               /etc/ImageMagick/sRGB.icm 8:6.7.7.0-1~ -- "$@"
+
+# remove after squeeze + 2
+dpkg-maintscript-helper rm_conffile \
+               /etc/ImageMagick/sRGB.icc 8:6.7.7.7-1~ -- "$@"
+
+
+# We move a whole bunch of configuration files:
+# remove after jessie + 2
+for f in coder.xml colors.xml delegates.xml log.xml magic.xml \
+    mime.xml policy.xml quantization-table.xml thresholds.xml \
+    type-dejavu.xml type-ghostscript.xml type-windows.xml \
+    type.xml; do
+  dpkg-maintscript-helper mv_conffile \
+      /etc/ImageMagick/$f /etc/ImageMagick-6/$f 8:6.8.4.2-1~ -- "$@"
+done
+
+#DEBHELPER#

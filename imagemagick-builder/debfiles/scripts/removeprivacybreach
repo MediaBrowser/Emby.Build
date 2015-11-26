@@ -1,0 +1,18 @@
+#!/bin/sh
+set -e
+
+# Set $TMPDIR to "/tmp" only if it didn't have a value previously
+: ${TMPDIR:=/tmp}
+
+# Remove the temporary directory when the script finishes
+unset temporary_dir
+trap '[ "$temporary_dir" ] && rm -rf "$temporary_dir"' EXIT
+
+save_mask=$(umask)
+umask 077
+temporary_dir=$(mktemp -d "$TMPDIR/XXXXXXXXXXXXXXXXXXXXXXXXXXXXX") || { echo "ERROR creating a temporary file" >&2; exit 1; }
+umask "$save_mask"
+temporary_file=$temporary_dir/htmlprivacy
+
+xsltproc --novalid --nonet debian/scripts/removeprivacybreach.xslt $1 > $temporary_file
+mv $temporary_file $1

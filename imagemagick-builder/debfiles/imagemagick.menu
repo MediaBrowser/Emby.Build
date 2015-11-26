@@ -1,0 +1,3 @@
+?package(imagemagick-6):needs="X11" section="Applications/Graphics" \
+  title="ImageMagick" command="/usr/bin/display-im6 logo:" hints="Images" \
+  icon="/usr/share/pixmaps/display-im6.q16.xpm"

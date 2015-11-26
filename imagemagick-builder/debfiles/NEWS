@@ -1,0 +1,45 @@
+imagemagick (8:6.8.9.9-1) unstable; urgency=high
+
+  Obsolete config scripts (Magick-config, MagickCore-config,
+  MagickWand-config, Wand-config and Magick++-config) are
+  not multi-arch safe and thus have been removed from /usr/bin.
+  .
+  Moreover, these scripts are superseded by pkg-config
+  facilities.
+  .
+  However as a courtesy to our users, these scripts have
+  been moved to
+  /usr/lib/$DEB_HOST_MULTIARCH/ImageMagick-$VERSION/bin-$QUANTUMDEPTH/
+  where $DEB_HOST_MULTIARCH is the multi-arch triplet and
+  $QUANTUMDEPTH is the current quantum depth. $VERSION is the upstream
+  version without the revision number.
+  .
+  Please note that these scripts will be definitively removed after
+  jessie.
+
+ -- Bastien Roucariès <roucaries.bastien+debian@gmail.com>  Sun, 19 Oct 2014 12:12:20 +0200
+
+imagemagick (8:6.6.9.7-3) unstable; urgency=low
+  
+  Please note that imagemagick version 6.6.9.7 has moved its global 
+  configuration files from /usr/share/imagemagick to /etc/ImageMagick, 
+  following the FHS. See the package imagemagick-doc or 
+  http://www.imagemagick.org/script/resources.php for more information 
+  on configuring ImageMagick.
+  .
+  This will lose any changes you may have made to these files, 
+  in the extremely unlikely case that you have customized them (doing so 
+  was not officially supported by either upstream or Debian versions 
+  before 6.6.9).
+
+ -- Bastien Roucariès <roucaries.bastien+debian@gmail.com>  Sun, 01 May 2011 13:43:12 +0200
+
+imagemagick (7:6.5.5.3-1exp1) experimental; urgency=low
+
+  The SVG, WMF, OpenEXR, DjVu and Graphviz coders have been moved to a new
+  package, libmagickcore3-extra. In order to use some of these coders with
+  Imagemagick you will need to install it (if recommended packages aren't
+  installed by default in your system).
+
+ -- Nelson A. de Oliveira <naoliv@debian.org>  Mon, 28 Sep 2009 19:22:10 -0300
+

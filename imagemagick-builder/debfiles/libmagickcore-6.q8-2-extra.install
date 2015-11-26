@@ -1,0 +1,12 @@
+usr/lib/*/ImageMagick-*/modules-*/coders/djvu.la
+usr/lib/*/ImageMagick-*/modules-*/coders/djvu.so
+usr/lib/*/ImageMagick-*/modules-*/coders/dot.la
+usr/lib/*/ImageMagick-*/modules-*/coders/dot.so
+usr/lib/*/ImageMagick-*/modules-*/coders/exr.la
+usr/lib/*/ImageMagick-*/modules-*/coders/exr.so
+usr/lib/*/ImageMagick-*/modules-*/coders/svg.la
+usr/lib/*/ImageMagick-*/modules-*/coders/svg.so
+usr/lib/*/ImageMagick-*/modules-*/coders/wmf.la
+usr/lib/*/ImageMagick-*/modules-*/coders/wmf.so
+usr/lib/*/ImageMagick-*/modules-*/coders/pango.so
+usr/lib/*/ImageMagick-*/modules-*/coders/pango.la

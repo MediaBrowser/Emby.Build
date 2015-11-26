@@ -1,0 +1,361 @@
+#!/usr/bin/make -f
+# Sample debian/rules that uses debhelper.
+# GNU copyright 1997 to 1999 by Joey Hess.
+
+# Uncomment this to turn on verbose mode.
+export DH_VERBOSE=1
+
+
+export QUANTUMDEPTH ?= Q8
+export CORESOVERSION ?= 2
+export WANDSOVERSION ?= 2
+export PPSOVERSION ?= 5
+
+# for hardening
+# export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
+
+export STATIC_DEB_HOST_GNU_TYPE := $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+export DEB_HOST_GNU_TYPE  ?= $(STATIC_DEB_HOST_GNU_TYPE)
+export STATIC_DEB_HOST_MULTIARCH := $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
+export DEB_HOST_MULTIARCH ?= $(STATIC_DEB_HOST_MULTIARCH)
+export STATIC_DEB_BUILD_GNU_TYPE := $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
+export DEB_BUILD_GNU_TYPE ?= $(STATIC_DEB_BUILD_GNU_TYPE)
+export STATIC_DEB_SOURCE_PACKAGE := $(strip $(shell egrep '^Source: ' debian/control | cut -f 2 -d ':'))
+export DEB_SOURCE_PACKAGE ?= $(STATIC_DEB_SOURCE_PACKAGE)
+export STATIC_DEB_VERSION := $(shell dpkg-parsechangelog | egrep '^Version:' | cut -f 2 -d ' ')
+export DEB_VERSION ?= $(STATIC_DEB_VERSION)
+export STATIC_DEB_NOEPOCH_VERSION := $(shell echo $(DEB_VERSION) | cut -d: -f2-)
+export DEB_NOEPOCH_VERSION ?= $(STATIC_DEB_NOEPOCH_VERSION)
+export STATIC_DEB_UPSTREAM_VERSION := $(shell echo $(DEB_NOEPOCH_VERSION) | sed 's/-[^-]*$$//')
+export DEB_UPSTREAM_VERSION ?= $(STATIC_DEB_UPSTREAM_VERSION)
+export STATIC_DEB_ISNATIVE := $(shell dpkg-parsechangelog | egrep '^Version:' | perl -ne 'print if not /^Version:\s*.*-/;')
+export DEB_ISNATIVE ?= $(STATIC_DEB_ISNATIVE)
+
+export STATIC_DEB_UPSTREAM_VERSION_DROPREVISION := $(shell echo $(DEB_UPSTREAM_VERSION) |  sed -r "s/(^.+)\..+$$/\1/g")
+export DEB_UPSTREAM_VERSION_DROPREVISION ?= $(STATIC_DEB_UPSTREAM_VERSION_DROPREVISION)
+export STATIC_DEB_UPSTREAM_VERSION_MAJOR := $(shell echo $(DEB_UPSTREAM_VERSION) | sed -r "s/(^[[:digit:]]+)\..+$$/\1/g")
+export DEB_UPSTREAM_VERSION_MAJOR ?= $(STATIC_DEB_UPSTREAM_VERSION_MAJOR)
+export IMVERSION := $(DEB_UPSTREAM_VERSION_MAJOR)
+
+# quantum depth used by default and by quantum independant package (first one of QUANTUMDEPTH)
+export DEFAULTQUANTUMDEPTH := $(shell echo $(QUANTUMDEPTH) | cut -f 1 -d ' ')
+export NOQUANTUMDEPTH := $(shell echo $(QUANTUMDEPTH) | cut -f 1 -d ' ')
+
+# convert 
+export CONVERT ?= ./magick.sh convert
+#export CONVERT = MAGICK_CONFIGURE_PATH=./config LD_LIBRARY_PATH=$(CURDIR)/magick/.libs:$(CURDIR)/wand/.libs MAGICK_CODER_MODULE_PATH=$(CURDIR)/coders/.libs $(CURDIR)/utilities/.libs/convert
+export CONVERT_FLAGS ?= -background none -define filter:blur=0.75 -filter Gaussian
+
+# perl
+export DEB_PERL_ARCHLIB := $(shell perl -MConfig -e 'print $$Config{vendorarch}')
+
+# put QUANTUMDEPTH in lower case for package name
+#export QUANTUMDEPTH_LOWER ?= $(shell echo $(QUANTUMDEPTH) | sed -e 's/\(.*\)/\L\1/'))
+
+export STATIC_CONFIGURE_CACHEFILE := config.cache
+export CONFIGURE_CACHEFILE ?= $(STATIC_CONFIGURE_CACHEFILE)
+
+export STATIC_CONFIGURE_OPTIONS_CACHE := \
+       --cache-file=../../$(CONFIGURE_CACHEFILE)
+export CONFIGURE_OPTIONS_CACHE ?= $(STATIC_CONFIGURE_OPTIONS_CACHE)
+# disable arch optimization see #757996 and AX_GCC_ARCHFLAG m4 macro
+export STATIC_CONFIGURE_ARCH_FLAGS := --without-gcc-arch
+export CONFIGURE_ARCH_FLAGS ?= $(STATIC_CONFIGURE_ARCH_FLAGS)
+
+# check if FPU
+HAVE_FPU_CMD:= case $(DEB_HOST_MULTIARCH) in \
+		mips*-*) \
+			if grep " FPU" /proc/cpuinfo > /dev/null; then \
+				echo "yes"; \
+			else \
+				echo "no"; \
+			fi ;;\
+		*) \
+			echo "yes" ;; \
+	       esac
+export STATIC_HAVE_FPU := $(shell $(HAVE_FPU_CMD))
+
+test_fpu_is present:
+	echo "CPU has FPU...$(STATIC_HAVE_FPU)"
+
+# NOTICE: remove EPL delegate lib gvc (license problem)
+export STATIC_CONFIGURE_OPTIONS := \
+	--prefix=/usr \
+        --libdir=/usr/lib/$(DEB_HOST_MULTIARCH) \
+	--sysconfdir=/etc \
+	--with-includearch-dir=/usr/include/$(DEB_HOST_MULTIARCH)/ \
+	--mandir=/usr/share/man \
+	--infodir=/usr/share/info \
+	--docdir=/usr/share/doc/imagemagick \
+	--with-modules \
+	--with-gs-font-dir=/usr/share/fonts/type1/gsfonts \
+	--with-magick-plus-plus \
+	--with-djvu \
+        --with-wmf \
+        --without-gvc \
+	--enable-shared \
+	--without-dps \
+	--without-fpx \
+	--with-perl \
+	--with-perl-options='INSTALLDIRS=vendor' \
+	--with-rsvg \
+	--with-webp=yes \
+	--with-jpeg=yes \
+	--with-jp2=yes \
+	--with-png=yes \
+	--with-wmf=yes \
+	--with-xml=yes \
+        --disable-openmp \
+	--with-openexr=yes
+	
+export CONFIGURE_OPTIONS ?= $(STATIC_CONFIGURE_OPTIONS) \
+			    $(CONFIGURE_OPTIONS_CACHE) \
+			    $(CONFIGURE_ARCH_FLAGS)
+
+%:
+	dh $@ --with autoreconf --with pkgkde_symbolshelper; 
+
+override_dh_autoreconf:
+	 dh_autoreconf --as-needed
+
+# configure in build directory
+quantum_override_dh_auto_configure-arch_%: 
+	dh_auto_configure --builddirectory="debian/build-quantum-$*" -- \
+		 ${CONFIGURE_OPTIONS} \
+		--disable-silent-rules \
+		--with-quantum-depth=${shell echo $* | sed -r 's/q?([[:digit:]]*)(HDRI)?/\1/gi'}
+
+override_dh_auto_configure-arch: quantum_override_dh_auto_configure-arch_Q8
+
+override_dh_auto_configure-indep:
+	dh_auto_configure --builddirectory="debian/build-quantum-indep" -- \
+		 ${CONFIGURE_OPTIONS} \
+		--with-quantum-depth=${shell echo $(NOQUANTUMDEPTH)  | sed -r 's/q?([[:digit:]]*)(HDRI)?/\1/gi'}
+	# HACK: create default quantum package Makefile
+	cd debian/build-quantum-indep/PerlMagick/default/ && perl Makefile.PL INSTALLDIRS=vendor
+
+# dh_auto_build in build directory
+# build icons cache build for each arch in order to get more testing 
+quantum_override_dh_auto_build-arch_%:
+	dh_auto_build --builddirectory="debian/build-quantum-$*" -- all perl-build
+
+override_dh_auto_build-arch: quantum_override_dh_auto_build-arch_Q8
+override_dh_auto_build-indep:
+        # generate html doc
+	dh_auto_build --builddirectory="debian/build-quantum-indep" -- html
+	cd debian/build-quantum-indep/PerlMagick/default/ && make
+
+# dh_auto_test in build directory
+# display log in case of failure
+quantum_override_dh_auto_test-arch_%:
+	if ! dh_auto_test --builddirectory="debian/build-quantum-$*"; then \
+		find "debian/build-quantum-$*/tests" -name *.log -exec cat {} \; ; \
+	fi
+override_dh_auto_test-arch: quantum_override_dh_auto_test-arch_Q8
+override_dh_auto_test-indep:
+
+
+# dh_auto_install in build directory
+quantum_override_dh_auto_install-arch_%:
+	dh_auto_install --builddirectory="debian/build-quantum-$*" \
+	                --destdir="debian/tmp-$*" \
+		        -- install pkgdocdir=/usr/share/doc/imagemagick-common V=1
+
+	# empties dependency_libs from .la files
+	# http://lists.debian.org/debian-devel/2009/08/msg00783.html
+	find $(CURDIR)/debian/tmp-$*/usr/lib -name '*.la' -exec \
+		sed -i "s,^dependency_libs=.*,dependency_libs=''," {} \;
+	# Remove RPATH from *.so
+	find $(CURDIR)/debian/tmp-$* -name '*.so*' -exec \
+		chrpath -d {} \;
+
+	# move binaries to /usr/lib/bin
+	# TODO: proper patch upstream
+	if ! test -d "debian/tmp-$*/usr/lib/$(DEB_HOST_MULTIARCH)/ImageMagick-$(DEB_UPSTREAM_VERSION_DROPREVISION)/bin-$(DEFAULTQUANTUMDEPTH)/"; then \
+		mkdir -p "debian/tmp-$*/usr/lib/$(DEB_HOST_MULTIARCH)/ImageMagick-$(DEB_UPSTREAM_VERSION_DROPREVISION)/bin-$(DEFAULTQUANTUMDEPTH)/"; \
+	fi;
+	while read FILE; do \
+           if echo $$FILE | grep usr/bin > /dev/null; then \
+              filename=`echo "$$FILE"|sed 's/-\*//g'`; \
+	      basename=`basename $$filename`; \
+	      if ! test -f debian/tmp-$*/usr/lib/$(DEB_HOST_MULTIARCH)/ImageMagick-$(DEB_UPSTREAM_VERSION_DROPREVISION)/bin-$(DEFAULTQUANTUMDEPTH)/$$basename ; then \
+                cp -f "debian/tmp-$*/usr/bin/$$basename" \
+                      "debian/tmp-$*/usr/lib/$(DEB_HOST_MULTIARCH)/ImageMagick-$(DEB_UPSTREAM_VERSION_DROPREVISION)/bin-$(DEFAULTQUANTUMDEPTH)/"; \
+              else \
+                true; \
+              fi; \
+            else \
+              true; \
+            fi ;\
+        done < debian/imagemagick.install
+
+	# move config script to arch directory
+	# TODO: remove after jessie +1
+	for SCRIPT in Magick-config MagickCore-config MagickWand-config Wand-config Magick++-config; do \
+		cp -f "debian/tmp-$*/usr/bin/$$SCRIPT" \
+                      "debian/tmp-$*/usr/lib/$(DEB_HOST_MULTIARCH)/ImageMagick-$(DEB_UPSTREAM_VERSION_DROPREVISION)/bin-$(DEFAULTQUANTUMDEPTH)/"; \
+	done;
+
+
+	# build icons cache (build for each arch in order to get more testing)
+	while read SIZE; do \
+		mkdir -p $(CURDIR)/debian/tmp-$*/usr/share/icons/hicolor/$$SIZE/apps/ ;\
+		cd $(CURDIR)/debian/build-quantum-$*; \
+		echo $$SIZE | sed "s/^\([[:digit:]]*\)x\([[:digit:]]*\)$$/-w \1 -h \2/g" \
+		| xargs rsvg-convert $(CURDIR)/debian/display-im$(DEB_UPSTREAM_VERSION_MAJOR).svg > $(CURDIR)/debian/tmp-$*/usr/share/icons/hicolor/$$SIZE/apps/display-im$(DEB_UPSTREAM_VERSION_MAJOR).${shell echo $* | sed -e 's/\(.*\)/\L\1/'}.png; \
+	done < $(CURDIR)/debian/display-im$(DEB_UPSTREAM_VERSION_MAJOR).iconssize
+
+	
+	# make xpm
+	mkdir -p $(CURDIR)/debian/tmp-$*/usr/share/pixmaps/
+	cd $(CURDIR)/debian/build-quantum-$*; \
+	$(CONVERT) $(CURDIR)/debian/display-im$(DEB_UPSTREAM_VERSION_MAJOR).svg $(CONVERT_FLAGS) -resize 32x32 \
+                -gravity center -extent 32x32  \
+		$(CURDIR)/debian/tmp-$*/usr/share/pixmaps/display-im$(DEB_UPSTREAM_VERSION_MAJOR).${shell echo $* | sed -e 's/\(.*\)/\L\1/'}.xpm
+	# do not forget svgz
+	mkdir -p $(CURDIR)/debian/tmp-$*/usr/share/icons/hicolor/scalable/apps/
+	gzip -c -n -9 $(CURDIR)/debian/display-im$(DEB_UPSTREAM_VERSION_MAJOR).svg \
+		> $(CURDIR)/debian/tmp-$*/usr/share/icons/hicolor/scalable/apps/display-im$(DEB_UPSTREAM_VERSION_MAJOR).${shell echo $* | sed -e 's/\(.*\)/\L\1/'}.svgz
+
+        # add desktop for default
+	mkdir -p debian/tmp-$*/usr/share/applications/
+	sed < $(CURDIR)/debian/display.desktop.in \
+		-e s/\$$\(QUANTUMDEPTH\)/$*/g \
+		-e s/\$$\(LCQUANTUMDEPTH\)/${shell echo $* | sed -e 's/\(.*\)/\L\1/'}/g \
+		-e s/\$$\(IMVERSION\)/$(IMVERSION)/g \
+		-e s/\$$\(DEB_HOST_MULTIARCH\)/$(DEB_HOST_MULTIARCH)/g \
+                -e s/\$$\(DEB_UPSTREAM_VERSION_DROPREVISION\)/$(DEB_UPSTREAM_VERSION_DROPREVISION)/g \
+		> $(CURDIR)/debian/tmp-$*/usr/share/applications/display-im$(IMVERSION).${shell echo $* | sed -e 's/\(.*\)/\L\1/'}.desktop
+
+	# Remove empty directories in debian/tmp
+	-find $(CURDIR)/debian/tmp-$* -type d -empty | xargs -r rmdir -p
+
+override_dh_auto_install-arch: quantum_override_dh_auto_install-arch_Q8
+	# add versionned manpages and symlink to binaries (should move to script the link to /usr/lib ?)
+	mkdir -p debian/tmp-$(DEFAULTQUANTUMDEPTH)/usr/bin/
+	while read FILE; do \
+                if echo $$FILE | grep usr/bin > /dev/null; then \
+                        filename=`echo "$$FILE"|sed 's/-\*//g'`; \
+                        basename=`basename $$filename`; \
+                        mv "$(CURDIR)/debian/tmp-$(DEFAULTQUANTUMDEPTH)/usr/share/man/man1/$$basename.1" \
+                          "$(CURDIR)/debian/tmp-$(DEFAULTQUANTUMDEPTH)/usr/share/man/man1/$$basename-im$(DEB_UPSTREAM_VERSION_MAJOR).1" ;\
+			ln -s "/usr/lib/$(DEB_HOST_MULTIARCH)/ImageMagick-$(DEB_UPSTREAM_VERSION_DROPREVISION)/bin-$(DEFAULTQUANTUMDEPTH)/$$basename" \
+	                      "debian/tmp-$(DEFAULTQUANTUMDEPTH)/usr/bin/$$basename-im$(DEB_UPSTREAM_VERSION_MAJOR)";\
+                else \
+                        true; \
+                fi \
+        done < debian/imagemagick.install
+
+	# Fix HTML location inside manpages (TODO proper patch please)
+	sed -i 's/doc\/ImageMagick-$(DEB_UPSTREAM_VERSION_DROPREVISION)/doc\/imagemagick-common/' \
+		$(CURDIR)/debian/tmp-$(DEFAULTQUANTUMDEPTH)/usr/share/man/man*/*
+	sed -i 's/doc\/ImageMagick\\-$(DEB_UPSTREAM_VERSION_DROPREVISION)/doc\/imagemagick-common/' \
+		$(CURDIR)/debian/tmp-$(DEFAULTQUANTUMDEPTH)/usr/share/man/man*/*
+
+        # add desktop for default version
+	mkdir -p $(CURDIR)/debian/tmp-indep/usr/share/applications/
+	sed < $(CURDIR)/debian/display-im6.desktop.in \
+		-e s/\$$\(QUANTUMDEPTH\)/$(DEFAULTQUANTUMDEPTH)/g \
+		-e s/\$$\(IMVERSION\)/$(IMVERSION)/g \
+		-e s/\$$\(DEB_HOST_MULTIARCH\)/$(DEB_HOST_MULTIARCH)/g \
+		-e s/\$$\(DEB_UPSTREAM_VERSION_DROPREVISION\)/$(DEB_UPSTREAM_VERSION_DROPREVISION)/g \
+		> $(CURDIR)/debian/tmp-$(DEFAULTQUANTUMDEPTH)/usr/share/applications/display-im$(IMVERSION).desktop
+
+	# Remove empty directories in debian/tmp
+	-find $(CURDIR)/debian/tmp-$(DEFAULTQUANTUMDEPTH) -type d -empty | xargs -r rmdir -p
+
+override_dh_auto_install-indep:
+	cd "$(CURDIR)/debian/build-quantum-indep" && \
+                make  DESTDIR=$(CURDIR)/debian/tmp-indep \
+                            install-configlibDATA install-data-html \
+                            install-magickincHEADERS  install-wandincHEADERS install-magickppincHEADERS install-magickpptopincHEADERS \
+                            install-man1 \
+                            pkgdocdir=/usr/share/doc/imagemagick-doc \
+                            V=1 ;
+
+	# install default perl
+	cd debian/build-quantum-indep/PerlMagick/default/ && make install DESTDIR=$(CURDIR)/debian/tmp-indep
+
+	# Remove empty directories in debian/tmp
+	-find $(CURDIR)/debian/tmp-indep -type d -empty | xargs -r rmdir -p
+
+# install quantum package
+quantum_override_dh_install-arch_%:
+	dh_install --package=imagemagick-$(IMVERSION).${shell echo $* | sed -e 's/\(.*\)/\L\1/'} \
+		--sourcedir=debian/tmp-$* --autodest
+	dh_install --package=libmagickcore-${IMVERSION}.${shell echo $* | sed -e 's/\(.*\)/\L\1/'}-${CORESOVERSION} \
+		--sourcedir=debian/tmp-$* --autodest
+	dh_install --package=libmagickcore-${IMVERSION}.${shell echo $* | sed -e 's/\(.*\)/\L\1/'}-${CORESOVERSION}-extra \
+		--sourcedir=debian/tmp-$* --autodest
+	dh_install --package=libmagickwand-${IMVERSION}.${shell echo $* | sed -e 's/\(.*\)/\L\1/'}-${WANDSOVERSION} \
+		--sourcedir=debian/tmp-$* --autodest
+	dh_install --package=libmagick++-${IMVERSION}.${shell echo $* | sed -e 's/\(.*\)/\L\1/'}-${PPSOVERSION} \
+		--sourcedir=debian/tmp-$* --autodest
+	# dev package
+	dh_install --package=libmagick++-${IMVERSION}.${shell echo $* | sed -e 's/\(.*\)/\L\1/'}-dev \
+		--sourcedir=debian/tmp-$* --autodest
+	dh_install --package=libmagickcore-${IMVERSION}.${shell echo $* | sed -e 's/\(.*\)/\L\1/'}-dev \
+		--sourcedir=debian/tmp-$* --autodest
+	dh_install --package=libmagickwand-${IMVERSION}.${shell echo $* | sed -e 's/\(.*\)/\L\1/'}-dev \
+		--sourcedir=debian/tmp-$* --autodest
+	# perl
+	dh_install --package=libimage-magick-${shell echo $* | sed -e 's/\(.*\)/\L\1/'}-perl \
+	        --sourcedir=debian/tmp-$* --autodest
+
+	# Remove extra coders from libmagickcore
+	while read FILE; do \
+		rm -f debian/libmagickcore-${IMVERSION}.${shell echo $* | sed -e 's/\(.*\)/\L\1/'}-${CORESOVERSION}/$$FILE; \
+	done < debian/libmagickcore-${IMVERSION}.${shell echo $* | sed -e 's/\(.*\)/\L\1/'}-${CORESOVERSION}-extra.install
+
+# install arch package
+override_dh_install-arch: quantum_override_dh_install-arch_Q8
+	# take arch include in default quantum
+	dh_install --package=libmagickcore-6-arch-config --sourcedir=debian/tmp-${DEFAULTQUANTUMDEPTH} --autodest
+	# TODO: better granularity
+	dh_install --package=imagemagick-dbg --sourcedir=debian/tmp-${DEFAULTQUANTUMDEPTH} --autodest
+	# install here imagemagick
+	dh_install --package=imagemagick --sourcedir=debian/tmp-${DEFAULTQUANTUMDEPTH} --autodest
+
+override_dh_install-indep:
+	dh_install --indep --sourcedir=debian/tmp-indep --autodest
+	./debian/scripts/dh_doxygen --indep --package=imagemagick-doc
+
+override_dh_compress:
+	# fix #611125
+	dh_compress -Xusr/share/doc/imagemagick/www -Xusr/share/doc/imagemagick-doc/www
+
+override_dh_makeshlibs:
+	# avoid plugins' dir
+	dh_makeshlibs -v -Xcoders/ -Xfilters/
+
+override_dh_strip:
+	dh_strip --dbg-package=imagemagick-dbg
+
+override_dh_bugfiles:
+	dh_bugfiles --all
+
+override_dh_installdocs:
+	#not yet due to lack of support in debhelper #659044
+	if test "BUG#659044" = "SOLVED" ; then \
+	dh_installdocs --link-doc=imagemagick-common; \
+	else \
+	dh_installdocs ;\
+	fi;
+
+# prep rules
+quantum_override_dh_prep_%:
+	[ ! -d debian/tmp-$* ] || rm -rf debian/tmp-$*
+
+override_dh_prep: quantum_override_dh_prep_Q8 quantum_override_dh_prep_indep
+	dh_prep
+
+
+# clean rules
+quantum_override_dh_clean_%:
+	[ ! -d debian/build-quantum-$* ] || rm -rf debian/build-quantum-$*
+	[ ! -d debian/tmp-$* ] || rm -rf debian/tmp-$*
+
+override_dh_clean: quantum_override_dh_clean_Q8 quantum_override_dh_clean_indep
+	[ ! -f $(CONFIGURE_CACHEFILE) ] || rm -f $(CONFIGURE_CACHEFILE)
+	dh_clean

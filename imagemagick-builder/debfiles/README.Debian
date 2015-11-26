@@ -1,0 +1,14 @@
+ImageMagick for Debian
+
+----------------------
+
+  When you submit a bug report, please include a reference to the image which
+  exposed the bug. Either attach it, or put it up on a web page somewhere and
+  give the URL.
+
+
+  The default number of bits in a pixel quantum is 16. If you have a problem
+  with the depth of the image, you can set the '-depth 8' command-line option.
+
+
+ -- Nelson A. de Oliveira <naoliv@debian.org>, Sun, 21 Dec 2008 15:33:53 -0200

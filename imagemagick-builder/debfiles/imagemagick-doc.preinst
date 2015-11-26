@@ -1,0 +1,13 @@
+#!/bin/sh
+
+set -e 
+
+# remove after jeesie + 2
+# see #720145
+dpkg-maintscript-helper symlink_to_dir \
+               /usr/share/doc/imagemagick-doc/images /usr/share/doc/imagemagick/images \
+               8:6.8.8.0-1~ -- "$@"
+dpkg-maintscript-helper symlink_to_dir \
+               /usr/share/doc/imagemagick-doc/www /usr/share/doc/imagemagick/www \
+               8:6.8.8.0-1~ -- "$@"
+#DEBHELPER#

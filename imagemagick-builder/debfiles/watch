@@ -1,0 +1,3 @@
+version=3
+opts="uversionmangle=s/-/./,dversionmangle=s/\.dfsg\d+$//,pgpsigurlmangle=s/$/.asc/" \
+ftp://ftp.imagemagick.org/pub/ImageMagick/ ImageMagick-(.*)\.tar\.xz

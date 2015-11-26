@@ -1,0 +1,14 @@
+usr/share/icons/hicolor/*
+usr/share/pixmaps/*
+usr/share/applications/display-im6.q8.desktop
+usr/lib/*/ImageMagick-*/bin-Q8/compare*
+usr/lib/*/ImageMagick-*/bin-Q8/animate*
+usr/lib/*/ImageMagick-*/bin-Q8/convert*
+usr/lib/*/ImageMagick-*/bin-Q8/composite*
+usr/lib/*/ImageMagick-*/bin-Q8/conjure*
+usr/lib/*/ImageMagick-*/bin-Q8/import*
+usr/lib/*/ImageMagick-*/bin-Q8/identify*
+usr/lib/*/ImageMagick-*/bin-Q8/stream*
+usr/lib/*/ImageMagick-*/bin-Q8/display*
+usr/lib/*/ImageMagick-*/bin-Q8/montage*
+usr/lib/*/ImageMagick-*/bin-Q8/mogrify*

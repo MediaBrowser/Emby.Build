@@ -1,0 +1,7 @@
+usr/lib/*/libMagickWand*.*.a
+usr/lib/*/libMagickWand*.*.la
+usr/lib/*/libMagickWand*.*.so
+usr/lib/*/pkgconfig/MagickWand.pc
+usr/lib/*/pkgconfig/Wand.pc
+usr/lib/*/ImageMagick-*/bin-Q8/Wand-config
+usr/lib/*/ImageMagick-*/bin-Q8/MagickWand-config

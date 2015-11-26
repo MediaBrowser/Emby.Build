@@ -1,0 +1,30 @@
+#!/bin/sh
+
+# Pretty echo, underline the specified string:
+pecho() {
+    echo "$@"
+    echo "$@"|sed 's/./-/g'
+}
+
+# work even with graphicsmagick
+# will detect graphickmagick using as compat
+versioncheck() {
+    echo -n "$@: " 
+    "$@" -version 2> /dev/null | head -1 | sed s/Version://g
+}
+
+exec >&3
+
+
+pecho "ImageMagick program version"
+versioncheck animate
+versioncheck compare
+versioncheck convert
+versioncheck composite
+versioncheck conjure
+versioncheck display
+versioncheck identify
+versioncheck import
+versioncheck mogrify
+versioncheck montage
+versioncheck stream

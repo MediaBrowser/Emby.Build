@@ -73,7 +73,7 @@ HAVE_FPU_CMD:= case $(DEB_HOST_MULTIARCH) in \
 			fi ;;\
 		*) \
 			echo "yes" ;; \
-	       esac
+		   esac
 export STATIC_HAVE_FPU := $(shell $(HAVE_FPU_CMD))
 
 test_fpu_is present:
@@ -82,32 +82,34 @@ test_fpu_is present:
 # NOTICE: remove EPL delegate lib gvc (license problem)
 export STATIC_CONFIGURE_OPTIONS := \
 	--prefix=/usr \
-    --libdir=/usr/lib/$(DEB_HOST_MULTIARCH) \
+	--libdir=/usr/lib/$(DEB_HOST_MULTIARCH) \
 	--sysconfdir=/etc \
 	--with-includearch-dir=/usr/include/$(DEB_HOST_MULTIARCH)/ \
 	--with-modules \
 	--with-djvu=no \
-    --without-wmf \
-    --without-gvc \
+	--without-wmf \
+	--without-gvc \
 	--enable-shared \
 	--without-dps \
 	--without-fpx \
 	--with-rsvg=no \
-        --with-tiff=yes \
+	--with-tiff=yes \
 	--with-webp=yes \
 	--with-jpeg=yes \
-	--with-jp2=yes \
 	--with-png=yes \
 	--with-xml=yes \
 	--with-x=no \
 	--enable-hdri=no \
-        --with-gslib=no \
-    --disable-openmp \
+	--with-magick-plus-plus=no \
+	--with-gslib=no \
+	--disable-openmp \
+	--with-fontconfig=no \
+	--with-gvc=no \
 	--with-openexr=no
 
 export CONFIGURE_OPTIONS ?= $(STATIC_CONFIGURE_OPTIONS) \
-			    $(CONFIGURE_OPTIONS_CACHE) \
-			    $(CONFIGURE_ARCH_FLAGS)
+				$(CONFIGURE_OPTIONS_CACHE) \
+				$(CONFIGURE_ARCH_FLAGS)
 
 %:
 	dh $@ --with autoreconf;
@@ -133,7 +135,7 @@ override_dh_auto_build-arch: quantum_override_dh_auto_build-arch_Q8
 # dh_auto_install in build directory
 quantum_override_dh_auto_install-arch_%:
 	dh_auto_install --builddirectory="debian/build-quantum-$*" \
-	                --destdir="debian/tmp-$*" \
+					--destdir="debian/tmp-$*"
 
 	# empties dependency_libs from .la files
 	# http://lists.debian.org/debian-devel/2009/08/msg00783.html
@@ -145,6 +147,10 @@ quantum_override_dh_auto_install-arch_%:
 
 	# Remove empty directories in debian/tmp
 	-find $(CURDIR)/debian/tmp-$* -type d -empty | xargs -r rmdir -p
+
+override_dh_auto_install-arch: quantum_override_dh_auto_install-arch_Q8
+	mkdir -p debian/tmp-$(DEFAULTQUANTUMDEPTH)
+
 
 # install quantum package
 quantum_override_dh_install-arch_%:

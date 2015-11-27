@@ -8,10 +8,10 @@ RUN apt-get update \
  && apt-get upgrade -y \
  && apt-get install -y \
 	git \
+	vim \
 	adduser \
 	sudo \
     build-essential \
-	libgdiplus \
 	curl \
     devscripts \
     equivs \
@@ -19,7 +19,6 @@ RUN apt-get update \
     git \
     lsb-release \
     make \
-    openssh-client \
     pristine-tar \
     rsync \
     wget \
@@ -27,7 +26,24 @@ RUN apt-get update \
 	libsqlite3-dev \
 	debhelper \
 	cli-common-dev \
-	sqlite3
+	chrpath \
+	libfftw3-dev \
+	liblcms2-dev \
+	liblqr-1-0-dev \
+	zlib1g-dev \
+	liblzma-dev \
+	libbz2-dev \
+	libexif-dev \
+	libjasper-dev \
+	libjpeg-dev \
+	libpng12-dev \
+	libtiff5-dev \
+	libwebp-dev \
+	libltdl-dev \
+	dh-autoreconf \
+	xsltproc \
+	autotools \
+	libxml2-utils
 
 # copy entrypoint script
 COPY entrypoint.sh /sbin/entrypoint.sh

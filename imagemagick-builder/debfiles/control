@@ -15,7 +15,7 @@ Build-Depends: debhelper (>= 9~),
 # for plugins
  libexif-dev,
  libjasper-dev, libjpeg-dev,
- libpng-dev, libtiff-dev
+ libpng-dev, libtiff-dev, libwebp-dev
 Build-Depends-Indep: debhelper (>= 9~),
 		     libxml2-utils,
 		     xsltproc

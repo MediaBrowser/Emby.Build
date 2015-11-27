@@ -1,6 +1,0 @@
-usr/lib/*/libMagick++*.*.a
-usr/lib/*/libMagick++*.*.la
-usr/lib/*/libMagick++*.*.so
-usr/lib/*/pkgconfig/ImageMagick++.pc
-usr/lib/*/pkgconfig/Magick++.pc
-usr/lib/*/ImageMagick-*/bin-Q8/Magick++-config

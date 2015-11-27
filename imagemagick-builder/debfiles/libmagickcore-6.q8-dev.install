@@ -1,7 +1,0 @@
-usr/lib/*/libMagickCore*.*.a
-usr/lib/*/libMagickCore*.*.la
-usr/lib/*/libMagickCore*.*.so
-usr/lib/*/pkgconfig/ImageMagick.pc
-usr/lib/*/pkgconfig/MagickCore.pc
-usr/lib/*/ImageMagick-*/bin-Q8/Magick-config
-usr/lib/*/ImageMagick-*/bin-Q8/MagickCore-config

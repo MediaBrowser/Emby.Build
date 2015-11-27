@@ -109,7 +109,7 @@ export CONFIGURE_OPTIONS ?= $(STATIC_CONFIGURE_OPTIONS) \
 			    $(CONFIGURE_ARCH_FLAGS)
 
 %:
-	dh $@ --with autoreconf --with pkgkde_symbolshelper;
+	dh $@ --with autoreconf;
 
 override_dh_autoreconf:
 	 dh_autoreconf --as-needed
@@ -123,32 +123,11 @@ quantum_override_dh_auto_configure-arch_%:
 
 override_dh_auto_configure-arch: quantum_override_dh_auto_configure-arch_Q8
 
-override_dh_auto_configure-indep:
-	dh_auto_configure --builddirectory="debian/build-quantum-indep" -- \
-		 ${CONFIGURE_OPTIONS} \
-		--with-quantum-depth=${shell echo $(NOQUANTUMDEPTH)  | sed -r 's/q?([[:digit:]]*)(HDRI)?/\1/gi'}
-	# HACK: create default quantum package Makefile
-	cd debian/build-quantum-indep/PerlMagick/default/ && perl Makefile.PL INSTALLDIRS=vendor
-
 # dh_auto_build in build directory
-# build icons cache build for each arch in order to get more testing
 quantum_override_dh_auto_build-arch_%:
 	dh_auto_build --builddirectory="debian/build-quantum-$*" -- all perl-build
 
 override_dh_auto_build-arch: quantum_override_dh_auto_build-arch_Q8
-override_dh_auto_build-indep:
-        # generate html doc
-	dh_auto_build --builddirectory="debian/build-quantum-indep" -- html
-
-# dh_auto_test in build directory
-# display log in case of failure
-#quantum_override_dh_auto_test-arch_%:
-#	if ! dh_auto_test --builddirectory="debian/build-quantum-$*"; then \
-#		find "debian/build-quantum-$*/tests" -name *.log -exec cat {} \; ; \
-#	fi
-#override_dh_auto_test-arch: quantum_override_dh_auto_test-arch_Q8
-#override_dh_auto_test-indep:
-
 
 # dh_auto_install in build directory
 quantum_override_dh_auto_install-arch_%:
@@ -163,142 +142,28 @@ quantum_override_dh_auto_install-arch_%:
 	find $(CURDIR)/debian/tmp-$* -name '*.so*' -exec \
 		chrpath -d {} \;
 
-	# move binaries to /usr/lib/bin
-	# TODO: proper patch upstream
-	if ! test -d "debian/tmp-$*/usr/lib/$(DEB_HOST_MULTIARCH)/ImageMagick-$(DEB_UPSTREAM_VERSION_DROPREVISION)/bin-$(DEFAULTQUANTUMDEPTH)/"; then \
-		mkdir -p "debian/tmp-$*/usr/lib/$(DEB_HOST_MULTIARCH)/ImageMagick-$(DEB_UPSTREAM_VERSION_DROPREVISION)/bin-$(DEFAULTQUANTUMDEPTH)/"; \
-	fi;
-	while read FILE; do \
-           if echo $$FILE | grep usr/bin > /dev/null; then \
-              filename=`echo "$$FILE"|sed 's/-\*//g'`; \
-	      basename=`basename $$filename`; \
-	      if ! test -f debian/tmp-$*/usr/lib/$(DEB_HOST_MULTIARCH)/ImageMagick-$(DEB_UPSTREAM_VERSION_DROPREVISION)/bin-$(DEFAULTQUANTUMDEPTH)/$$basename ; then \
-                cp -f "debian/tmp-$*/usr/bin/$$basename" \
-                      "debian/tmp-$*/usr/lib/$(DEB_HOST_MULTIARCH)/ImageMagick-$(DEB_UPSTREAM_VERSION_DROPREVISION)/bin-$(DEFAULTQUANTUMDEPTH)/"; \
-              else \
-                true; \
-              fi; \
-            else \
-              true; \
-            fi ;\
-        done < debian/imagemagick.install
-
-	# move config script to arch directory
-	# TODO: remove after jessie +1
-	for SCRIPT in Magick-config MagickCore-config MagickWand-config Wand-config Magick++-config; do \
-		cp -f "debian/tmp-$*/usr/bin/$$SCRIPT" \
-                      "debian/tmp-$*/usr/lib/$(DEB_HOST_MULTIARCH)/ImageMagick-$(DEB_UPSTREAM_VERSION_DROPREVISION)/bin-$(DEFAULTQUANTUMDEPTH)/"; \
-	done;
-
-
 	# Remove empty directories in debian/tmp
 	-find $(CURDIR)/debian/tmp-$* -type d -empty | xargs -r rmdir -p
 
-override_dh_auto_install-arch: quantum_override_dh_auto_install-arch_Q8
-	# add versionned manpages and symlink to binaries (should move to script the link to /usr/lib ?)
-	mkdir -p debian/tmp-$(DEFAULTQUANTUMDEPTH)/usr/bin/
-	while read FILE; do \
-                if echo $$FILE | grep usr/bin > /dev/null; then \
-                        filename=`echo "$$FILE"|sed 's/-\*//g'`; \
-                        basename=`basename $$filename`; \
-                        mv "$(CURDIR)/debian/tmp-$(DEFAULTQUANTUMDEPTH)/usr/share/man/man1/$$basename.1" \
-                          "$(CURDIR)/debian/tmp-$(DEFAULTQUANTUMDEPTH)/usr/share/man/man1/$$basename-im$(DEB_UPSTREAM_VERSION_MAJOR).1" ;\
-			ln -s "/usr/lib/$(DEB_HOST_MULTIARCH)/ImageMagick-$(DEB_UPSTREAM_VERSION_DROPREVISION)/bin-$(DEFAULTQUANTUMDEPTH)/$$basename" \
-	                      "debian/tmp-$(DEFAULTQUANTUMDEPTH)/usr/bin/$$basename-im$(DEB_UPSTREAM_VERSION_MAJOR)";\
-                else \
-                        true; \
-                fi \
-        done < debian/imagemagick.install
-
-	# Fix HTML location inside manpages (TODO proper patch please)
-	sed -i 's/doc\/ImageMagick-$(DEB_UPSTREAM_VERSION_DROPREVISION)/doc\/imagemagick-common/' \
-		$(CURDIR)/debian/tmp-$(DEFAULTQUANTUMDEPTH)/usr/share/man/man*/*
-	sed -i 's/doc\/ImageMagick\\-$(DEB_UPSTREAM_VERSION_DROPREVISION)/doc\/imagemagick-common/' \
-		$(CURDIR)/debian/tmp-$(DEFAULTQUANTUMDEPTH)/usr/share/man/man*/*
-
-        # add desktop for default version
-	mkdir -p $(CURDIR)/debian/tmp-indep/usr/share/applications/
-	sed < $(CURDIR)/debian/display-im6.desktop.in \
-		-e s/\$$\(QUANTUMDEPTH\)/$(DEFAULTQUANTUMDEPTH)/g \
-		-e s/\$$\(IMVERSION\)/$(IMVERSION)/g \
-		-e s/\$$\(DEB_HOST_MULTIARCH\)/$(DEB_HOST_MULTIARCH)/g \
-		-e s/\$$\(DEB_UPSTREAM_VERSION_DROPREVISION\)/$(DEB_UPSTREAM_VERSION_DROPREVISION)/g \
-		> $(CURDIR)/debian/tmp-$(DEFAULTQUANTUMDEPTH)/usr/share/applications/display-im$(IMVERSION).desktop
-
-	# Remove empty directories in debian/tmp
-	-find $(CURDIR)/debian/tmp-$(DEFAULTQUANTUMDEPTH) -type d -empty | xargs -r rmdir -p
-
-override_dh_auto_install-indep:
-	cd "$(CURDIR)/debian/build-quantum-indep" && \
-                make  DESTDIR=$(CURDIR)/debian/tmp-indep \
-                            install-configlibDATA install-data-html \
-                            install-magickincHEADERS  install-wandincHEADERS install-magickppincHEADERS install-magickpptopincHEADERS \
-                            install-man1 \
-                            pkgdocdir=/usr/share/doc/imagemagick-doc \
-                            V=1 ;
-
-	# install default perl
-	cd debian/build-quantum-indep/PerlMagick/default/ && make install DESTDIR=$(CURDIR)/debian/tmp-indep
-
-	# Remove empty directories in debian/tmp
-	-find $(CURDIR)/debian/tmp-indep -type d -empty | xargs -r rmdir -p
-
 # install quantum package
 quantum_override_dh_install-arch_%:
-	dh_install --package=imagemagick-$(IMVERSION).${shell echo $* | sed -e 's/\(.*\)/\L\1/'} \
+	dh_install --package=libembymagickcore-${IMVERSION}.${shell echo $* | sed -e 's/\(.*\)/\L\1/'}-${CORESOVERSION} \
 		--sourcedir=debian/tmp-$* --autodest
-	dh_install --package=libmagickcore-${IMVERSION}.${shell echo $* | sed -e 's/\(.*\)/\L\1/'}-${CORESOVERSION} \
+	dh_install --package=libembymagickwand-${IMVERSION}.${shell echo $* | sed -e 's/\(.*\)/\L\1/'}-${WANDSOVERSION} \
 		--sourcedir=debian/tmp-$* --autodest
-	dh_install --package=libmagickcore-${IMVERSION}.${shell echo $* | sed -e 's/\(.*\)/\L\1/'}-${CORESOVERSION}-extra \
-		--sourcedir=debian/tmp-$* --autodest
-	dh_install --package=libmagickwand-${IMVERSION}.${shell echo $* | sed -e 's/\(.*\)/\L\1/'}-${WANDSOVERSION} \
-		--sourcedir=debian/tmp-$* --autodest
-	dh_install --package=libmagick++-${IMVERSION}.${shell echo $* | sed -e 's/\(.*\)/\L\1/'}-${PPSOVERSION} \
-		--sourcedir=debian/tmp-$* --autodest
-	# dev package
-	dh_install --package=libmagick++-${IMVERSION}.${shell echo $* | sed -e 's/\(.*\)/\L\1/'}-dev \
-		--sourcedir=debian/tmp-$* --autodest
-	dh_install --package=libmagickcore-${IMVERSION}.${shell echo $* | sed -e 's/\(.*\)/\L\1/'}-dev \
-		--sourcedir=debian/tmp-$* --autodest
-	dh_install --package=libmagickwand-${IMVERSION}.${shell echo $* | sed -e 's/\(.*\)/\L\1/'}-dev \
-		--sourcedir=debian/tmp-$* --autodest
-	# perl
-	dh_install --package=libimage-magick-${shell echo $* | sed -e 's/\(.*\)/\L\1/'}-perl \
-	        --sourcedir=debian/tmp-$* --autodest
-
-	# Remove extra coders from libmagickcore
-	while read FILE; do \
-		rm -f debian/libmagickcore-${IMVERSION}.${shell echo $* | sed -e 's/\(.*\)/\L\1/'}-${CORESOVERSION}/$$FILE; \
-	done < debian/libmagickcore-${IMVERSION}.${shell echo $* | sed -e 's/\(.*\)/\L\1/'}-${CORESOVERSION}-extra.install
 
 # install arch package
 override_dh_install-arch: quantum_override_dh_install-arch_Q8
-	# take arch include in default quantum
-	dh_install --package=libmagickcore-6-arch-config --sourcedir=debian/tmp-${DEFAULTQUANTUMDEPTH} --autodest
-	# TODO: better granularity
-	dh_install --package=imagemagick-dbg --sourcedir=debian/tmp-${DEFAULTQUANTUMDEPTH} --autodest
-	# install here imagemagick
-	dh_install --package=imagemagick --sourcedir=debian/tmp-${DEFAULTQUANTUMDEPTH} --autodest
-
-override_dh_install-indep:
-	dh_install --indep --sourcedir=debian/tmp-indep --autodest
-	./debian/scripts/dh_doxygen --indep --package=imagemagick-doc
 
 override_dh_makeshlibs:
 	# avoid plugins' dir
 	dh_makeshlibs -v -Xcoders/ -Xfilters/
 
-override_dh_strip:
-	dh_strip --dbg-package=imagemagick-dbg
-
-override_dh_bugfiles:
-	dh_bugfiles --all
-
 # prep rules
 quantum_override_dh_prep_%:
 	[ ! -d debian/tmp-$* ] || rm -rf debian/tmp-$*
 
-override_dh_prep: quantum_override_dh_prep_Q8 quantum_override_dh_prep_indep
+override_dh_prep: quantum_override_dh_prep_Q8
 	dh_prep
 
 # clean rules
@@ -306,6 +171,6 @@ quantum_override_dh_clean_%:
 	[ ! -d debian/build-quantum-$* ] || rm -rf debian/build-quantum-$*
 	[ ! -d debian/tmp-$* ] || rm -rf debian/tmp-$*
 
-override_dh_clean: quantum_override_dh_clean_Q8 quantum_override_dh_clean_indep
+override_dh_clean: quantum_override_dh_clean_Q8
 	[ ! -f $(CONFIGURE_CACHEFILE) ] || rm -f $(CONFIGURE_CACHEFILE)
 	dh_clean

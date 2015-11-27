@@ -15,7 +15,6 @@ RUN apt-get update \
 	curl \
     devscripts \
     equivs \
-    git-buildpackage \
     git \
     lsb-release \
     make \
@@ -25,7 +24,6 @@ RUN apt-get update \
 	po-debconf \
 	libsqlite3-dev \
 	debhelper \
-	cli-common-dev \
 	chrpath \
 	libfftw3-dev \
 	liblcms2-dev \
@@ -42,7 +40,9 @@ RUN apt-get update \
 	libltdl-dev \
 	dh-autoreconf \
 	xsltproc \
-	autotools \
+	pkg-config \
+	libfreetype6-dev \
+	libfontconfig1-dev \
 	libxml2-utils
 
 # copy entrypoint script

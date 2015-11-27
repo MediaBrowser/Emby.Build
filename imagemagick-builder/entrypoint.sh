@@ -44,8 +44,6 @@ prep_debfiles() {
 
 PACKAGE_NAME=$1
 create_user
-# for testing
-exec bash
 case "$PACKAGE_NAME" in
   imagemagick)
     build $PACKAGE_NAME

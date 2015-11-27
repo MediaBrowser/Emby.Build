@@ -86,14 +86,14 @@ export STATIC_CONFIGURE_OPTIONS := \
 	--sysconfdir=/etc \
 	--with-includearch-dir=/usr/include/$(DEB_HOST_MULTIARCH)/ \
 	--with-modules \
-	--with-gs-font-dir=/usr/share/fonts/type1/gsfonts \
-	--with-djvu \
+	--with-djvu=no \
     --without-wmf \
     --without-gvc \
 	--enable-shared \
 	--without-dps \
 	--without-fpx \
-	--without-rsvg \
+	--with-rsvg=no \
+        --with-tiff=yes \
 	--with-webp=yes \
 	--with-jpeg=yes \
 	--with-jp2=yes \
@@ -101,6 +101,7 @@ export STATIC_CONFIGURE_OPTIONS := \
 	--with-xml=yes \
 	--with-x=no \
 	--enable-hdri=no \
+        --with-gslib=no \
     --disable-openmp \
 	--with-openexr=no
 
@@ -125,7 +126,7 @@ override_dh_auto_configure-arch: quantum_override_dh_auto_configure-arch_Q8
 
 # dh_auto_build in build directory
 quantum_override_dh_auto_build-arch_%:
-	dh_auto_build --builddirectory="debian/build-quantum-$*" -- all perl-build
+	dh_auto_build --builddirectory="debian/build-quantum-$*" -- all
 
 override_dh_auto_build-arch: quantum_override_dh_auto_build-arch_Q8
 

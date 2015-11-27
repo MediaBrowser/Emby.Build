@@ -1,9 +1,8 @@
 #!/bin/bash
 set -e
 
-PACKAGE_NAME=""
-VERSION=""
-COMMIT=""
+PACKAGE_NAME="embymagick"
+VERSION="8:6.9.2-7"
 
 build_imagemagick() {
   prep_source
@@ -12,13 +11,12 @@ build_imagemagick() {
 
 prep_debfiles() {
   # debianize source
-  prep_debfiles
   mv /var/cache/buildarea/debfiles /var/cache/buildarea/imagemagick-source/debian
   create_changelog
 }
 
 prep_source() {
-  tar -xvf /var/cache/source/ImageMagick.tar.gz -C /var/cache/buildarea/imagemagick-source
+  tar -xvf /var/cache/source/ImageMagick.tar.gz -C /var/cache/buildarea/imagemagick-source --strip-components=1
   # debianize source
   prep_debfiles
   #produce_obsfiles
@@ -30,15 +28,21 @@ mkdir -p /pkg/obs
 }
 
 create_changelog() {
+  CODENAME=$(lsb_release -c | awk -F ":" '{print $2}')
+  cd /var/cache/buildarea/imagemagick-source
   DEBFULLNAME="HurricaneHrndz" \
     NAME="HurricaneHrndz" \
     DEBEMAIL="hurricanehrndz@techbyte.ca" \
-    dch --create -v $VERSION --package $PACKAGE_NAME "Automatic build."
+    dch --create -v $VERSION \
+	--distribution $CODENAME \
+	--package $PACKAGE_NAME "Automatic build."
 }
 
 build_package() {
   cd /var/cache/buildarea/imagemagick-source
-  debuild -uc -us -b
+#  debuild -uc -us -b
 }
 
-build_imagemagick
+#build_imagemagick
+create_changelog
+

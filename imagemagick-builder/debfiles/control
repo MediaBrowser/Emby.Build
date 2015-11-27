@@ -10,26 +10,13 @@ Build-Depends: debhelper (>= 9~),
  dh-autoreconf, chrpath,
 # for special function
  libfftw3-dev, liblcms2-dev, liblqr-1-0-dev,
-# for fonts
- libfreetype6-dev, libfontconfig1-dev,
 # for compression
  zlib1g-dev, liblzma-dev, libbz2-dev,
-# for X
- libx11-dev, libxext-dev, libxt-dev,
 # for plugins
- ghostscript, libdjvulibre-dev, libexif-dev,
+ libexif-dev,
  libjasper-dev, libjpeg-dev,
- libopenexr-dev, libperl-dev, libpng-dev, libtiff-dev, libwebp-dev,
- libwmf-dev,
-# libgraphviz-dev, incompatible license against fftw
-# for converting svg
- libpango1.0-dev, librsvg2-bin, librsvg2-dev, libxml2-dev,
-# for easy symbols of c++ lib
- pkg-kde-tools,
-# for documentation
- doxygen, doxygen-latex
+ libpng-dev, libtiff-dev
 Build-Depends-Indep: debhelper (>= 9~),
-		     graphviz,
 		     libxml2-utils,
 		     xsltproc
 Vcs-Browser: http://anonscm.debian.org/gitweb/?p=collab-maint/imagemagick.git

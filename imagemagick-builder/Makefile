@@ -9,9 +9,6 @@ ENV_VARS = \
 		   --env="USER_GID=$(shell id -g)" \
 		   --env="BUILD_USER=${USER}"
 
-PORTS = \
-		-p 8096:8096
-
 DIST = "ubuntu/wily"
 
 help:
@@ -33,7 +30,6 @@ build:
 imagemagick bash: build
 	@echo "Starting container to build $1 package."
 	@docker run -it --rm \
-		${PORTS} \
 		${ENV_VARS} \
 		${VOLUMES} \
 		${USER}/imagemagick-builder:latest $@

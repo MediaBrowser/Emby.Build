@@ -29,23 +29,27 @@ create_user() {
   fi
 }
 
-build_emby() {
+build() {
+  local PACKAGE_NAME=$1
   prep_debfiles
   echo "Building imagemagick..."
   sudo  --preserve-env -u $BUILD_USER /var/cache/scripts/debbuild.sh $PACKAGE_NAME
   echo "Package was built successfully."
+  sudo  --preserve-env -u $BUILD_USER /var/cache/scripts/deliver_deb.sh
 }
 
 prep_debfiles() {
   # make sure $BUILD_USER owns files
   mkdir -p /var/cache/buildarea/imagemagick-source
 	chown -R $USER_UID:$USER_GID /var/cache/buildarea
+	chown -R $USER_UID:$USER_GID /var/cache/imagemagick-source
+	chown -R $USER_UID:$USER_GID /var/cache/source
 }
 
 PACKAGE_NAME=$1
 create_user
 case "$PACKAGE_NAME" in
-  imagemagick)
+  embymagick)
     build $PACKAGE_NAME
     ;;
   *)

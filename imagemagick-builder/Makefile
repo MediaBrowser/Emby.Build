@@ -15,7 +15,7 @@ help:
 	@echo ""
 	@echo "-- Help Menu"
 	@echo ""
-	@echo "   1. make imagemagick      - build emby-imagemagick debian package"
+	@echo "   1. make embymagick       - build imagemagick debian package for emby"
 	@echo "   4. make bash             - bash login"
 	@echo "   5. make build            - build imagemagick-builder image"
 	@echo ""
@@ -27,7 +27,7 @@ clean:
 build:
 	@docker build --rm=true --tag=${USER}/imagemagick-builder -f ./${DIST}/Dockerfile .
 
-imagemagick bash: build
+embymagick bash: build
 	@echo "Starting container to build $1 package."
 	@docker run -it --rm \
 		${ENV_VARS} \

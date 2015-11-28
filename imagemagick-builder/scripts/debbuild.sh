@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 
+PACKAGE_NAME=$1
 PACKAGE_NAME=${PACKAGE_NAME-embymagick}
 VERSION="8:6.9.2-7"
 

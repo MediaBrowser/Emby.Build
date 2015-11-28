@@ -42,7 +42,6 @@ build_emby() {
     echo "Package was built, but test install failed, emby-server build is deffective."
     echo "Package will not be copied to destination."
   fi
-  exec bash
 }
 
 prep_debfiles() {

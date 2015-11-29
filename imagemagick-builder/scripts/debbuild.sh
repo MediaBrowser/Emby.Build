@@ -3,7 +3,7 @@ set -e
 
 PACKAGE_NAME=$1
 PACKAGE_NAME=${PACKAGE_NAME-embymagick}
-VERSION="8:6.9.2-7"
+VERSION="8:6.9.2-8"
 
 build_imagemagick() {
   prep_source
@@ -12,7 +12,9 @@ build_imagemagick() {
 
 prep_debfiles() {
   # debianize source
-  mv /var/cache/buildarea/debfiles /var/cache/buildarea/imagemagick-source/debian
+  mkdir -p /var/cache/buildarea/imagemagick-source/debian
+  mv /var/cache/buildarea/debfiles /var/cache/buildarea/debian
+  cp -r /var/cache/buildarea/debian /var/cache/buildarea/imagemagick-source/
   create_changelog
 }
 
@@ -20,16 +22,19 @@ prep_source() {
   if [ ! -d /var/cache/buildarea/imagemagick-source ]; then
     mkdir -p /var/cache/buildarea/imagemagick-source
   fi
-  tar -xvf /var/cache/source/ImageMagick.tar.gz -C /var/cache/buildarea/imagemagick-source --strip-components=1
+  cp /var/cache/source/embymagick*.orig.tar.gz /var/cache/buildarea/
+  tar -xvf /var/cache/source/embymagick*.orig.tar.gz -C /var/cache/buildarea/imagemagick-source --strip-components=1
   # debianize source
   prep_debfiles
-  produce_obsfiles
 }
 
 produce_obsfiles() {
   # deliver deb files for obs
   mkdir -p /pkg/obs
-  tar -cvzf /pkg/obs/debian.tar.gz /var/cache/buildarea/imagemagick-source/debian
+  tar -cvzf /pkg/obs/debian.tar.gz /var/cache/buildarea/debian
+  cp /var/cache/buildarea/embymagick*.orig.tar.gz /pkg/obs
+  cp /var/cache/buildarea/*.dsc /pkg/obs
+  cp /var/cache/buildarea/*.debian.* /pkg/obs
 }
 
 create_changelog() {
@@ -45,7 +50,8 @@ create_changelog() {
 
 build_package() {
   cd /var/cache/buildarea/imagemagick-source
-  debuild -uc -us -b
+  debuild -uc -us
+  produce_obsfiles
 }
 
 build_imagemagick

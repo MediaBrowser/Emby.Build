@@ -66,3 +66,5 @@ case "$PACKAGE_NAME" in
     exec $@
     ;;
 esac
+# for testing
+echo "To further test the package run the image with an entrypoint to /sbin/init"

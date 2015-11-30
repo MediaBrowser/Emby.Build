@@ -1,6 +1,6 @@
 Template: emby-server/permissions
 Type: note
-_Description: Emby permission info:
+_Description: Emby permission info.
  Emby by default runs under a user named "emby".
  Please ensure that the user emby has read and write access to any folders
  you wish to add to your library. Otherwise please run emby under a different user.

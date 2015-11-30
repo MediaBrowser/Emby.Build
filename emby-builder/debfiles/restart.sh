@@ -1,3 +1,3 @@
 #!/bin/sh
 
-/usr/bin/sudo service emby-server restart
+/usr/bin/sudo /bin/systemctl restart emby-server.service

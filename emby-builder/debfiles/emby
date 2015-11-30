@@ -1,5 +1,5 @@
 #Allow emby to start, stop and restart itself
-emby ALL=(ALL) NOPASSWD: /usr/sbin/service emby-server *
+emby ALL=(ALL) NOPASSWD: /bin/systemctl restart emby-server.service
 #Allow the server to mount iso images
 emby ALL=(ALL) NOPASSWD: /bin/mount
 emby ALL=(ALL) NOPASSWD: /bin/umount

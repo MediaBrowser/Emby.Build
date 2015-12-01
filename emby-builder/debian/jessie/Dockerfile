@@ -15,20 +15,20 @@ RUN apt-get update \
 	git \
 	adduser \
 	sudo \
-    build-essential \
+	build-essential \
 	libgdiplus \
 	curl \
-    devscripts \
-    equivs \
-    git-buildpackage \
-    git \
-    lsb-release \
-    make \
-    openssh-client \
+	devscripts \
+	equivs \
+	git-buildpackage \
+	git \
+	lsb-release \
+	make \
+	openssh-client \
 	libmagickwand-6.q8-2 \
-    pristine-tar \
-    rsync \
-    wget \
+	pristine-tar \
+	rsync \
+	wget \
 	mono-xbuild \
 	mono-devel \
 	libmediainfo0 \

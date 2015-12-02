@@ -2,6 +2,7 @@
 emby ALL=(ALL) NOPASSWD: /bin/systemctl restart emby-server.service
 emby ALL=(ALL) NOPASSWD: /etc/init.d/emby-server *
 emby ALL=(ALL) NOPASSWD: /usr/sbin/service emby-server *
+emby ALL=(ALL) NOPASSWD: /usr/sbin/invoke-rc.d emby-server *
 #Allow the server to mount iso images
 emby ALL=(ALL) NOPASSWD: /bin/mount
 emby ALL=(ALL) NOPASSWD: /bin/umount

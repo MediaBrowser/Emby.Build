@@ -7,7 +7,7 @@ if which systemctl > /dev/null 2>&1; then
 elif which service >/dev/null 2>&1; then
   sudo /usr/sbin/service ${NAME} restart
 elif which invoke-rc.d >/dev/null 2>&1; then
-  invoke-rc.d ${NAME} restart
+  sudo /usr/sbin/invoke-rc.d ${NAME} restart
 else
   sudo /etc/init.d/${NAME} restart
 fi

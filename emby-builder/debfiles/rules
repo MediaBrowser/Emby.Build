@@ -21,7 +21,8 @@ override_dh_auto_clean:
 override_dh_makeclilibs:
 
 override_dh_clideps:
-	dh_clideps --exclude-moduleref=i:ole32 --exclude-moduleref=i:msvcrt --exclude-moduleref=i:Mono.Posix.dll --exclude-moduleref=i:MonoPosixHelper
+	dh_clideps --exclude-moduleref=i:ole32 --exclude-moduleref=i:msvcrt --exclude-moduleref=i:Mono.Posix.dll --exclude-moduleref=i:MonoPosixHelper --exclude-moduleref=i:CORE_RL_Wand_ --exclude-moduleref=i:MediaInfo --exclude-moduleref=i:CORE_RL_magick_
+
 override_dh_installinit:
 	# use "emby-server" as our service name, not "emby-server-beta"
 	dh_installinit --name=emby-server

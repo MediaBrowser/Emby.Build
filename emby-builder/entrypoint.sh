@@ -67,4 +67,4 @@ case "$PACKAGE_NAME" in
     ;;
 esac
 # for testing
-echo "To further test the package run the image with an entrypoint to /sbin/init"
+echo "To further test the package run make test and within the container install and start emby-server"

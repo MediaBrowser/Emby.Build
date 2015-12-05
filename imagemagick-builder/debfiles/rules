@@ -99,7 +99,8 @@ export STATIC_CONFIGURE_OPTIONS := \
 	--with-jpeg=yes \
 	--with-png=yes \
 	--with-xml=yes \
-	--with-x=no \
+	--without-x \
+	--without-perl \
 	--enable-hdri=no \
 	--with-magick-plus-plus=no \
 	--with-gslib=no \
@@ -152,6 +153,11 @@ quantum_override_dh_auto_install-arch_%:
 override_dh_auto_install-arch: quantum_override_dh_auto_install-arch_Q8
 	mkdir -p debian/tmp-$(DEFAULTQUANTUMDEPTH)
 
+quantum_override_dh_auto_test-arch_%:
+	if ! dh_auto_test --builddirectory="debian/build-quantum-$*"; then \
+		find "debian/build-quantum-$*/tests" -name *.log -exec cat {} \; ; \
+	fi
+override_dh_auto_test-arch: quantum_override_dh_auto_test-arch_Q8
 
 # install quantum package
 quantum_override_dh_install-arch_%:

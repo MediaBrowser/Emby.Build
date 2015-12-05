@@ -7,7 +7,7 @@ _Description: Emby permission info.
 
 Template: emby-server/user
 Type: string
-_Description: Username to run Emby as:
+_Description: Username to run Emby as (enter emby if you are unsure):
  The user that emby will run as.
 
 Template: emby-server/old-running

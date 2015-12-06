@@ -69,7 +69,7 @@ cat <<'EOT' > /etc/service/emby/run
 #!/bin/bash
 umask 000
 
-cd /opt/emby-server/
+cd /usr/lib/emby-server/bin
 exec env MONO_THREADS_PER_CPU=100 MONO_GC_PARAMS=nursery-size=64m /sbin/setuser nobody mono-sgen /usr/lib/emby-server/bin/MediaBrowser.Server.Mono.exe \
                                 -programdata /config \
                                 -ffmpeg $(which ffmpeg) \
@@ -103,9 +103,8 @@ apt-get install -qy --force-yes mono-runtime \
                                 libsqlite3-dev \
                                 libc6-dev \
                                 ffmpeg \
-                                imagemagick-6.q8 \
-                                libmagickwand-6.q8-2 \
-                                libmagickcore-6.q8-2 \
+                                libembymagickwand-6.q8-2 \
+                                libembymagickcore-6.q8-2 \
                                 emby-server-dev
 
 #########################################

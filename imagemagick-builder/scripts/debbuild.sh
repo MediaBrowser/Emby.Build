@@ -50,6 +50,7 @@ create_changelog() {
 
 build_package() {
   cd /var/cache/buildarea/imagemagick-source
+  exec bash
   debuild -uc -us
   produce_obsfiles
 }

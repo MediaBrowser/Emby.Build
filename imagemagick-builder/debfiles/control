@@ -22,6 +22,9 @@ Homepage: http://www.emby.media
 
 # predepend on dpkg (>= 1.17.6) for libgomp symbols remove after jeesie +2
 Package: libembymagickcore-6.q8-2
+Replaces: libmagickcore-6.q8-2
+Breaks: libmagickcore-6.q8-2
+Conflicts: libmagickcore-6.q8-2
 Architecture: any
 Multi-Arch: same
 Section: libs
@@ -42,6 +45,9 @@ Description: low-level image manipulation library -- quantum depth Q8
 
 # predepend on dpkg (>= 1.17.6)  for libgomp symbols remove after jeesie + 2
 Package: libembymagickwand-6.q8-2
+Replaces: libmagickwand-6.q8-2
+Breaks: libmagickwand-6.q8-2
+Conflicts: libmagickwand-6.q8-2
 Architecture: any
 Multi-Arch: same
 Section: libs

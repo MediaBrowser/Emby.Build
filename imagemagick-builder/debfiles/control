@@ -1,0 +1,67 @@
+Source: embymagick
+Section: graphics
+Priority: optional
+Maintainer: HurricaneHrndz <carlos@techbyte.ca>
+Standards-Version: 3.9.6
+Build-Depends: debhelper (>= 9~),
+# for linking compiling ...
+ pkg-config, libltdl-dev,
+# for libtool does not link to depends lib
+ dh-autoreconf, chrpath,
+# for special function
+ libfftw3-dev, liblcms2-dev, liblqr-1-0-dev,
+# for fonts
+ libfreetype6-dev, libfontconfig1-dev,
+# for compression
+ zlib1g-dev, liblzma-dev, libbz2-dev,
+# for plugins
+ libexif-dev,
+ libjasper-dev, libjpeg-dev,
+ libpng-dev, libtiff-dev, libwebp-dev
+Homepage: http://www.emby.media
+
+# predepend on dpkg (>= 1.17.6) for libgomp symbols remove after jeesie +2
+Package: libembymagickcore-6.q8-2
+Replaces: libmagickcore-6.q8-2
+Breaks: libmagickcore-6.q8-2
+Conflicts: libmagickcore-6.q8-2
+Architecture: any
+Multi-Arch: same
+Section: libs
+Pre-Depends: ${misc:Pre-Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: low-level image manipulation library -- quantum depth Q8
+ The MagickCore API is a low-level interface between the C programming language
+ and the ImageMagick image processing libraries and is recommended for
+ wizard-level programmers only. Unlike the MagickWand C API which uses only a
+ few opaque types and accessors, with MagickCore you almost exclusively access
+ the structure members directly.
+ .
+ This package contains the C libraries needed to run executables that make
+ use of MagickCore.
+ .
+ This version of libmagickcore is compiled for quantum depth of 8 bits
+ and specifically for the emby project.
+
+# predepend on dpkg (>= 1.17.6)  for libgomp symbols remove after jeesie + 2
+Package: libembymagickwand-6.q8-2
+Replaces: libmagickwand-6.q8-2
+Breaks: libmagickwand-6.q8-2
+Conflicts: libmagickwand-6.q8-2
+Architecture: any
+Multi-Arch: same
+Section: libs
+Pre-Depends: ${misc:Pre-Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends},
+        libembymagickcore-6.q8-2 (= ${binary:Version})
+Description: image manipulation library
+ The MagickWand API is the recommended interface between the C programming
+ language and the ImageMagick image processing libraries. Unlike the
+ MagickCore C API, MagickWand uses only a few opaque types. Accessors are
+ available to set or get important wand properties.
+ .
+ This package contains the C libraries needed to run executables that make
+ use of MagickWand.
+ .
+ This version of libmagickwand is compiled for quantum depth of 8 bits
+ and specifically for the emby project.

@@ -61,18 +61,13 @@ prep_source() {
 produce_obsfiles() {
 # deliver deb files for obs
 mkdir -p /pkg/obs
-cp /var/cache/buildarea/emby-source/debian/emby /pkg/obs/debian.emby
-cp /var/cache/buildarea/emby-source/debian/emby-server.conf /pkg/obs/debian.emby-server.conf
-cp /var/cache/buildarea/emby-source/debian/${PACKAGE_NAME}.emby-server.service /pkg/obs/debian.${PACKAGE_NAME}.emby-server.service
-cp /var/cache/buildarea/emby-source/debian/${PACKAGE_NAME}.emby-server.default /pkg/obs/debian.${PACKAGE_NAME}.emby-server.default
-cp /var/cache/buildarea/emby-source/debian/restart.sh /pkg/obs/debian.restart.sh
+#cp /var/cache/buildarea/emby-source/debian/emby /pkg/obs/debian.emby
+#cp /var/cache/buildarea/emby-source/debian/emby-server.conf /pkg/obs/debian.emby-server.conf
+#cp /var/cache/buildarea/emby-source/debian/${PACKAGE_NAME}.emby-server.service /pkg/obs/debian.${PACKAGE_NAME}.emby-server.service
+#cp /var/cache/buildarea/emby-source/debian/${PACKAGE_NAME}.emby-server.default /pkg/obs/debian.${PACKAGE_NAME}.emby-server.default
+#cp /var/cache/buildarea/emby-source/debian/restart.sh /pkg/obs/debian.restart.sh
 
-tar --exclude=emby \
-  --exclude=emby-server.conf \
-  --exclude=${PACKAGE_NAME}.emby-server.default \
-  --exclude=${PACKAGE_NAME}.emby-server.service \
-  --exclude=restart.sh \
-  -zcvf /pkg/obs/debian.tar.gz debian
+tar -zcvf /pkg/obs/debian.tar.gz debian
 }
 
 create_changelog() {
@@ -84,7 +79,7 @@ create_changelog() {
 
 build_package() {
   cd /var/cache/buildarea/emby-source
-  gbp buildpackage --git-ignore-branch --git-ignore-new --git-builder=debuild -i.git -I.git -uc -us -b
+  gbp buildpackage --git-ignore-branch --git-ignore-new --git-builder=debuild -i.git -I.git -uc -us
 }
 
 get_conflicts() {

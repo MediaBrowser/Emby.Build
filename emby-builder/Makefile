@@ -2,7 +2,8 @@ all: build
 
 current_dir := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 VOLUMES = \
-		  --volume=$(current_dir):/pkg
+		  --volume=$(current_dir):/pkg \
+		  --volume=/sys/fs/cgroup:/sys/fs/cgroup:rw
 
 ENV_VARS = \
 		   --env="USER_UID=$(shell id -u)" \
@@ -35,7 +36,19 @@ build:
 emby-server emby-server-beta emby-server-dev bash: build
 	@echo "Starting container to build $1 package."
 	@docker run -it --rm \
+		--cap-add=SYS_ADMIN \
 		${PORTS} \
 		${ENV_VARS} \
 		${VOLUMES} \
 		${USER}/emby-builder:latest $@
+
+test:
+	@echo "Starting container to thoroughly test package."
+	@echo "run docker exec to enter container."
+	@docker run -d \
+		--cap-add=SYS_ADMIN \
+		--entrypoint /sbin/init \
+		${PORTS} \
+		${ENV_VARS} \
+		${VOLUMES} \
+		${USER}/emby-builder:latest

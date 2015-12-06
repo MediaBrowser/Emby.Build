@@ -1,0 +1,2 @@
+# This is an override for the following lintian errors:
+embymagick source: source-is-missing

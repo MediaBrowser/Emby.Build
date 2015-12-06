@@ -25,16 +25,9 @@ case "$1" in
       addgroup --quiet --system emby > /dev/null 2>&1
     fi
 
-    # Get emby's home directory
-    EMBY_HOME=$(getent passwd emby | awk -F: '{print $6}')
-    if [ -n "$EMBY_HOME" ]; then
-      PROGRAMDATA=$EMBY_HOME
-      sed -i "s#\(EB_DATA.*=\).*#\1\"$EMBY_HOME\"#" $DEFAULT_FILE
-    fi
-
     # create emby user if it does not exist
     if ! getent passwd emby > /dev/null; then
-      adduser --system --ingroup emby --home "$PROGRAMDATA" emby \
+      adduser --system --ingroup emby --shell /bin/false emby \
         --gecos "Emby Server default user" > /dev/null 2>&1
     fi
 

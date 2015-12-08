@@ -81,33 +81,33 @@ test_fpu_is present:
 
 # NOTICE: remove EPL delegate lib gvc (license problem)
 export STATIC_CONFIGURE_OPTIONS := \
-	--prefix=/usr \
-	--libdir=/usr/lib/$(DEB_HOST_MULTIARCH) \
+	--prefix=/usr/lib/emby-server \
+	--libdir=/usr/lib/emby-server/$(DEB_HOST_MULTIARCH)/ \
+	--with-includearch-dir=/usr/lib/emby-server/include/$(DEB_HOST_MULTIARCH)/ \
+        --with-gs-font-dir=/usr/share/fonts/type1/gsfonts \
 	--sysconfdir=/etc \
-	--with-includearch-dir=/usr/include/$(DEB_HOST_MULTIARCH)/ \
-	--with-modules \
-	--with-gs-font-dir=/usr/share/fonts/type1/gsfonts \
-	--with-djvu=no \
-	--without-wmf \
-	--without-gvc \
-	--enable-shared \
-	--without-dps \
-	--without-fpx \
-	--with-rsvg=no \
-	--with-tiff=yes \
-	--with-webp=yes \
-	--with-jpeg=yes \
-	--with-png=yes \
-	--with-xml=yes \
-	--without-x \
-	--without-perl \
-	--enable-hdri=no \
-	--with-magick-plus-plus=no \
-	--with-gslib=no \
-	--disable-openmp \
-	--with-fontconfig=yes \
-	--with-gvc=no \
-	--with-openexr=no
+        --enable-shared \
+        --enable-hdri=no \
+        --disable-openmp \
+        --disable-silent-rules \
+        --with-modules \
+        --with-tiff=yes \
+        --with-webp=yes \
+        --with-jpeg=yes \
+        --with-png=yes \
+        --with-xml=yes \
+        --with-fontconfig \
+        --without-x \
+        --without-dps \
+        --without-fpx \
+        --without-wmf \
+        --without-gvc \
+        --without-djvu \
+        --without-rsvg \
+        --without-gslib \
+        --without-openexr \
+        --without-gcc-arch \
+        --without-magick-plus-plus
 
 export CONFIGURE_OPTIONS ?= $(STATIC_CONFIGURE_OPTIONS) \
 				$(CONFIGURE_OPTIONS_CACHE) \
@@ -171,7 +171,10 @@ override_dh_install-arch: quantum_override_dh_install-arch_Q8
 
 override_dh_makeshlibs:
 	# avoid plugins' dir
-	dh_makeshlibs -v -Xcoders/ -Xfilters/
+	dh_makeshlibs -n -v -Xcoders/ -Xfilters/
+
+override_dh_shlibdeps:
+	dh_shlibdeps -v -a -lusr/lib/emby-server/$(DEB_HOST_MULTIARCH)
 
 # prep rules
 quantum_override_dh_prep_%:

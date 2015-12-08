@@ -4,7 +4,7 @@
 Name:           embymagick
 Version:        %{VERSION}
 Release:        %{Patchlevel}
-Summary:        Use ImageMagick to convert, edit, or compose bitmap images in a variety of formats.  In addition resize, rotate, shear, distort and transform images.
+Summary:        Use ImageMagick to modify and compose bitmap images in a variety of formats
 Group:          Applications/Multimedia
 License:        http://www.imagemagick.org/script/license.php
 Url:            http://www.imagemagick.org/
@@ -54,11 +54,11 @@ proprietary applications. It is distributed under an Apache 2.0-style license,
 approved by the OSI.
 
 
-%package libembymagickcore-6.q8-2
+%package -n libMagickCore-6_Q8-2
 Summary: ImageMagick libraries to link with
 Group: Applications/Multimedia
 
-%description libembymagickcore-6.q8-2
+%description -n libMagickCore-6_Q8-2
 The MagickCore API is a low-level interface between the C programming language
 and the ImageMagick image processing libraries and is recommended for
 wizard-level programmers only. Unlike the MagickWand C API which uses only a
@@ -69,21 +69,27 @@ use of MagickCore.
 This version of libmagickcore is compiled for quantum depth of 8 bits
 and specifically for the emby project.
 
-%package libembymagickwand-6.q8-2
+%package -n libMagickWand-6_Q8-2
 Summary: ImageMagick libraries to link with
 Group: Applications/Multimedia
-Requires: libembymagickcore-6.q8-2
+Requires: libMagickCore-6_Q8-2
 
-%description libembymagickwand-6.q8-2
+%description -n libMagickWand-6_Q8-2
 The MagickWand API is the recommended interface between the C programming language
 and the ImageMagick image processing libraries. Unlike the MagickCore C API,
 MagickWand uses only a few opaque types. Accessors are available to set or get
 important wand properties.
-This package contains the C libraries needed to run executables that make use of
+This package contains the C libraries needed to run executables that make use of 
 MagickWand.
-This version of libmagickwand is compiled for quantum depth of 8 bits and
+This version of libmagickwand is compiled for quantum depth of 8 bits and 
 specifically for the emby project.
 
+%package devel
+Summary: ImageMagick development files
+Group: Applications/Multimedia
+
+%description devel
+ImageMagick development files
 
 %prep
 #%setup -q -n imagemagick-%{VERSION}
@@ -117,7 +123,6 @@ sed -i 's/libltdl.la/libltdl.so/g' configure
 	--enable-hdri=no \
 	--with-magick-plus-plus=no \
 	--with-gslib=no \
-    --without-perl \
 	--disable-openmp \
 	--with-fontconfig=yes \
 	--with-gvc=no \
@@ -135,13 +140,26 @@ make
 
 %install
 rm -rf %{buildroot}
-
-make %{?_smp_mflags} install DESTDIR=%{buildroot} INSTALL="install -p"
-cp -a www/source %{buildroot}%{_datadir}/doc/%{name}-%{VERSION}
+%if 0%{?suse_version} >= 1315
+	make %{?_smp_mflags} install DESTDIR=%{buildroot} INSTALL="install -p" \
+		pkgdocdir=%{_defaultdocdir}/%{name}-doc/
+	#mkdir %{buildroot}%{_datadir}/doc/package
+	#mv %{buildroot}%{_datadir}/doc/embymagick-6.9.2 %{buildroot}%{_datadir}/doc/package
+    #mv %{buildroot}%{_datadir}/doc/ImageMagick-6 %{buildroot}%{_datadir}/doc/package
+	#cp -a www/source %{buildroot}%{_datadir}/doc/package/%{name}-%{VERSION}
+    #%fdupes -s %{buildroot}%{_defaultdocdir}/%{name}-doc/www/api
+%else
+	make %{?_smp_mflags} install DESTDIR=%{buildroot} INSTALL="install -p"
+	#cp -a www/source %{buildroot}%{_datadir}/doc/%{name}-%{VERSION}
+%endif
 rm %{buildroot}%{_libdir}/*.la
-echo "********************_____________________******************________________**************"
-ls -lR %{_builddir}
-
+#echo "*************************************************************************"
+#echo "*************************************************************************"
+#echo "*************************************************************************"
+#ls -lR %{_prefix}
+#echo "*************************************************************************"
+#echo "*************************************************************************"
+#echo "*************************************************************************"
 
 %check
 export LD_LIBRARY_PATH=%{buildroot}/%{_libdir}
@@ -150,42 +168,56 @@ make %{?_smp_mflags} check
 %clean
 rm -rf %{builddir}
 
-%post libembymagickcore-6.q8-2 -p /sbin/ldconfig
+%post -n libMagickCore-6_Q8-2 -p /sbin/ldconfig
 
-%post libembymagickwand-6.q8-2 -p /sbin/ldconfig
+%post -n libMagickWand-6_Q8-2 -p /sbin/ldconfig
 
-%postun libembymagickcore-6.q8-2 -p /sbin/ldconfig
+%postun -n libMagickCore-6_Q8-2 -p /sbin/ldconfig
 
-%postun libembymagickwand-6.q8-2 -p /sbin/ldconfig
+%postun -n libMagickWand-6_Q8-2 -p /sbin/ldconfig
 
 
 
 %files
+%defattr(-,root,root,-)
 #%doc README.txt LICENSE NOTICE AUTHORS.txt NEWS.txt ChangeLog Platforms.txt
-%{_bindir}/Magick*
-%{_bindir}/Wand*
-##
+###
 %{_bindir}/*
-###
-%{_includedir}/ImageMagick-6
-%{_mandir}/man1/ImageMagick.*
-##
-%{_mandir}/man1/*
-###
-%{_libdir}/ImageMagick-%{VERSION}
-%{_libdir}/pkgconfig/*.pc
-##
 %{_libdir}/*
-###
-%{_datadir}/ImageMagick-6
-%{_docdir}/ImageMagick*
+%{_mandir}/man1/*
 ##
-%{_docdir}/embymagick-6.9.2/*
-###
+%{_datadir}/ImageMagick-6
+%if 0%{?suse_version} >= 1315
+	#%{_bindir}/Magick*
+	#%{_bindir}/Wand*
+    #%{_mandir}/man1/ImageMagick.*
+	%doc LICENSE
+	#%{_docdir}/ImageMagick-6/*
+    %{_datadir}/doc/ImageMagick-6
+	%{_docdir}/embymagick-doc
+    #%{_libdir}/ImageMagick-%{VERSION}
+	#%{_libdir}/pkgconfig/*.pc
+    %exclude %{_libdir}/ImageMagick-*/config-*/*
+	%exclude %{_libdir}/ImageMagick-*/modules-*/coders/*.la
+	%exclude %{_libdir}/ImageMagick-*/modules-*/coders/*.so
+	%exclude %{_libdir}/ImageMagick-*/modules-*/filters/*.la
+	%exclude %{_libdir}/ImageMagick-*/modules-*/filters/*.so
+	%exclude %{_libdir}/libMagickCore*.so*
+    %exclude %{_libdir}/libMagickWand*.so*
+%else
+	#%{_bindir}/*
+    #%{_mandir}/man1/*
+	%doc LICENSE
+	%{_docdir}/ImageMagick-6/*
+	#%{_docdir}/embymagick-6.9.2/*
+    #%{_libdir}/*
+%endif
+#
 %{_sysconfdir}/ImageMagick-6
 
-%files libembymagickcore-6.q8-2
+%files -n libMagickCore-6_Q8-2
 %defattr(-,root,root,-)
+%doc LICENSE
 %{_libdir}/ImageMagick-*/config-*/*
 %{_libdir}/ImageMagick-*/modules-*/coders/*.la
 %{_libdir}/ImageMagick-*/modules-*/coders/*.so
@@ -194,9 +226,14 @@ rm -rf %{builddir}
 %{_libdir}/libMagickCore*.so*
 
 
-%files libembymagickwand-6.q8-2
+%files -n libMagickWand-6_Q8-2
 %defattr(-,root,root,-)
+%doc LICENSE
 %{_libdir}/libMagickWand*.so*
 
+%files devel
+%defattr(-,root,root,-)
+%doc LICENSE
+%{_includedir}/ImageMagick-6
 
 %changelog

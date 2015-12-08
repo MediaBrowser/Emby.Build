@@ -68,3 +68,6 @@ case "$PACKAGE_NAME" in
 esac
 # for testing
 echo "To further test the package run make test and within the container install and start emby-server"
+if [ "$DEBUG" == true ]; then
+  exec bash
+fi

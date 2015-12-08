@@ -58,8 +58,8 @@ case "$1" in
       # Get default group of user
       gid=$(getent passwd $dbuser | awk -F ':' '{print $4}')
       group_name=$(getent group $gid | awk -F ':' '{print $1}')
-      sed -i "s#\(EMBY_USER.*=\)emby#\1\"$dbuser\"#" $DEFAULT_FILE
-      sed -i "s#\(EMBY_GROUP.*=\)emby#\1\"$group_name\"#" $DEFAULT_FILE
+      sed -i "s#\(EMBY_USER.*=\).*#\1\"$dbuser\"#" $DEFAULT_FILE
+      sed -i "s#\(EMBY_GROUP.*=\).*#\1\"$group_name\"#" $DEFAULT_FILE
     fi
     ;;
     abort-upgrade|abort-remove|abort-deconfigure)

@@ -41,7 +41,8 @@ EMBY_PATH=$EMBY_DIR
 MONO_EXEC=$MONO_BIN
 
 # Mono environment variables
-MONO_EXEC_ENV=$MONO_ENV
+MAGICK_LIBRARY_PATH=$(find /usr/lib/emby-server/ -maxdepth 1 -mindepth 1 -type d| grep -v bin)
+MONO_EXEC_ENV="$MONO_ENV LD_LIBRARY_PATH=${MAGICK_LIBRARY_PATH}${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH"
 
 # Mono options
 MONO_EXEC_OPTS=$MONO_OPTS

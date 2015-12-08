@@ -3,7 +3,7 @@ set -e
 
 PACKAGE_NAME=$1
 PACKAGE_NAME=${PACKAGE_NAME-embymagick}
-VERSION="8:6.9.2-8"
+VERSION="8:6.9.2-9"
 
 build_imagemagick() {
   prep_source
@@ -50,7 +50,6 @@ create_changelog() {
 
 build_package() {
   cd /var/cache/buildarea/imagemagick-source
-  exec bash
   debuild -uc -us
   produce_obsfiles
 }

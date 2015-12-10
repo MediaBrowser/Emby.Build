@@ -20,16 +20,16 @@ PROGRAMDATA=${EMBY_DATA-/var/lib/$NAME}
 
 case "$1" in
   purge)
-    echo PURGE | debconf-communicate $NAME
+    echo PURGE | debconf-communicate $NAME > /dev/null 2>&1 || true
     if [ -f /etc/init.d/$NAME ]; then
-      update-rc.d -f $NAME remove > /dev/null || exit $?
+      update-rc.d -f $NAME remove > /dev/null 2>&1 || exit $?
     fi
 
     if [ -d $PROGRAMDATA ]; then
       rm -rf $PROGRAMDATA
     fi
-    userdel emby > /dev/null || true
-    delgroup --quiet emby || true
+    userdel emby > /dev/null 2>&1 || true
+    delgroup --quiet emby 2>&1 || true
     [ -f /etc/init.d/emby ] && rm /etc/init.d/emby
     [ -f /etc/init.d/emby-server ] && rm /etc/init.d/emby-server
     [ -f /etc/init.d/emby-server-beta ] && rm /etc/init.d/emby-server-beta

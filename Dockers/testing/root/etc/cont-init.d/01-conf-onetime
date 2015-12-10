@@ -1,0 +1,5 @@
+#!/usr/bin/with-contenv sh
+
+echo "EMBY_USER=${EMBYSERVER_USER}" >> /etc/emby-server.conf
+echo "EMBY_GROUP=${EMBYSERVER_USER}" >> /etc/emby-server.conf
+echo "EMBY_DATA=/config" >> /etc/emby-server.conf

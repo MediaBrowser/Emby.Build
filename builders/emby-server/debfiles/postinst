@@ -61,7 +61,13 @@ case "$1" in
       sed -i "s#\(EMBY_USER.*=\).*#\1\"$dbuser\"#" $DEFAULT_FILE
       sed -i "s#\(EMBY_GROUP.*=\).*#\1\"$group_name\"#" $DEFAULT_FILE
     fi
-    /usr/bin/mono --aot=full -O=all $EMBY_BIN > /dev/null 2>&1
+    /usr/bin/mono --aot=full -O=all $EMBY_BIN > /dev/null 2>&1 || true
+
+    chmod +x ${EMBY_DIR}/restart.sh > /dev/null 2>&1 || true
+
+    if [ $(cat /etc/*release | grep -cE "PRETTY_NAME=.*sid") > 0 ]; then
+      rm /etc/init.d/emby-server
+    fi
     ;;
     abort-upgrade|abort-remove|abort-deconfigure)
     ;;

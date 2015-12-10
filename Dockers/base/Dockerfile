@@ -10,18 +10,6 @@ RUN echo 'APT::Install-Recommends "0";' >> /etc/apt/apt.conf.d/01buildconfig \
  && apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 0x782cc96a9bcfd389 \
  && echo 'deb http://download.opensuse.org/repositories/home:/hurricanehernandez/Debian_8.0/ /' >> /etc/apt/sources.list.d/emby.list \
  && apt-get update \
- && echo 'Yes, do as I say!' | apt-get remove --purge -y -q --allow-remove-essential systemd \
-    sysvinit-utils \
-	sysv-rc \
-	ncurses-base \
-	ncurses-bin \
-    e2fsprogs \
-	e2fslibs \
-	initscripts \
-	init \
-	libcryptsetup4 \
-	libdevmapper1.02.1 \
-	libfdisk1 \
  && apt-get install -y -qq --no-install-recommends \
     sudo \
     ca-certificates \
@@ -38,6 +26,7 @@ RUN echo 'APT::Install-Recommends "0";' >> /etc/apt/apt.conf.d/01buildconfig \
     libmono-system-servicemodel4.0a-cil \
     libmono-system-web4.0-cil \
     libmono-system-xml-linq4.0-cil \
+	mono-devel \
     mediainfo \
 	locales \
     xz-utils \
@@ -46,6 +35,7 @@ RUN echo 'APT::Install-Recommends "0";' >> /etc/apt/apt.conf.d/01buildconfig \
  && apt-get autoclean \
  && locale-gen C.UTF-8 \
  && dpkg-reconfigure locales \
+ && rm -rf mono-devel*.deb \
  && rm -rf /var/lib/apt/lists/* \
  && rm -rf /usr/share/man/* \
  && rm -rf /usr/share/doc/* \

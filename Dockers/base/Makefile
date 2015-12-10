@@ -1,5 +1,10 @@
 all: build
 
+IMG_BUILD_USER=emby
+ifdef BUILD_USER
+IMG_BUILD_USER=${BUILD_USER}
+endif
+
 help:
 	@echo ""
 	@echo "-- Help Menu"
@@ -8,8 +13,10 @@ help:
 	@echo ""
 
 clean:
-	@docker rm -f `docker ps -a | grep "${USER}/emby-base" | awk '{print $$1}'` > /dev/null 2>&1 || exit 0
-	@docker rmi `docker images  | grep "${USER}/emby-base" | awk '{print $$3}'` > /dev/null 2>&1 || exit 0
+	@docker rm -f `docker ps -a | grep "${IMG_BUILD_USER}/emby-base" | awk '{print $$1}'` > /dev/null 2>&1 || exit 0
+	@docker rmi `docker images  | grep "${IMG_BUILD_USER}/emby-base" | awk '{print $$3}'` > /dev/null 2>&1 || exit 0
 
-base:
-	@docker build --rm=true --tag=${USER}/emby-base .
+build:
+	@docker build --rm=true --tag=${IMG_BUILD_USER}/emby-base .
+
+base: build

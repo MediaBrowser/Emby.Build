@@ -22,7 +22,6 @@ fi
 
 if getent passwd ${USER_UID} > /dev/null; then
     userdel ${USER_UID} 2> /dev/null
-    userdel nobody 2> /dev/null
 fi
 
 # create user with USER_UID

@@ -7,10 +7,11 @@ RUN apt-get update -qq \
  && rm -rf /var/lib/apt/lists/* \
  && rm -rf /var/cache/* \
  && rm -rf /var/tmp/* \
+ && userdel -f nobody
 
 VOLUME [ "/config" ]
 EXPOSE 8096 8920 7359/udp 1900/udp
 
 COPY root /
-
-ENTRYPOINT ["/init", "/bin/entrypoint.sh"]
+ENV S6_LOGGING="1"
+ENTRYPOINT ["/init"]

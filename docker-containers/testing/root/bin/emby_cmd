@@ -1,4 +1,5 @@
 #!/usr/bin/with-contenv bash
+# vim:set ft=sh sw=2 sts=2 st=2 et:
 set -e
 
 USER_UID=${USER_UID:-1000}
@@ -7,7 +8,7 @@ USER_GID=${USER_GID:-1000}
 EMBYSERVER_USER=${EMBYSERVER_USER:-emby}
 EMBYSERVER_REPO=${EMBYSERVER_REPO:-emby}
 
-install_emby-server() {
+install_embyserver() {
   echo "Installing Emby Server..."
   install -m 0755 /var/cache/scripts/emby-server /target/
   if [ "${EMBYSERVER_USER}" != "emby" ] && [ -n "${EMBYSERVER_USER}" ]; then
@@ -17,32 +18,37 @@ install_emby-server() {
   exec s6-svscanctl -t /var/run/s6/services
 }
 
-install_emby-server_service() {
+install_embyserver_service() {
   echo "Installing Emby Service..."
-  install -m 0755 /var/cache/emby-server/emby-server.service /target/
+  install -m 0755 /var/cache/systemd/emby-server.service /target/
+  echo "Please run: sudo systemctl daemon-reload"
+  echo "To start run: sudo systemctl start emby-server"
   exec s6-svscanctl -t /var/run/s6/services
 }
 
-uninstall_emby-server() {
+uninstall_embyserver() {
   echo "Uninstalling Emby Server..."
   rm -rf /target/emby-server
   exec s6-svscanctl -t /var/run/s6/services
 }
 
+uninstall_service() {
+  echo "Uninstalling Emby Service..."
+  rm -rf /target/emby-server.service
+  exec s6-svscanctl -t /var/run/s6/services
+}
+
 case "$1" in
   install)
-    install_emby-server
+    install_embyserver
     ;;
   install_service)
-    install_emby-server_service
+    install_embyserver_service
     ;;
   uninstall)
-    uninstall_emby-server
+    uninstall_embyserver
     ;;
-  bash)
-    exec bash
-    ;;
-  *)
-    exec $@
+  uninstall_service)
+    uninstall_embyserver
     ;;
 esac

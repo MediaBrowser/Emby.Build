@@ -25,4 +25,8 @@ build:
 emby-server: build
 
 install: clean build
-	@docker run -it --rm -v /usr/local/bin:/target emby/emby-server install
+	@docker run -it --rm -v /usr/local/bin:/target emby/emby-server install_emby
+
+service: clean build
+	@docker run -it --rm -v /usr/local/bin:/target emby/emby-server install_emby
+	@docker run -it --rm -v /etc/systemd/system:/target emby/emby-server install_service

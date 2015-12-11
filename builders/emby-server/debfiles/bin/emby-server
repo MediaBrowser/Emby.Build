@@ -1,4 +1,5 @@
 #!/bin/sh
+# vim:set ft=sh sw=2 sts=2 st=2 et:
 # Author: HurricaneHernandez <carlos@techbyte.ca>
 # Modified for CentOS/Fedora by: FC7 <casasfernando@outlook.com>
 
@@ -82,7 +83,7 @@ case "$1" in
   start)
     echo $$ > $PIDFILE
     exec su -s /bin/sh -c 'exec "$0" "$@"' $USER -- \
-    env $MONO_EXEC_ENV $MONO_EXEC $MONO_EXEC_OPTS $EMBY_EXEC $EMBY_OPTS > $LOG_FILE 2>&1
+      env $MONO_EXEC_ENV $MONO_EXEC $MONO_EXEC_OPTS $EMBY_EXEC $EMBY_OPTS > $LOG_FILE 2>&1
     ;;
   clear)
     [ -e $PIDFILE ] && rm -rf $PIDFILE

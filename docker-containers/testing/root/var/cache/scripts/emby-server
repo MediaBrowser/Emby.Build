@@ -57,6 +57,29 @@ prepare_docker_volume_parameters() {
   VOLUMES+=" --volume=${EMBYSERVER_CONFIG}:/config"
 }
 
+prepare_user_volume_parameters() {
+  if [ ! -e "${EMBYSERVER_CONFIG}/.embydockervolumes" ]; then
+    declare -a user_volumes
+    echo "We could not find existing settings for your media files."
+    echo "Pleae enter the parent directories of your media files, one entry per line."
+    while read mediapath; do
+      if [ ! -d "$mediapath" ]; then
+        echo "Sorry, $mediapath is not a valid path."
+      else
+        user_volumes+=("$mediapath")
+      fi
+    done < /dev/stdin
+
+    for user_volume in "${user_volumes[@]}"; do
+      echo "${user_volue}" >> "${EMBYSERVER_CONFIG}/.embydockervolumes"
+    done
+  fi
+
+  # setup user volumes
+  while read user_volume; do
+    VOLUMES+=" --volume=${user_volume}:${user_volume}"
+  done < "${EMBYSERVER_CONFIG}/.embydockervolumes"
+}
 
 prog=$(basename $0)
 if [[ ${prog} == "emby-server" ]]; then
@@ -69,6 +92,7 @@ fi
 cleanup_stopped_emby-server_instances
 prepare_docker_env_parameters
 prepare_docker_volume_parameters
+prepare_user_volume_parameters
 
 echo "Starting ${prog}..."
 if [ "${prog}" != "emby-server" ]; then
@@ -84,6 +108,5 @@ else
     ${ENV_VARS} \
     ${VOLUMES} \
     --name=emby-server \
-    --entrypoint /init \
     ${EMBYSERVER_REPO}/emby-server:latest >/dev/null
 fi

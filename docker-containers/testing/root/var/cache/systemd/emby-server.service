@@ -1,0 +1,13 @@
+[Unit]
+Description=Emby Media Server
+After=docker.service
+
+[Service]
+Type=forking
+ExecStartPre=/usr/bin/docker pull emby/emby-server:latest
+ExecStart=/usr/local/bin/emby-server
+Restart=on-abort
+TimeoutSec=20
+
+[Install]
+WantedBy=multi-user.target

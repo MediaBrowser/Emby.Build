@@ -1,0 +1,9 @@
+#!/usr/bin/with-contenv sh
+# vim:set ft=sh sw=2 sts=2 st=2 et:
+
+echo "EMBY_USER=${EMBYSERVER_USER}" >> /etc/emby-server.conf
+echo "EMBY_GROUP=${EMBYSERVER_USER}" >> /etc/emby-server.conf
+echo "EMBY_DATA=/config" >> /etc/emby-server.conf
+echo "LOG_FILE=/dev/stdout" >> /etc/emby-server.conf
+echo "${EMBYSERVER_USER}i ALL=(ALL) NOPASSWD: /bin/s6-svc" >> /etc/sudoers.d/dockers
+echo "Defaults:${EMBYSERVER_USER} !requiretty" >> /etc/sudoers.d/dockers

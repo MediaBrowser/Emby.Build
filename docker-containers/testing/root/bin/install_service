@@ -1,0 +1,3 @@
+#!/bin/bash
+
+exec emby_cmd install_service

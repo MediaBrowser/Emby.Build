@@ -25,6 +25,12 @@ fi
 USER=$EMBY_USER
 GROUP=$EMBY_GROUP
 
+# Ensure user has restart permission
+if [ "$USER" != "emby " ]; then
+  [ $(sed -n -e '/^emby/p' /etc/group |grep -c "$USER") == 0 ] && \
+    adduser $USER emby > /dev/null 2>&1
+fi
+
 # Data directory where Emby database, cache and logs are stored
 PROGRAMDATA=$EMBY_DATA
 PROGRAMDATA_OPT="-programdata $PROGRAMDATA"

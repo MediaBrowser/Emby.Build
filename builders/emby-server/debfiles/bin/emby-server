@@ -27,7 +27,7 @@ GROUP=$EMBY_GROUP
 
 # Ensure user has restart permission
 if [ "$USER" != "emby " ]; then
-  [ $(sed -n -e '/^emby/p' /etc/group |grep -c "$USER") == 0 ] && \
+  [[ $(sed -n -e '/^emby/p' /etc/group | grep -c "$USER") ==  0 ]] && \
     usermod -G emby $USER > /dev/null 2>&1
 fi
 

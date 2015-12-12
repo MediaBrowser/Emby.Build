@@ -28,7 +28,7 @@ GROUP=$EMBY_GROUP
 # Ensure user has restart permission
 if [ "$USER" != "emby " ]; then
   [ $(sed -n -e '/^emby/p' /etc/group |grep -c "$USER") == 0 ] && \
-    adduser $USER emby > /dev/null 2>&1
+    usermod -G emby $USER > /dev/null 2>&1
 fi
 
 # Data directory where Emby database, cache and logs are stored
@@ -55,11 +55,11 @@ MONO_EXEC_ENV="$MONO_ENV LD_LIBRARY_PATH=${MAGICK_LIBRARY_PATH}${LD_LIBRARY_PATH
 MONO_EXEC_OPTS=$MONO_OPTS
 
 # ffmpeg
-FFMPEG_BIN=$(which ffmpeg)
+FFMPEG_BIN=$(command -v ffmpeg)
 [ -n "$FFMPEG_BIN" ] && FFMPEG_OPTS="-ffmpeg $FFMPEG_BIN"
 
 # ffprobe
-FFPROBE_BIN=$(which ffprobe)
+FFPROBE_BIN=$(command -v ffprobe)
 [ -n "$FFPROBE_BIN" ] && FFPROBE_OPTS="-ffprobe $FFPROBE_BIN"
 
 # restart function

@@ -55,6 +55,7 @@
     <package name="sqlite"/>
     <package name="libmediainfo0"/>
     <package name="ffmpeg"/>
+    <package name="sudo"/>
   </packages>
   <packages type="bootstrap">
     <package name="ncurses-utils"/>

@@ -36,10 +36,10 @@
     <source path="obs://openSUSE:Factory/snapshot"/>
   </repository>
   <repository type="rpm-md" alias="repo-emby">
-      <source path="obs://home:hurricanehernandez/openSUSE_Tumbleweed"/>
+    <source path="obs://home:hurricanehernandez/openSUSE_Tumbleweed"/>
   </repository>
   <repository type="rpm-md" alias="repo-MediaArea_net">
-      <source path="obs://home:MediaArea_net/openSUSE_Tumbleweed"/>
+    <source path="obs://home:MediaArea_net/openSUSE_Tumbleweed"/>
   </repository>
   <packages type="image">
     <package name="ca-certificates"/>
@@ -54,6 +54,7 @@
     <package name="mono-wcf"/>
     <package name="sqlite"/>
     <package name="libmediainfo0"/>
+    <package name="ffmpeg"/>
   </packages>
   <packages type="bootstrap">
     <package name="ncurses-utils"/>

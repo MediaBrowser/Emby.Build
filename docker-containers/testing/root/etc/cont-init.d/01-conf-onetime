@@ -5,5 +5,9 @@ echo "EMBY_USER=${EMBYSERVER_USER}" >> /etc/emby-server.conf
 echo "EMBY_GROUP=${EMBYSERVER_USER}" >> /etc/emby-server.conf
 echo "EMBY_DATA=/config" >> /etc/emby-server.conf
 echo "LOG_FILE=/dev/stdout" >> /etc/emby-server.conf
-echo "${EMBYSERVER_USER}i ALL=(ALL) NOPASSWD: /bin/s6-svc" >> /etc/sudoers.d/dockers
+echo "Cmnd_Alias S6_SVC = /bin/s6-svc" >> /etc/sudoers.d/dockers
+echo "${EMBYSERVER_USER} ALL=(ALL) NOPASSWD: S6_SVC" >> /etc/sudoers.d/dockers
+echo "Defaults!S6_SVC !requiretty" >> /etc/sudoers.d/dockers
 echo "Defaults:${EMBYSERVER_USER} !requiretty" >> /etc/sudoers.d/dockers
+# fix sudo
+sed -i -e 's#session\s\+required\s\+pam_limits.so##' /etc/pam.d/common-session-pc

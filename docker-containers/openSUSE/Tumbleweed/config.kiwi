@@ -57,7 +57,7 @@
     <package name="mono-wcf"/>
     <package name="sqlite"/>
     <package name="libmediainfo0"/>
-    <package name="ffmpeg"/>
+    <package name="repo-mborodin:ffmpeg"/>
     <package name="sudo"/>
   </packages>
   <packages type="bootstrap">

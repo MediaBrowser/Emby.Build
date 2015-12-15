@@ -41,9 +41,6 @@
   <repository type="rpm-md" alias="repo-MediaArea_net">
     <source path="obs://home:MediaArea_net/openSUSE_Tumbleweed"/>
   </repository>
-  <repository type="rpm-md" priority="1" alias="mborodin">
-    <source path="obs://home:mborodin:security/openSUSE_Tumbleweed"/>
-  </repository>
   <packages type="image">
     <package name="ca-certificates"/>
     <package name="ca-certificates-mozilla"/>
@@ -57,7 +54,6 @@
     <package name="mono-wcf"/>
     <package name="sqlite"/>
     <package name="libmediainfo0"/>
-    <package name="ffmpeg"/>
     <package name="sudo"/>
   </packages>
   <packages type="bootstrap">

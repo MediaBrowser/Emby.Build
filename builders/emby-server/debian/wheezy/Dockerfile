@@ -33,7 +33,7 @@ RUN apt-get update \
     debhelper \
     libmono-cil-dev \
     cli-common-dev \
-	embymagick \
+	libembymagickwand-6.q8-2 \
     sqlite3
 
 # copy entrypoint script

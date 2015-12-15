@@ -40,34 +40,10 @@ case "$1" in
     # ensure emby-server binary has appropriate permissions
     chmod 755 /usr/bin/emby-server
 
-    # for debconf
-    . /usr/share/debconf/confmodule
-    # let the user know about emby and permissions
-    db_input high $NAME/permissions || true
-    db_go || true
-
-    # user?
-    db_set $NAME/user emby
-    db_input high $NAME/user || true
-    db_go || true
-
-    db_get $NAME/user
-    dbuser="$RET"
-
-    if [ -n "$dbuser" ] && [ "ok" != "$dbuser" ]; then
-      # Get default group of user
-      gid=$(getent passwd $dbuser | awk -F ':' '{print $4}')
-      group_name=$(getent group $gid | awk -F ':' '{print $1}')
-      sed -i "s#\(EMBY_USER.*=\).*#\1\"$dbuser\"#" $DEFAULT_FILE
-      sed -i "s#\(EMBY_GROUP.*=\).*#\1\"$group_name\"#" $DEFAULT_FILE
-    fi
     /usr/bin/mono --aot=full -O=all $EMBY_BIN > /dev/null 2>&1 || true
 
     chmod +x ${EMBY_DIR}/restart.sh > /dev/null 2>&1 || true
 
-    if [ $(cat /etc/*release | grep -cE "PRETTY_NAME=.*sid") > 0 ]; then
-      rm /etc/init.d/emby-server
-    fi
     ;;
     abort-upgrade|abort-remove|abort-deconfigure)
     ;;

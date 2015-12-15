@@ -32,12 +32,12 @@ create_user() {
 build_emby() {
   prep_debfiles
   echo "Building emby-server..."
-  sudo  --preserve-env -u $BUILD_USER /var/cache/scripts/debbuild.sh $PACKAGE_NAME
+  sudo -E -u $BUILD_USER /var/cache/scripts/debbuild.sh $PACKAGE_NAME
   /var/cache/scripts/test_emby.sh
   test_result=$?
   if [ "$test_result" == "0" ]; then
     echo "Package was built successfully."
-    sudo  --preserve-env -u $BUILD_USER /var/cache/scripts/deliver_deb.sh
+    sudo -E -u $BUILD_USER /var/cache/scripts/deliver_deb.sh
   else
     echo "Package was built, but test install failed, emby-server build is deffective."
     echo "Package will not be copied to destination."

@@ -79,7 +79,7 @@ create_changelog() {
 
 build_package() {
   cd /var/cache/buildarea/emby-source
-  gbp buildpackage --git-ignore-branch --git-ignore-new --git-builder=debuild -i.git -I.git -uc -us
+  git-buildpackage --git-ignore-branch --git-ignore-new --git-builder=debuild -i.git -I.git -uc -us
 }
 
 get_conflicts() {

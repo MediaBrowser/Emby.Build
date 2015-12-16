@@ -3,7 +3,7 @@ FROM emby/emby-base
 MAINTAINER Carlos Hernandez <carlos@techbyte.ca>
 
 RUN zypper --gpg-auto-import-keys ref \
- && zypper --non-interactive in emby-server-dev \
+ && zypper --non-interactive in emby-server-beta \
  && zypper cc --all \
  && rm -rf /var/cache/zypp*
 

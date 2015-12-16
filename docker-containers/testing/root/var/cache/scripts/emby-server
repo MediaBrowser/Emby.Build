@@ -75,7 +75,7 @@ prepare_user_volume_parameters() {
     done < /dev/stdin
 
     for user_volume in "${user_volumes[@]}"; do
-      echo "${user_volue}" >> "${EMBYSERVER_CONFIG}/.embydockervolumes"
+      echo "${user_volume}" >> "${EMBYSERVER_CONFIG}/.embydockervolumes"
     done
   fi
 

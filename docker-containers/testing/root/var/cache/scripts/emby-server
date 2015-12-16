@@ -62,7 +62,11 @@ prepare_user_volume_parameters() {
     declare -a user_volumes
     echo "We could not find existing settings for your media files."
     echo "Pleae enter the parent directories of your media files, one entry per line."
+    echo "Enter \"done\" when finished"
     while read mediapath; do
+      if [ "$mediapath" == "done" ]; then
+        break
+      fi
       if [ ! -d "$mediapath" ]; then
         echo "Sorry, $mediapath is not a valid path."
       else

@@ -7,6 +7,7 @@ USER_GID=${USER_GID:-1000}
 
 EMBYSERVER_USER=${EMBYSERVER_USER:-emby}
 EMBYSERVER_REPO=${EMBYSERVER_REPO:-emby}
+EMBYSERVER_CONFIG=${EMBYSERVER_CONFIG:-emby}
 
 install_embyserver() {
   echo "Installing Emby Server..."
@@ -16,7 +17,7 @@ install_embyserver() {
     sed -i -e s%"EMBYSERVER_USER:-emby"%"EMBYSERVER_USER:-${EMBYSERVER_USER}"%1 /target/emby-server
   fi
 
-  if [ -n $EMBYSERVER_CONFIG ]; then
+  if [ "${EMBYSERVER_CONFIG}" != "emby" ] && [ -n "${EMBYSERVER_CONFIG}" ]; then
     echo "Updating data config directory."
     sed -i -e s%"\(EMBYSERVER_CONFIG=\).*"%"\1${EMBYSERVER_CONFIG}"%1 /target/emby-server
   fi

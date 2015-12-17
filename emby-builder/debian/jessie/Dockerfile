@@ -22,7 +22,6 @@ RUN apt-get update \
     lsb-release \
     make \
     openssh-client \
-    libembymagickwand-6.q8-2 \
     pristine-tar \
     rsync \
     wget \

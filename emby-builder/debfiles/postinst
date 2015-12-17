@@ -27,7 +27,7 @@ case "$1" in
 
     # create emby user if it does not exist
     if ! getent passwd emby > /dev/null; then
-      adduser --system --ingroup emby --shell /bin/false emby \
+      adduser --system --ingroup emby --shell /bin/false emby --no-create-home --home ${PROGRAMDATA} \
         --gecos "Emby Server default user" > /dev/null 2>&1
     fi
 
@@ -54,7 +54,14 @@ case "$1" in
     db_get $NAME/user
     dbuser="$RET"
 
-    [ -n "$dbuser" ] && [ "ok" != "$dbuser" ]  && sed -i "s#\(EB_USER.*=\).*#\1\"$dbuser\"#" $DEFAULT_FILE
+    if [ -n "$dbuser" ] && [ "ok" != "$dbuser" ]; then
+      # Get default group of user
+      gid=$(getent passwd $dbuser | awk -F ':' '{print $4}')
+      group_name=$(getent group $gid | awk -F ':' '{print $1}')
+      sed -i "s#\(EMBY_USER.*=\).*#\1\"$dbuser\"#" $DEFAULT_FILE
+      sed -i "s#\(EMBY_GROUP.*=\).*#\1\"$group_name\"#" $DEFAULT_FILE
+    fi
+    /usr/bin/mono --aot=full -O=all $EMBY_BIN > /dev/null 2>&1
     ;;
     abort-upgrade|abort-remove|abort-deconfigure)
     ;;

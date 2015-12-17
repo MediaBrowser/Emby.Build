@@ -8,7 +8,8 @@ VOLUMES = \
 ENV_VARS = \
 		   --env="USER_UID=$(shell id -u)" \
 		   --env="USER_GID=$(shell id -g)" \
-		   --env="BUILD_USER=${USER}"
+		   --env="BUILD_USER=${USER}" \
+		   --env="DEBUG=${DEBUG}"
 
 PORTS = \
 		-p 8096:8096

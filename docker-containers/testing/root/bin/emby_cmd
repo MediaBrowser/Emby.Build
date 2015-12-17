@@ -15,6 +15,12 @@ install_embyserver() {
     echo "Updating user to ${EMBYSERVER_USER}..."
     sed -i -e s%"EMBYSERVER_USER:-emby"%"EMBYSERVER_USER:-${EMBYSERVER_USER}"%1 /target/emby-server
   fi
+
+  if [ -n $EMBYSERVER_CONFIG ]; then
+    echo "Updating data config directory."
+    sed -i -e s%"\(EMBYSERVER_CONFIG=\).*"%"\1${EMBYSERVER_CONFIG}"%1 /target/emby-server
+  fi
+
   exec s6-svscanctl -t /var/run/s6/services
 }
 

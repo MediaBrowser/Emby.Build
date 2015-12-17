@@ -11,7 +11,7 @@
   </Description>
   <Registry>https://registry.hub.docker.com/u/emby/emby-server/</Registry>
   <GitHub>https://github.com/MediaBrowser/Emby.Build/tree/new-docker/docker-containers/testing/</GitHub>
-  <Repository>emby/emby-server</Repository>
+  <Repository>emby/emby-server:testing</Repository>
   <BindTime>true</BindTime>
   <Privileged>false</Privileged>
   <Environment/>

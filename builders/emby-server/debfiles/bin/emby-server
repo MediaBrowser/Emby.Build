@@ -21,10 +21,6 @@ else
   echo "${CONF_FILE} not found using default settings.";
 fi
 
-# Run as username
-$EMBY_USER
-$EMBY_GROUP
-
 # Ensure the runas user has restart privilege to restart the service if not try to add the user to emby group. WARN on failure
 if [ "$EMBY_USER" != "emby" ]; then
 	groups $EMBY_USER | grep -q emby

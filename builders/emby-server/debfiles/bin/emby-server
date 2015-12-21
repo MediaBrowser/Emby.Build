@@ -22,13 +22,21 @@ else
 fi
 
 # Run as username
-USER=$EMBY_USER
-GROUP=$EMBY_GROUP
+$EMBY_USER
+$EMBY_GROUP
 
-# Ensure user has restart permission
-if [ "$USER" != "emby " ]; then
-  ! $(sed -n -e '/^emby/p' /etc/group | grep -q "$USER") && \
-    usermod -a -G emby $USER > /dev/null 2>&1
+# Ensure the runas user has restart privilege to restart the service if not try to add the user to emby group. WARN on failure
+if [ "$EMBY_USER" != "emby" ]; then
+	groups $EMBY_USER | grep -q emby
+	if [ $? -ne 0 ]; then
+		if [ $USER == "root"   ]; then
+      usermod -a -G emby $EMBY_USER
+		else
+			echo "WARNING: The runas user is not part of emby group and you don't have enough privileges to add it. The restart button in the GUI will probably fail."
+			echo "To solve this start the emby-server service using the startup scripts (systemd/sysv) or"
+			echo "add the runas user ($EMBY_USER) to the emby group manually and restart Emby."
+		fi
+	fi
 fi
 
 # Data directory where Emby database, cache and logs are stored
@@ -77,20 +85,32 @@ PID_PATH=`dirname $PIDFILE`
 
 # Create programdata  directory if not exist and ensure the emby user can write to it
 if [ ! -d $PROGRAMDATA ]; then
-  mkdir -p $PROGRAMDATA
+  if [ "$USER" == "root"]; then
+    mkdir -p $PROGRAMDATA
+  else
+			echo "WARNING: $EMBY_DATA directory does not exist."
+      echo "To solve this, if it is an upgrade verify that \"EMBY_DATA\" is set to the correct path in /etc/emby-server.conf."
+      echo "You may need to locate the path of your library files and set EMBY_DATA to that path."
+      echo "If this is an new installation please rerun last command with elevated permissions."
+  fi
 fi
 
 # Set right permission for directories
 DATA_CURRENT_USER=`ls -lad $PROGRAMDATA | awk '{print $3}'`
 
-if [ "$DATA_CURRENT_USER" != "$USER" ]; then
-  chown -R $USER.$GROUP $PROGRAMDATA
+if [ "$DATA_CURRENT_USER" != "$EMBY_USER" ]; then
+  if [ "$USER" == "root"]; then
+    chown -R $EMBY_USER.$EMBY_GROUP $PROGRAMDATA
+  else
+    echo "WARNING: $EMBY_DATA directory does not have the correct permissions."
+    echo "Please rerun this script with elevated permissions."
+  fi
 fi
 
 case "$1" in
   start)
     echo $$ > $PIDFILE
-    exec su -s /bin/sh -c 'exec "$0" "$@"' $USER -- \
+    exec su -s /bin/sh -c 'exec "$0" "$@"' $EMBY_USER -- \
       env $MONO_EXEC_ENV $MONO_EXEC $MONO_EXEC_OPTS $EMBY_EXEC $EMBY_OPTS > $LOG_FILE 2>&1
     ;;
   clear)

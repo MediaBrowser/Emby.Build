@@ -79,7 +79,7 @@ create_changelog() {
 
 build_package() {
   cd /var/cache/buildarea/emby-source
-  if [ -n "$(command -v git-buildpackages)" ]; then
+  if [ -n "$(command -v git-buildpackage)" ]; then
     git-buildpackage --git-ignore-branch --git-ignore-new --git-builder=debuild -i.git -I.git -uc -us
   else
     gbp buildpackage --git-ignore-branch --git-ignore-new --git-builder=debuild -i.git -I.git -uc -us

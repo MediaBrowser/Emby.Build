@@ -4,7 +4,7 @@ After=docker.service
 
 [Service]
 Type=forking
-ExecStartPre=/usr/bin/docker pull emby/emby-server:latest
+ExecStartPre=/usr/bin/docker pull emby/emby-server:testing
 ExecStart=/usr/local/bin/emby-server
 Restart=on-abort
 TimeoutSec=20

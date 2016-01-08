@@ -1,0 +1,6 @@
+usr/lib/emby-server/*/ImageMagick-*/config-*/*
+usr/lib/emby-server/*/ImageMagick-*/modules-*/coders/*.la
+usr/lib/emby-server/*/ImageMagick-*/modules-*/coders/*.so
+usr/lib/emby-server/*/ImageMagick-*/modules-*/filters/*.la
+usr/lib/emby-server/*/ImageMagick-*/modules-*/filters/*.so
+usr/lib/emby-server/*/libMagickCore*.*.so.*

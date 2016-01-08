@@ -1,0 +1,40 @@
+#!/usr/bin/with-contenv bash
+# vim:set ft=sh sw=2 sts=2 st=2 et:
+
+USER_UID=${USER_UID:-1000}
+USER_GID=${USER_GID:-1000}
+
+EMBYSERVER_USER=${EMBYSERVER_USER:-emby}
+EMBYSERVER_REPO=${EMBYSERVER_REPO:-emby}
+
+# del emby user and group
+groupdel -f emby 2> /dev/null
+userdel -f emby 2> /dev/null
+
+if getent group ${USER_GID} > /dev/null; then
+  groupdel -f ${USER_GID} 2> /dev/null
+fi
+
+# add USER GID
+if ! getent group ${EMBYSERVER_USER} > /dev/null; then
+  groupadd -f -g ${USER_GID} ${EMBYSERVER_USER} > /dev/null 2>&1
+fi
+
+if getent passwd ${USER_UID} > /dev/null; then
+  userdel ${USER_UID} 2> /dev/null
+fi
+
+# create user with USER_UID
+if ! getent passwd ${EMBYSERVER_USER} > /dev/null; then
+  useradd --system \
+    --shell /bin/false \
+    --no-create-home \
+    --uid ${USER_UID} \
+    --gid ${USER_GID} \
+    --comment 'Emby Server' ${EMBYSERVER_USER} > /dev/null 2>&1
+fi
+
+# ensure the group emby exist no matter what
+if ! getent group emby  > /dev/null; then
+  groupadd -f emby > /dev/null 2>&1
+fi

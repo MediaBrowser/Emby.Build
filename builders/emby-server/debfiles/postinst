@@ -1,0 +1,57 @@
+#!/bin/sh
+set -e
+
+NAME=emby-server
+CONF_FILE=/etc/${NAME}.conf
+DEFAULT_FILE=/etc/default/${NAME}
+
+# Source Emby server default configuration
+if [ -f $DEFAULT_FILE ]; then
+  . $DEFAULT_FILE
+fi
+
+# Source Emby server user configuration overrides
+if [ -f $CONF_FILE ]; then
+  . $CONF_FILE
+fi
+
+# Data directory where Emby database, cache and logs are stored
+PROGRAMDATA=${EMBY_DATA-/var/lib/$NAME}
+
+case "$1" in
+  configure)
+    # create emby group if it does not exist
+    if ! getent group emby > /dev/null; then
+      addgroup --quiet --system emby > /dev/null 2>&1
+    fi
+
+    # create emby user if it does not exist
+    if ! getent passwd emby > /dev/null; then
+      adduser --system --ingroup emby --shell /bin/false emby --no-create-home --home ${PROGRAMDATA} \
+        --gecos "Emby Server default user" > /dev/null 2>&1
+    fi
+
+    # ensure $PROGRAMDATA has appropriate permissions
+    if [ ! -d $PROGRAMDATA ]; then
+      mkdir $PROGRAMDATA
+      chown -R emby:emby $PROGRAMDATA
+    fi
+
+    # ensure emby-server binary has appropriate permissions
+    chmod 755 /usr/bin/emby-server
+
+    /usr/bin/mono --aot=full -O=all $EMBY_BIN > /dev/null 2>&1 || true
+
+    chmod +x ${EMBY_DIR}/restart.sh > /dev/null 2>&1 || true
+
+    ;;
+    abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
+    *)
+      echo "postinst called with unknown argument \`$1'" >&2
+      exit 1
+    ;;
+esac
+
+#DEBHELPER#
+exit 0

@@ -1,0 +1,9 @@
+#!/bin/bash
+
+echo "Stopping Emby..."
+s6-svc -d /var/run/s6/services/emby-server > /dev/null 2>&1
+echo "Updating Emby..."
+zypper --quiet --non-interactive ref > /dev/null 2>&1
+zypper --quiet --non-interactive up -f emby-server > /dev/null 2>&1
+echo "Starting Emby..."
+s6-svc -u /var/run/s6/services/emby-server > /dev/null 2>&1

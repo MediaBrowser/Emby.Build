@@ -25,6 +25,16 @@
       </Port>
     </Publish>
   </Networking>
+  <Environment>
+    <Variable>
+      <Name>USER_UID</Name>
+      <Value>99</Value>
+    </Variable>
+    <Variable>
+      <Name>USER_GID</Name>
+      <Value>100</Value>
+    </Variable>
+  </Environment>
   <Data>
     <Volume>
         <HostDir>/mnt/cache/appdata/emby-server</HostDir>

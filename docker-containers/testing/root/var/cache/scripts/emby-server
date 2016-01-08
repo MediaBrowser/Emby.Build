@@ -1,0 +1,116 @@
+#!/bin/bash
+
+PATH=/usr/sbin:/usr/bin:/sbin:/bin
+EMBYSERVER_USER=${EMBYSERVER_USER:-$USER}
+EMBYSERVER_REPO=${EMBYSERVER_REPO:-emby}
+EMBYSERVER_CONFIG=${EMBYSERVER_CONFIG:-"/home/${EMBYSERVER_USER}/.emby-server"}
+( id -Gn | grep -q docker ) || SUDO=sudo
+
+if [ ${EMBYSERVER_USER} != "emby" ]; then
+  USER_UID=$(getent passwd $EMBYSERVER_USER | awk -F":" '{print $3}')
+  USER_GID=$(getent passwd $EMBYSERVER_USER | awk -F":" '{print $4}')
+else
+  USER_UID=$(id -u)
+  USER_GID=$(id -g)
+fi
+
+list_options() {
+  echo ""
+  echo "Launch emby-server using:"
+  echo "  emby-server                          - Launch emby-server"
+  echo "  emby-server bash                     - Launch bash shell in emby-server container"
+  echo ""
+  exit 1
+}
+
+cleanup_stopped_emby-server_instances() {
+  echo "Cleaning up stopped emby-server instances..."
+  for c in $(${SUDO} docker ps -a -q)
+  do
+    image=$(${SUDO} docker inspect -f {{.Config.Image}} ${c})
+    if [[ ${image} == "${EMBYSERVER_REPO}/emby-server:latest" ]]; then
+      running=$(${SUDO} docker inspect -f {{.State.Running}} ${c})
+      if [[ ${running} != true ]]; then
+        ${SUDO} docker rm -v "${c}" >/dev/null
+      fi
+    fi
+  done
+}
+
+prepare_docker_env_parameters() {
+  ENV_VARS+=" --env=USER_UID=${USER_UID}"
+  ENV_VARS+=" --env=USER_GID=${USER_GID}"
+  ENV_VARS+=" --env=EMBYSERVER_USER=${EMBYSERVER_USER}"
+  if [ -f /etc/timezone ]; then
+    ENV_VARS+=" --env=TZ=$(cat /etc/timezone)"
+  else
+    [ ! -z "${TIMEZONE}" ] && ENV_VARS+=" --env=TZ=${TIMEZONE}"
+  fi
+}
+
+prepare_docker_volume_parameters() {
+  if [ ! -d "${EMBYSERVER_CONFIG}" ]; then
+    mkdir -p ${EMBYSERVER_CONFIG}
+  fi
+  chown -R ${USER_UID}:${USER_GID} ${EMBYSERVER_CONFIG}
+  # prepare local filesystems
+  VOLUMES+=" --volume=${EMBYSERVER_CONFIG}:/config"
+}
+
+prepare_user_volume_parameters() {
+  if [ ! -e "${EMBYSERVER_CONFIG}/.embydockervolumes" ]; then
+    declare -a user_volumes
+    echo "We could not find existing settings for your media files."
+    echo "Pleae enter the parent directories of your media files, one entry per line."
+    echo "Enter \"done\" when finished"
+    while read mediapath; do
+      if [ "$mediapath" == "done" ]; then
+        break
+      fi
+      if [ ! -d "$mediapath" ]; then
+        echo "Sorry, $mediapath is not a valid path."
+      else
+        user_volumes+=("$mediapath")
+      fi
+    done < /dev/stdin
+
+    for user_volume in "${user_volumes[@]}"; do
+      echo "${user_volume}" >> "${EMBYSERVER_CONFIG}/.embydockervolumes"
+    done
+  fi
+
+  # setup user volumes
+  while read user_volume; do
+    VOLUMES+=" --volume=${user_volume}:${user_volume}"
+  done < "${EMBYSERVER_CONFIG}/.embydockervolumes"
+}
+
+prog=$(basename $0)
+if [[ ${prog} == "emby-server" ]]; then
+  [ "${1}" == "bash" ] && \
+    prog=bash && \
+    shift
+  [[ "${1}" == "help" ]] && list_options && exit 1
+fi
+
+cleanup_stopped_emby-server_instances
+prepare_docker_env_parameters
+prepare_docker_volume_parameters
+prepare_user_volume_parameters
+
+echo "Starting ${prog}..."
+if [ "${prog}" != "emby-server" ]; then
+  ${SUDO} docker run -it \
+    --net=host \
+    ${ENV_VARS} \
+    ${VOLUMES} \
+    --name=emby-server \
+    ${EMBYSERVER_REPO}/emby-server:latest ${prog} $@
+else
+  ${SUDO} docker run -d \
+    --net=host \
+    ${ENV_VARS} \
+    ${VOLUMES} \
+    --name=emby-server \
+    ${EMBYSERVER_REPO}/emby-server:latest >/dev/null
+fi

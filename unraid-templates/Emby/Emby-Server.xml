@@ -34,6 +34,10 @@
       <Name>USER_GID</Name>
       <Value>100</Value>
     </Variable>
+    <Variable>
+      <Name>EMBYSERVER_USER</Name>
+      <Value>embyuser</Value>
+    </Variable>
   </Environment>
   <Data>
     <Volume>

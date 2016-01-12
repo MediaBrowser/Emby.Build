@@ -1,13 +1,10 @@
 #Allow emby group to start, stop and restart itself
-Cmnd_Alias RESTARTSERVER_SYSV = /sbin/service emby-server restart
-Cmnd_Alias STARTSERVER_SYSV = /sbin/service emby-server start
-Cmnd_Alias STOPSERVER_SYSV = /sbin/service emby-server stop
-Cmnd_Alias RESTARTSERVER_SYSTEMD = /usr/bin/systemctl restart emby-server
-Cmnd_Alias STARTSERVER_SYSTEMD = /usr/bin/systemctl start emby-server
-Cmnd_Alias STOPSERVER_SYSTEMD = /usr/bin/systemctl stop emby-server
-Cmnd_Alias RESTARTSERVER_SYSTEMD_DEBIAN = /bin/systemctl restart emby-server
-Cmnd_Alias STARTSERVER_SYSTEMD_DEBIAN = /bin/systemctl start emby-server
-Cmnd_Alias STOPSERVER_SYSTEMD_DEBIAN = /bin/systemctl stop emby-server
+Cmnd_Alias RESTARTSERVER_SYSV = service emby-server restart
+Cmnd_Alias STARTSERVER_SYSV = service emby-server start
+Cmnd_Alias STOPSERVER_SYSV = service emby-server stop
+Cmnd_Alias RESTARTSERVER_SYSTEMD = systemctl restart emby-server
+Cmnd_Alias STARTSERVER_SYSTEMD = systemctl start emby-server
+Cmnd_Alias STOPSERVER_SYSTEMD = systemctl stop emby-server
 Cmnd_Alias RESTARTSERVER_INITD = /etc/init.d/emby-server restart
 Cmnd_Alias STARTSERVER_INITD = /etc/init.d/emby-server start
 Cmnd_Alias STOPSERVER_INITD = /etc/init.d/emby-server stop

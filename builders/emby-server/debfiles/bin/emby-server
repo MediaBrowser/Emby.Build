@@ -11,6 +11,8 @@ DEFAULT_FILE=/etc/default/${NAME}
 SCRIPTNAME=/usr/bin/emby-server
 LOG_FILE=/var/log/${NAME}.log
 
+EXEC_UID="$(id -u)"
+
 # Source Emby server default configuration
 . $DEFAULT_FILE
 
@@ -23,16 +25,16 @@ fi
 
 # Ensure the runas user has restart privilege to restart the service if not try to add the user to emby group. WARN on failure
 if [ "$EMBY_USER" != "emby" ]; then
-	groups $EMBY_USER | grep -q emby
-	if [ $? -ne 0 ]; then
-		if [ $USER == "root"   ]; then
+  groups $EMBY_USER | grep -q emby
+  if [ $? -ne 0 ]; then
+    if [ "$EXEC_UID" -eq "0" ]; then
       usermod -a -G emby $EMBY_USER
 		else
-			echo "WARNING: The runas user is not part of emby group and you don't have enough privileges to add it. The restart button in the GUI will probably fail."
-			echo "To solve this start the emby-server service using the startup scripts (systemd/sysv) or"
-			echo "add the runas user ($EMBY_USER) to the emby group manually and restart Emby."
-		fi
-	fi
+      echo "WARNING: The runas user is not part of emby group and you don't have enough privileges to add it. The restart button in the GUI will probably fail."
+      echo "To solve this start the emby-server service using the startup scripts (systemd/sysv) or"
+      echo "add the runas user ($EMBY_USER) to the emby group manually and restart Emby."
+    fi
+  fi
 fi
 
 # Data directory where Emby database, cache and logs are stored
@@ -81,7 +83,7 @@ PID_PATH=`dirname $PIDFILE`
 
 # Create programdata  directory if not exist and ensure the emby user can write to it
 if [ ! -d $PROGRAMDATA ]; then
-  if [ "$USER" == "root"]; then
+  if [ "$EXEC_UID" -eq "0"]; then
     mkdir -p $PROGRAMDATA
   else
 			echo "WARNING: $EMBY_DATA directory does not exist."
@@ -95,7 +97,7 @@ fi
 DATA_CURRENT_USER=`ls -lad $PROGRAMDATA | awk '{print $3}'`
 
 if [ "$DATA_CURRENT_USER" != "$EMBY_USER" ]; then
-  if [ "$USER" == "root"]; then
+  if [ "$EXEC_UID" -eq "0"]; then
     chown -R $EMBY_USER.$EMBY_GROUP $PROGRAMDATA
   else
     echo "WARNING: $EMBY_DATA directory does not have the correct permissions."

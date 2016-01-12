@@ -16,5 +16,9 @@ for restart_cmd in "${restart_cmds[@]}"; do
   cmd_loc=$(command -v ${cmd})
   if [ -n $cmd_loc ]; then
     exec sudo $restart_cmd > /dev/null 2>&1 || true
+    sleep 1
+    if ! kill -0 $EMBY_PID > /dev/null; then
+      break
+    fi
   fi
 done

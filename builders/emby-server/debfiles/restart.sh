@@ -14,8 +14,8 @@ PIDFILE=`find /var/run -name "emby*.pid" -print -quit`
 for restart_cmd in "${restart_cmds[@]}"; do
   cmd=$(echo "$restart_cmd" | awk '{print $1}')
   cmd_loc=$(command -v ${cmd})
-  if [ -n $cmd_loc ]; then
-    restart_cmd=$(echo $restart_cmd | sed -e "s%${cmd}%${cmd_loc}%")
+  if [ -n "$cmd_loc" ]; then
+    restart_cmd=$(echo "$restart_cmd" | sed -e "s%${cmd}%${cmd_loc}%")
     exec sudo $restart_cmd > /dev/null 2>&1 || true
     sleep 1
     if ! kill -0 $EMBY_PID > /dev/null; then

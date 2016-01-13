@@ -1,3 +1,0 @@
-#!/bin/bash
-
-exec emby_cmd uinstall_service

@@ -1,11 +1,11 @@
 #!/bin/bash
 
-echo "Stopping Emby..."
+echo "Stopping ${APP_NAME}..."
 s6-svc -d /var/run/s6/services/emby-server > /dev/null 2>&1
-echo "Updating Emby..."
+echo "Updating ${APP_NAME}..."
 zypper --quiet --non-interactive ref > /dev/null 2>&1
-zypper --quiet --non-interactive up --no-recommends emby-server > /dev/null 2>&1
+zypper --quiet --non-interactive up --no-recommends ${PKG_NAME} > /dev/null 2>&1
 zypper cc --all
 rm -rf /var/cache/zypp*
-echo "Starting Emby..."
+echo "Starting ${APP_NAME}..."
 s6-svc -u /var/run/s6/services/emby-server > /dev/null 2>&1

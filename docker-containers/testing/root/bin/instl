@@ -1,0 +1,33 @@
+#!/bin/bash
+
+APP_USER=${APP_USER:-appuser}
+
+install_app() {
+echo "Installing ${APP_NAME}..."
+install -m 0755 /var/cache/scripts/${APP_NAME} /target/
+if [ -n "${APP_REPO}" ]; then
+  echo "Updating image repo to ${APP_REPO}..."
+  sed -i -e s%"-emby"%"-${APP_REPO}"%1 /target/${APP_NAME}
+fi
+
+if [ "${APP_USER}" != "appuser" ] && [ -n "${APP_USER}" ]; then
+  echo "Updating user to ${APP_USER}..."
+  sed -i -e s%"\(APP_USER=\).*"%"\1${APP_USER}"%1 /target/${APP_NAME}
+fi
+}
+
+install_service() {
+  echo "Installing ${APP_NAME} Service..."
+  install -m 0755 /var/cache/systemd/${APP_NAME}.service /target/
+  sed -i -e s%":tag"%":${IMG_NAME_AND_TAG}"%1 /target/${APP_NAME}.service
+  echo "Please run: sudo systemctl daemon-reload"
+  echo "To start run: sudo systemctl start ${APP_NAME}"
+}
+
+if [ -z "$1" ]; then
+  install_app
+else
+  if [ "$1" -eq "service" ]; then
+    install_service
+  fi
+fi

@@ -1,7 +1,7 @@
 FROM opensuse:tumbleweed
 MAINTAINER Carlos Hernandez <carlos@techbyte.ca>
 
-ENV LANG="en_US.UTF-8" s6_overlay_version="1.17.1.1" S6_LOGGING="1"
+ENV LANG="en_US.UTF-8" s6_overlay_version="1.17.1.1"
 
 RUN zypper addrepo http://download.opensuse.org/repositories/home:emby/openSUSE_Tumbleweed/home:emby.repo \
  && zypper --gpg-auto-import-keys ref \

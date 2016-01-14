@@ -4,8 +4,7 @@
 USER_UID=${USER_UID:-1000}
 USER_GID=${USER_GID:-1000}
 
-EMBYSERVER_USER=${EMBYSERVER_USER:-emby}
-EMBYSERVER_REPO=${EMBYSERVER_REPO:-emby}
+APP_USER=${APP_USER:-appuser}
 
 # del emby user and group
 groupdel -f emby 2> /dev/null
@@ -16,8 +15,8 @@ if getent group ${USER_GID} > /dev/null; then
 fi
 
 # add USER GID
-if ! getent group ${EMBYSERVER_USER} > /dev/null; then
-  groupadd -f -g ${USER_GID} ${EMBYSERVER_USER} > /dev/null 2>&1
+if ! getent group ${APP_USER} > /dev/null; then
+  groupadd -f -g ${USER_GID} ${APP_USER} > /dev/null 2>&1
 fi
 
 if getent passwd ${USER_UID} > /dev/null; then
@@ -25,13 +24,13 @@ if getent passwd ${USER_UID} > /dev/null; then
 fi
 
 # create user with USER_UID
-if ! getent passwd ${EMBYSERVER_USER} > /dev/null; then
+if ! getent passwd ${APP_USER} > /dev/null; then
   useradd --system \
     --shell /bin/false \
     --no-create-home \
     --uid ${USER_UID} \
     --gid ${USER_GID} \
-    --comment 'Emby Server' ${EMBYSERVER_USER} > /dev/null 2>&1
+    --comment 'Emby Server' ${APP_USER} > /dev/null 2>&1
 fi
 
 # ensure the group emby exist no matter what

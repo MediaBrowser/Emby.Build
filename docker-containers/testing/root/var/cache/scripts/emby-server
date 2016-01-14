@@ -1,6 +1,7 @@
 #!/bin/bash
 
 PATH=/usr/sbin:/usr/bin:/sbin:/bin
+APP_NAME="emby-server"
 APP_USER=${APP_USER:-$USER}
 APP_REPO=${APP_REPO:-emby}
 APP_CONFIG=${APP_CONFIG:-"/home/${APP_USER}/.${APP_NAME}"}

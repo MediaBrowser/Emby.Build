@@ -1,7 +1,10 @@
 all: build
 
 APP_NAME="emby-server"
+
+ifndef APP_REPO
 APP_REPO=${USER}
+endif
 
 ENV_VARS= \
 	--env="APP_REPO=${APP_REPO}" \
@@ -26,18 +29,8 @@ build:
 
 emby-server: clean build
 
-install: clean build
+instl uninstl: clean build
 	@docker run -it --rm \
 		-v /usr/local/bin:/target \
 		${ENV_VARS} \
-		${APP_REPO}/${APP_NAME} instl
-
-service: clean build
-	@docker run -it --rm \
-		-v /usr/local/bin:/target \
-		${ENV_VARS} \
-		${APP_REPO}/${APP_NAME} instl
-	@docker run -it --rm \
-		-v /etc/systemd/system:/target \
-		${ENV_VARS} \
-		${APP_REPO}/${APP_NAME} instl service
+		${APP_REPO}/${APP_NAME} $@

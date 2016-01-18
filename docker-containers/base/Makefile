@@ -1,6 +1,6 @@
 all: build
 
-APP_NAME="emby-base"
+IMG_NAME="emby-base"
 
 ifndef APP_REPO
 APP_REPO=${USER}
@@ -14,12 +14,12 @@ help:
 	@echo ""
 
 clean:
-	@docker rm -f `docker ps -a | grep "${APP_REPO}/${APP_NAME}" | awk '{print $$1}'` > /dev/null 2>&1 || exit 0
-	@docker rmi `docker images  | grep "${APP_REPO}/${APP_NAME}" | awk '{print $$3}'` > /dev/null 2>&1 || exit 0
+	@docker rm -f `docker ps -a | grep "${APP_REPO}/${IMG_NAME}" | awk '{print $$1}'` > /dev/null 2>&1 || exit 0
+	@docker rmi `docker images  | grep "${APP_REPO}/${IMG_NAME}" | awk '{print $$3}'` > /dev/null 2>&1 || exit 0
 
 build:
 	@docker build \
 		--rm=true \
-		--tag=${APP_REPO}/${APP_NAME} .
+		--tag=${APP_REPO}/${IMG_NAME} .
 
 base: build

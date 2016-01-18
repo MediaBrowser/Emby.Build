@@ -1,8 +1,9 @@
 all: build
 
-IMG_BUILD_USER=emby
-ifdef BUILD_USER
-IMG_BUILD_USER=${BUILD_USER}
+IMG_NAME="emby-base"
+
+ifndef APP_REPO
+APP_REPO=${USER}
 endif
 
 help:
@@ -13,10 +14,12 @@ help:
 	@echo ""
 
 clean:
-	@docker rm -f `docker ps -a | grep "${IMG_BUILD_USER}/emby-base" | awk '{print $$1}'` > /dev/null 2>&1 || exit 0
-	@docker rmi `docker images  | grep "${IMG_BUILD_USER}/emby-base" | awk '{print $$3}'` > /dev/null 2>&1 || exit 0
+	@docker rm -f `docker ps -a | grep "${APP_REPO}/${IMG_NAME}" | awk '{print $$1}'` > /dev/null 2>&1 || exit 0
+	@docker rmi `docker images  | grep "${APP_REPO}/${IMG_NAME}" | awk '{print $$3}'` > /dev/null 2>&1 || exit 0
 
 build:
-	@docker build --rm=true --tag=${IMG_BUILD_USER}/emby-base .
+	@docker build \
+		--rm=true \
+		--tag=${APP_REPO}/${IMG_NAME} .
 
 base: build

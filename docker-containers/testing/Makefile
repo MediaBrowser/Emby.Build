@@ -1,32 +1,36 @@
 all: build
 
-IMG_BUILD_USER=emby
-ifdef BUILD_USER
-IMG_BUILD_USER=${BUILD_USER}
+APP_NAME="emby-server"
+
+ifndef APP_REPO
+APP_REPO=${USER}
 endif
+
+ENV_VARS= \
+	--env="APP_REPO=${APP_REPO}" \
+	--env="APP_USER=${USER}"
 
 help:
 	@echo ""
 	@echo "-- Help Menu"
 	@echo ""
-	@echo "   1. make build             - build the emby-sever base image"
-	@echo "   2. make clean             - remove the emby-sever base image and containers"
-	@echo "   3. make install           - install emby-sever wrapper script for docker"
-	@echo "   4. make emby-server       - build emby-server image and run"
+	@echo "   1. make build             - build the ${APP_NAME} base image"
+	@echo "   2. make clean             - remove the ${APP_NAME} base image and containers"
+	@echo "   3. make install           - install ${APP_NAME} wrapper script for docker"
+	@echo "   4. make ${APP_NAME}       - build ${APP_NAME} image and run"
 	@echo ""
 
 clean:
-	@docker rm -f `docker ps -a | grep "${IMG_BUILD_USER}/emby-server" | awk '{print $$1}'` > /dev/null 2>&1 || exit 0
-	@docker rmi `docker images  | grep "${IMG_BUILD_USER}/emby-server" | awk '{print $$3}'` > /dev/null 2>&1 || exit 0
+	@docker rm -f `docker ps -a | grep "${APP_REPO}/${APP_NAME}" | awk '{print $$1}'` > /dev/null 2>&1 || exit 0
+	@docker rmi `docker images  | grep "${APP_REPO}/${APP_NAME}" | awk '{print $$3}'` > /dev/null 2>&1 || exit 0
 
 build:
-	@docker build --rm=true --tag=${IMG_BUILD_USER}/emby-server .
+	@docker build --rm=true --tag=${APP_REPO}/${APP_NAME} .
 
-emby-server: build
+emby-server: clean build
 
-install: clean build
-	@docker run -it --rm -v /usr/local/bin:/target emby/emby-server install_emby
-
-service: clean build
-	@docker run -it --rm -v /usr/local/bin:/target emby/emby-server install_emby
-	@docker run -it --rm -v /etc/systemd/system:/target emby/emby-server install_service
+instl uninstl: clean build
+	@docker run -it --rm \
+		-v /usr/local/bin:/target \
+		${ENV_VARS} \
+		${APP_REPO}/${APP_NAME} $@

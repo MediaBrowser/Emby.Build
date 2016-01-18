@@ -1,6 +1,8 @@
 #!/usr/bin/with-contenv sh
 # vim:set ft=sh sw=2 sts=2 st=2 et:
 
+APP_USER=${APP_USER:-appuser}
+
 echo "EMBY_USER=${APP_USER}" >> /etc/emby-server.conf
 echo "EMBY_GROUP=${APP_USER}" >> /etc/emby-server.conf
 echo "EMBY_DATA=/config" >> /etc/emby-server.conf

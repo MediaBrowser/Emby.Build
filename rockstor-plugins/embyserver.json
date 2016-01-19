@@ -41,7 +41,8 @@
                         "index": 2
                     }
                 }
-            },
+            }
+        },
         "description": "Emby media server",
         "more_info": "<h4>Adding media to Emby.</h4><p>You can add Shares(with media) to Emby from the settings wizard of this Rock-on. Then, from Emby WebUI, you can update and re-index your library.</p>",
         "ui": {
@@ -52,3 +53,4 @@
         "version": "1.0"
     }
 }
+

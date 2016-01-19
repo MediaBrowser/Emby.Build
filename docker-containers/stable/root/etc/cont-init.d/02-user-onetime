@@ -37,3 +37,5 @@ fi
 if ! getent group emby  > /dev/null; then
   groupadd -f emby > /dev/null 2>&1
 fi
+
+chown -R $APP_UID:$APP_GID /config

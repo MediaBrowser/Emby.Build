@@ -25,7 +25,7 @@ fi
 if [ "$EMBY_USER" != "emby" ]; then
   groups $EMBY_USER | grep -q emby
   if [ $? -ne 0 ]; then
-    if [ $EUID -eq 0 ]; then
+    if [[ $EUID -eq 0 ]]; then
       usermod -a -G emby $EMBY_USER
 		else
       echo "WARNING: The runas user is not part of emby group and you don't have enough privileges to add it. The restart button in the GUI will probably fail."

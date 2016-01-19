@@ -13,7 +13,7 @@ uninstall_service() {
 if [ -z "$1" ]; then
   uninstall_app
 else
-  if [ "$1" -eq "service" ]; then
+  if [[ "$1" -eq "service" ]]; then
     uninstall_service
   fi
 fi

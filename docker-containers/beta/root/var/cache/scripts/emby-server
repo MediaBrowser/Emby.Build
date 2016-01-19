@@ -8,14 +8,18 @@ APP_USER=${APP_USER:-$USER}
 APP_REPO=${APP_REPO:-emby}
 APP_CONFIG=${APP_CONFIG:-"/home/${APP_USER}/.${APP_NAME}"}
 
-( id -Gn | grep -q docker ) || SUDO=sudo
+( id -Gn | grep -q docker ) || [ $EUID == 0 ] || SUDO=sudo
 
-if [ ${APP_USER} != "emby" ]; then
+if [ ${APP_USER} != "appuser" ]; then
   APP_UID=$(getent passwd $APP_USER | awk -F":" '{print $3}')
   APP_GID=$(getent passwd $APP_USER | awk -F":" '{print $4}')
 else
   APP_UID=$(id -u)
   APP_GID=$(id -g)
+fi
+
+if [ ${APP_USER} == "nobody" ]; then
+  APP_USER="appuser"
 fi
 
 list_options() {
@@ -62,6 +66,12 @@ prepare_docker_volume_parameters() {
 }
 
 prepare_user_volume_parameters() {
+  # Ensure emby data directory exist.
+  if [ ! -d "${APP_CONFIG}" ]; then
+    echo "Error, Emby data directory: ${APP_CONFIG} does not exist."
+    exit 1
+  fi
+
   if [ ! -e "${APP_CONFIG}/.embydockervolumes" ]; then
     declare -a user_volumes
     echo "We could not find existing settings for your media files."

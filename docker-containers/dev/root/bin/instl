@@ -15,6 +15,11 @@ if [ "${APP_USER}" != "appuser" ] && [ -n "${APP_USER}" ]; then
   sed -i -e s%"\(APP_USER=\)\${APP_USER:-\$USER}"%"\1${APP_USER}"%1 /target/${APP_NAME}
 fi
 
+if [ -n "${APP_CONFIG}" ]; then
+  echo "Updating data directory to ${APP_CONFIG}..."
+  sed -i -e s%"\(APP_CONFIG=\).*"%"\1\"${APP_CONFIG}\""%1 /target/${APP_NAME}
+fi
+
 sed -i -e s%"=\"IMG_NAME\""%"=\"${IMG_NAME}\""%1 /target/${APP_NAME}
 sed -i -e s%"=\"TAG_NAME\""%"=\"${TAG_NAME}\""%1 /target/${APP_NAME}
 }
@@ -32,6 +37,8 @@ if [ -z "$1" ]; then
   install_app
 else
   if [[ "$1" -eq "service" ]]; then
-    install_service
+    if [ -f /var/cache/systemd/${APP_NAME}.service ]; then
+      install_service
+    fi
   fi
 fi

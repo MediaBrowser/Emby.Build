@@ -9,12 +9,17 @@ APP_REPO=${USER}
 endif
 
 ENV_VARS= \
-    --env="APP_REPO=${APP_REPO}" \
-    --env="APP_USER=${USER}" \
-    --env="APP_UID=$(shell id -u)" \
-    --env="APP_GID=$(shell id -g)" \
-    --env="IMG_NAME=${IMG_NAME}" \
-    --env="TAG_NAME=${TAG_NAME}"
+		  --env="APP_REPO=${APP_REPO}" \
+		  --env="APP_USER=${USER}" \
+		  --env="APP_UID=$(shell id -u)" \
+		  --env="APP_GID=$(shell id -g)" \
+		  --env="IMG_NAME=${IMG_NAME}" \
+		  --env="TAG_NAME=${TAG_NAME}"
+
+ifdef APP_CONFIG
+INSTL_VARS= \
+			--env="APP_CONFIG=${APP_CONFIG}"
+endif
 
 help:
 	@echo ""
@@ -37,6 +42,7 @@ instl uninstl: clean build
 	@docker run -it --rm \
 		-v /usr/local/bin:/target \
 		${ENV_VARS} \
+		${INSTL_VARS} \
 		${APP_REPO}/${IMG_NAME}:${TAG_NAME} $@
 
 service: build
@@ -44,8 +50,3 @@ service: build
 		-v /etc/systemd/system:/target \
 		${ENV_VARS} \
 		${APP_REPO}/${IMG_NAME}:${TAG_NAME} instl service
-
-${APP_NAME}: clean build
-    @docker run -it --rm \
-		${ENV_VARS} \
-		${APP_REPO}/${APP_NAME}:${TAG_NAME}

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # vim:set ft=sh sw=2 sts=2 st=2 et:
 # Author: HurricaneHernandez <carlos@techbyte.ca>
 # Modified for CentOS/Fedora by: FC7 <casasfernando@outlook.com>

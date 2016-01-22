@@ -43,7 +43,6 @@ case "$1" in
     [ -f /etc/sudoers.d/emby ] && rm /etc/sudoers.d/emby
     [ -f /usr/lib/emby-server/bin/MediaBrowser.Server.Mono.exe.so ] && rm /usr/lib/emby-server/bin/MediaBrowser.Server.Mono.exe.so
     [ -d /usr/lib/emby-server ] && rm -rf /usr/lib/emby-server
-    fi
     ;;
     remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
     ;;

@@ -52,6 +52,9 @@ case "$1" in
         [ -f $PIDFILE ] && rm $PIDFILE
       fi
     fi
+    if [ -f /usr/lib/emby-server/bin/MediaBrowser.Server.Mono.exe.so ]; then
+      rm /usr/lib/emby-server/bin/MediaBrowser.Server.Mono.exe.so
+    fi
     ;;
   failed-upgrade)
     ;;

@@ -23,7 +23,7 @@
       <Name>APP_GID</Name>
       <Value>100</Value>
     </Variable>
-  <Environment/>
+  </Environment>
   <Networking>
     <Mode>host</Mode>
     <Publish>

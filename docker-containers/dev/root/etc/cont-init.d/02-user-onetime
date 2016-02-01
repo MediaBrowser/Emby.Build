@@ -38,4 +38,8 @@ if ! getent group emby  > /dev/null; then
   groupadd -f emby > /dev/null 2>&1
 fi
 
-chown -R $APP_UID:$APP_GID /config
+CURR_UID=$(stat -c%u /config)
+CURR_GID=$(stat -c%u /config)
+if [ "$CURR_UID" != "$APP_UID" ] || [ "$CURR_GID" != "$APP_GID" ]; then
+  chown -R $APP_UID:$APP_GID /config
+fi

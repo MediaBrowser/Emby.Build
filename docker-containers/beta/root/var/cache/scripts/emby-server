@@ -60,7 +60,13 @@ prepare_docker_volume_parameters() {
   if [ ! -d "${APP_CONFIG}" ]; then
     mkdir -p ${APP_CONFIG}
   fi
-  chown -R ${APP_UID}:${APP_GID} ${APP_CONFIG}
+
+  CURR_UID=$(stat -c%u ${APP_CONFIG})
+  CURR_GID=$(stat -c%u ${APP_CONFIG})
+  if [ "$CURR_UID" != "$APP_UID" ] || [ "$CURR_GID" != "$APP_GID" ]; then
+    chown -R $APP_UID:$APP_GID ${APP_CONFIG}
+  fi
+
   # prepare local filesystems
   VOLUMES+=" --volume=${APP_CONFIG}:/config"
 }

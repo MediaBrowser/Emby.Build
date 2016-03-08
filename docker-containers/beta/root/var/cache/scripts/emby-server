@@ -61,9 +61,8 @@ prepare_docker_volume_parameters() {
     mkdir -p ${APP_CONFIG}
   fi
 
-  CURR_UID=$(stat -c%u ${APP_CONFIG})
-  CURR_GID=$(stat -c%u ${APP_CONFIG})
-  if [ "$CURR_UID" != "$APP_UID" ] || [ "$CURR_GID" != "$APP_GID" ]; then
+  CURR_SID=$(stat -c"%u:%g" ${APP_CONFIG})
+  if [ "$CURR_SID" != "$APP_UID:$APP_GID" ] ; then
     chown -R $APP_UID:$APP_GID ${APP_CONFIG}
   fi
 

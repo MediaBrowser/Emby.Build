@@ -3,7 +3,6 @@ Description=Emby Media Server
 After=network.target
 
 [Service]
-EnvironmentFile=/etc/emby-server.conf
 ExecStart=/usr/bin/emby-server start
 Restart=on-abort
 TimeoutSec=20

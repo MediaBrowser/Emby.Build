@@ -27,7 +27,7 @@ DEFAULT_FILE=/etc/default/${NAME}
 . $DEFAULT_FILE
 
 # Source Emby server user configuration overrides
-if [ -f $CONF_FILE ]; then
+if [[ -f $CONF_FILE ]]; then
   . $CONF_FILE
 else
   echo "${CONF_FILE} not found using default settings.";
@@ -40,14 +40,14 @@ PIDFILE=${EMBY_PIDFILE-/var/run/emby-server.pid}
 case "$1" in
   start)
     log_daemon_msg "Starting $NAME daemon"
-    if [ -s $PIDFILE ] && kill -0 $(cat $PIDFILE) >/dev/null 2>&1; then
+    if [[ -s $PIDFILE ]] && [[ -n "$(ps -p $(cat $PIDFILE) -o pid=)" ]]; then
       log_daemon_msg "apparently already running"
       log_end_msg 0
       exit 0
     fi
     exec $EMBYSERVER start &
     sleep 2
-    if [ -s $PIDFILE ] && kill -0 $(cat $PIDFILE) >/dev/null 2>&1; then
+    if [[ -s $PIDFILE ]] && [[ -n "$(ps -p $(cat $PIDFILE) -o pid=)" ]]; then
       log_end_msg 0
     else
       log_end_msg 1
@@ -55,18 +55,18 @@ case "$1" in
     ;;
   stop)
     log_daemon_msg "Stopping $NAME daemon"
-    if [ ! -s $PIDFILE ] || ! kill -0 $(cat $PIDFILE) >/dev/null 2>&1; then
-      [ -e $PIDFILE ] && rm -rf $PIDFILE
+    if [[ ! -s $PIDFILE ]] ||  [[ -z "$(ps -p $(cat $PIDFILE) -o pid=)" ]]; then
+      [[ -e $PIDFILE ]] && rm -rf $PIDFILE
       log_success_msg "apparently already stopped"
       log_end_msg 0
       exit 0
     fi
-    PID=`cat $PIDFILE`
+    PID=$(cat $PIDFILE)
     CPIDS=$(pgrep -P $PID)
     sleep 2 && kill -KILL $CPIDS
     kill -TERM $CPIDS > /dev/null 2>&1
     sleep 2
-    if ! kill -0 $PID > /dev/null 2>&1; then
+    if [[ -z "$(ps -p $PID -o pid=)" ]]; then
       rm -rf $PIDFILE
       log_end_msg 0
     else

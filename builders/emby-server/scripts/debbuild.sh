@@ -4,7 +4,7 @@ set -e
 EMBY_PACKAGES=(mediabrowser emby emby-server-beta emby-server-dev emby-server)
 PACKAGE_NAME=""
 VERSION=""
-COMMIT=""
+SUFFIX=""
 
 build_emby() {
   prep_source
@@ -32,25 +32,25 @@ prep_debfiles() {
 }
 
 prep_source() {
-  git clone https://github.com/MediaBrowser/Emby.git /var/cache/buildarea/emby-source
-  cd /var/cache/buildarea/emby-source
-  if [ "$PACKAGE_NAME" == "emby-server-dev" ] || [ "$PACKAGE_NAME" == "emby-server-beta" ]; then
-    git checkout dev
-  fi
-  # add short commit hash to beta and dev.
-  if [ "$PACKAGE_NAME" == "emby-server-beta" ]; then
-    COMMIT=$(git --no-pager log --oneline --all  | grep -e '^.\{7\}\s3.*'|head -1|awk '{print $1}')
-    VERSION=$(git --no-pager log --oneline --all  | grep -e '^.\{7\}\s3.*'|head -1|awk '{print $2}')
-    # switch to the last beta release
-    git checkout $COMMIT
-    VERSION=${VERSION}.git${COMMIT}
-  elif [ "$PACKAGE_NAME" == "emby-server-dev" ]; then
-    VERSION=$(git --no-pager log --oneline --all  | grep -e '^.\{7\}\s3.*'|head -1|awk '{print $2}')
-    COMMIT=$(git log -n 1 --pretty=format:"%h")
-    VERSION=${VERSION}.git${COMMIT}
+  [[ -d /var/cache/buildarea/emby-source ]] && rm -rf /var/cache/buildarea/emby-source
+  if [[ "$PACKAGE_NAME" == "emby-server-dev" ]]; then
+    _version=$(curl -sL https://github.com/MediaBrowser/Emby/releases.atom | grep "<title>" | grep "dev" | grep -v "note" | sed -e s%".*>\(.*\)<.*"%"\1"% | head -1 | awk -F- '{print $1}')
+    VERSION=${_version}~dev
+    SUFFIX="-dev"
+  elif [ "$PACKAGE_NAME" == "emby-server-beta" ]; then
+    _version=$(curl -sL https://github.com/MediaBrowser/Emby/releases.atom | grep "<title>" | grep "beta" | grep -v "note" | sed -e s%".*>\(.*\)<.*"%"\1"% | head -1 | awk -F- '{print $1}')
+    VERSION=${_version}~beta
+    SUFFIX="-beta"
   else
-    VERSION=$(git --no-pager log master --oneline --all  | grep -e '^.\{7\}\s3.*'|head -1|awk '{print $2}')
+    _version=$(curl -sL https://github.com/MediaBrowser/Emby/releases.atom | grep "<title>" | grep -v "beta" | grep -v "dev" | grep -v "note" | sed -e s%".*>\(.*\)<.*"%"\1"% | head -1)
+    VERSION=${_version}
   fi
+  curl -L https://github.com/MediaBrowser/Emby/archive/$_version.tar.gz -o /tmp/source.tar.gz
+  mkdir -p /var/cache/buildarea/emby-source
+  tar xvf /tmp/source.tar.gz --strip-components=1  -C /var/cache/buildarea/emby-source
+  cp /tmp/source.tar.gz /var/cache/buildarea/emby-server${SUFFIX}-${VERSION}.tar.gz
+  cd /var/cache/buildarea/emby-source
+
   # debianize source
   prep_debfiles
   mv /var/cache/buildarea/debfiles /var/cache/buildarea/emby-source/debian
@@ -79,11 +79,7 @@ create_changelog() {
 
 build_package() {
   cd /var/cache/buildarea/emby-source
-  if [ -n "$(command -v git-buildpackage)" ]; then
-    git-buildpackage --git-ignore-branch --git-ignore-new --git-builder=debuild -i.git -I.git -uc -us
-  else
-    gbp buildpackage --git-ignore-branch --git-ignore-new --git-builder=debuild -i.git -I.git -uc -us
-  fi
+  debuild -uc -us
 }
 
 get_conflicts() {

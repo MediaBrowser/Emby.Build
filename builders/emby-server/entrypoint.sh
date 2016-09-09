@@ -41,6 +41,7 @@ build_emby() {
   else
     echo "Package was built, but test install failed, emby-server build is deffective."
     echo "Package will not be copied to destination."
+    sudo -E -u $BUILD_USER /var/cache/scripts/deliver_deb.sh
   fi
 }
 

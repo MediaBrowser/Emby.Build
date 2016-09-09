@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 
 NAME=emby-server
@@ -6,12 +6,12 @@ CONF_FILE=/etc/${NAME}.conf
 DEFAULT_FILE=/etc/default/${NAME}
 
 # Source Emby server default configuration
-if [ -f $DEFAULT_FILE ]; then
+if [[ -f $DEFAULT_FILE ]]; then
   . $DEFAULT_FILE
 fi
 
 # Source Emby server user configuration overrides
-if [ -f $CONF_FILE ]; then
+if [[ -f $CONF_FILE ]]; then
   . $CONF_FILE
 fi
 
@@ -20,39 +20,34 @@ PROGRAMDATA=${EMBY_DATA-/var/lib/$NAME}
 
 case "$1" in
   remove|upgrade|deconfigure)
-    # try and figure out if emby is running
-    PIDFILE=`find /var/run -name "emby*.pid" -print -quit`
-    [ -n "$PIDFILE" ] && EMBY_PID=`cat ${PIDFILE} 2> /dev/null || true`
+    echo "Stopping Emby Server!"
+    # try graceful termination;
+    if [[ -d /run/systemd/system ]]; then
+      deb-systemd-invoke stop ${NAME}.service > /dev/null || true
+    elif [ -x "/etc/init.d/${NAME}" ] || [ -e "/etc/init/${NAME}.conf" ]; then
+      invoke-rc.d ${NAME} stop 2> /dev/null || true
+    fi
+    # Ensure that it is shutdown
+    PIDFILE=$(find /var/run/ -name "emby*.pid" -print -quit)
+    [[ -n "$PIDFILE" ]] && [[ -s "$PIDFILE" ]] && EMBY_PID=$(cat ${PIDFILE})
     # if its running, let's stop it
-    if [ -n "$EMBY_PID" ]; then
-      echo "Stopping Emby Server!"
-      # try graceful termination;
-      # Figure out how to start/stop emby-server daemon
-      if which systemctl > /dev/null 2>&1; then
-        sysetemctl stop ${NAME} 2>/dev/null || true
-      elif which service >/dev/null 2>&1; then
-        service ${NAME} stop 2>/dev/null || true
-      elif which invoke-rc.d >/dev/null 2>&1; then
-        invoke-rc.d ${NAME} stop 2>/dev/null || true
-      else
-        /etc/init.d/${NAME} stop 2>/dev/null || true
-      fi
+    if [[ -n "$EMBY_PID" ]]; then
       # if emby is still running, kill it
-      if kill -0 $EMBY_PID > /dev/null 2>&1; then
+      if [[ -n "$(ps -p $EMBY_PID -o pid=)" ]]; then
         CPIDS=$(pgrep -P $EMBY_PID)
         sleep 2 && kill -KILL $CPIDS
         kill -TERM $CPIDS > /dev/null 2>&1
       fi
       sleep 1
       # if it's still running, show error
-      if kill -0 $EMBY_PID > /dev/null; then
+      if [[ -n "$(ps -p $EMBY_PID -o pid=)" ]]; then
         echo "Could not successfully stop EmbyServer, please do so before uninstalling."
         exit 1
       else
-        [ -f $PIDFILE ] && rm $PIDFILE
+        [[ -f $PIDFILE ]] && rm $PIDFILE
       fi
     fi
-    if [ -f /usr/lib/emby-server/bin/MediaBrowser.Server.Mono.exe.so ]; then
+    if [[ -f /usr/lib/emby-server/bin/MediaBrowser.Server.Mono.exe.so ]]; then
       rm /usr/lib/emby-server/bin/MediaBrowser.Server.Mono.exe.so
     fi
     ;;
@@ -65,4 +60,5 @@ case "$1" in
 esac
 
 #DEBHELPER#
+
 exit 0

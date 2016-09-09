@@ -2,7 +2,7 @@
 export DH_VERBOSE=1
 
 %:
-	dh $@ --with cli
+	dh $@ --with=cli
 
 # disable "make check"
 override_dh_auto_test:
@@ -26,4 +26,4 @@ override_dh_clideps:
 
 override_dh_installinit:
 	# use "emby-server" as our service name, not "emby-server-beta"
-	dh_installinit --name=emby-server
+	dh_installinit --name=emby-server --no-start --noscripts

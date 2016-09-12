@@ -38,7 +38,7 @@ case "$1" in
     fi
 
     userdel emby > /dev/null 2>&1 || true
-    delgroup --quiet emby 2>&1 || true
+    delgroup --quiet emby > /dev/null 2>&1 || true
     if [[ -d $PROGRAMDATA ]]; then
       rm -rf $PROGRAMDATA
     fi

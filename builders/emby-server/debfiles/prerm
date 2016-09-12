@@ -23,12 +23,12 @@ case "$1" in
     echo "Stopping Emby Server!"
     # try graceful termination;
     if [[ -d /run/systemd/system ]]; then
-      deb-systemd-invoke stop ${NAME}.service > /dev/null || true
+      deb-systemd-invoke stop ${NAME}.service > /dev/null 2>&1 || true
     elif [ -x "/etc/init.d/${NAME}" ] || [ -e "/etc/init/${NAME}.conf" ]; then
-      invoke-rc.d ${NAME} stop 2> /dev/null || true
+      invoke-rc.d ${NAME} stop > /dev/null 2>&1 || true
     fi
     # Ensure that it is shutdown
-    PIDFILE=$(find /var/run/ -name "emby*.pid" -print -quit)
+    PIDFILE=$(find /var/run/ -maxdepth 1 -mindepth 1 -name "emby*.pid" -print -quit)
     [[ -n "$PIDFILE" ]] && [[ -s "$PIDFILE" ]] && EMBY_PID=$(cat ${PIDFILE})
     # if its running, let's stop it
     if [[ -n "$EMBY_PID" ]]; then

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ### BEGIN INIT INFO
 # Provides:          emby-server
 # Required-Start:    $remote_fs $local_fs $network

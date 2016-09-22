@@ -8,11 +8,11 @@ APP_USER=${APP_USER:-appuser}
 APP_CONFIG=${APP_CONFIG:-/config}
 
 # del emby user and group
-groupdel -f emby 2> /dev/null
 userdel -f emby 2> /dev/null
+groupdel emby 2> /dev/null
 
 if getent group ${APP_GID} > /dev/null; then
-  groupdel -f ${APP_GID} 2> /dev/null
+  groupdel ${APP_GID} 2> /dev/null
 fi
 
 # add USER GID

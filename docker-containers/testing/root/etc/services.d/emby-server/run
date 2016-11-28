@@ -1,0 +1,6 @@
+#!/usr/bin/execlineb -P
+# vim:set ft=sh sw=2 sts=2 st=2 et:
+
+with-contenv
+
+exec emby-server start

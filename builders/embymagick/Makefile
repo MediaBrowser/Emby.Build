@@ -9,7 +9,7 @@ ENV_VARS = \
 		   --env="USER_GID=$(shell id -g)" \
 		   --env="BUILD_USER=${USER}"
 
-DIST = "ubuntu/wily"
+DIST = "ubuntu/yakkety"
 
 help:
 	@echo ""

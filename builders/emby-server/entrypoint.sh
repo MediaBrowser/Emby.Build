@@ -37,18 +37,18 @@ build_emby() {
   test_result=$?
   if [ "$test_result" == "0" ]; then
     echo "Package was built successfully."
-    sudo -E -u $BUILD_USER /var/cache/scripts/deliver_deb.sh
+    sudo -E -u $BUILD_USER /var/cache/scripts/deliver_deb.sh $PACKAGE_NAME
   else
     echo "Package was built, but test install failed, emby-server build is deffective."
     echo "Package will not be copied to destination."
-    sudo -E -u $BUILD_USER /var/cache/scripts/deliver_deb.sh
+    sudo -E -u $BUILD_USER /var/cache/scripts/deliver_deb.sh $PACKAGE_NAME
   fi
 }
 
 prep_debfiles() {
   # make sure $BUILD_USER owns files
   mkdir -p /var/cache/buildarea/emby-source
-	chown -R $USER_UID:$USER_GID /var/cache/buildarea
+  chown -R $USER_UID:$USER_GID /var/cache/buildarea
 }
 
 PACKAGE_NAME=$1

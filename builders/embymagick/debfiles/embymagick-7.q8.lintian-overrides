@@ -1,0 +1,2 @@
+embymagick-7.q8: non-empty-dependency_libs-in-la-file *
+embymagick-7.q8: package-name-doesnt-match-sonames *

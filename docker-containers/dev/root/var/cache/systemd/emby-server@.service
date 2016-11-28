@@ -1,0 +1,15 @@
+[Unit]
+Description=Emby Media Server for %i
+After=docker.service
+
+[Service]
+Type=simple
+User=%i
+ExecStart=/usr/local/bin/emby-server service
+ExecStop=/usr/bin/docker stop -t 2 emby-server
+ExecStopPost=/usr/bin/docker rm -f emby-server
+Restart=on-abort
+TimeoutSec=20
+
+[Install]
+WantedBy=multi-user.target

@@ -7,10 +7,11 @@ APP_NAME="emby-server"
 APP_USER=${APP_USER:-$USER}
 APP_REPO=${APP_REPO:-emby}
 APP_CONFIG=${APP_CONFIG:-"/home/${APP_USER}/.${APP_NAME}"}
+RUN_MODE="-d"
 
-( id -Gn | grep -q docker ) || [ $EUID == 0 ] || SUDO=sudo
+( id -Gn | grep -q docker ) || [[ $EUID == 0 ]] || SUDO=sudo
 
-if [ ${APP_USER} != "appuser" ]; then
+if [[ "${APP_USER}" != "appuser" ]]; then
   APP_UID=$(getent passwd $APP_USER | awk -F":" '{print $3}')
   APP_GID=$(getent passwd $APP_USER | awk -F":" '{print $4}')
 else
@@ -18,7 +19,7 @@ else
   APP_GID=$(id -g)
 fi
 
-if [ ${APP_USER} == "nobody" ]; then
+if [[ ${APP_USER} == "nobody" ]]; then
   APP_USER="appuser"
 fi
 
@@ -32,17 +33,18 @@ list_options() {
 }
 
 cleanup_stopped_instances() {
-  echo "Cleaning up stopped ${APP_NAME} instances..."
   for c in $(${SUDO} docker ps -a -q)
   do
-    image=$(${SUDO} docker inspect -f {{.Config.Image}} ${c})
+    image=$(${SUDO} docker inspect --format="{{.Config.Image}}" ${c})
     if [[ ${image} == "${APP_REPO}/${IMG_NAME}:${TAG_NAME}" ]]; then
-      running=$(${SUDO} docker inspect -f {{.State.Running}} ${c})
+      running=$(${SUDO} docker inspect --format="{{.State.Running}}" ${c})
       if [[ ${running} != true ]]; then
+        echo "Cleaning up stopped ${APP_NAME} instances..."
         ${SUDO} docker rm -v "${c}" >/dev/null
       fi
     fi
   done
+  running=$(${SUDO} docker inspect --format="{{.State.Running}}" ${APP_NAME} 2> /dev/null)
 }
 
 prepare_docker_env_parameters() {
@@ -57,7 +59,7 @@ prepare_docker_env_parameters() {
 }
 
 prepare_docker_volume_parameters() {
-  if [ ! -d "${APP_CONFIG}" ]; then
+  if [[ ! -d "${APP_CONFIG}" ]]; then
     mkdir -p ${APP_CONFIG}
   fi
 
@@ -106,9 +108,11 @@ prepare_user_volume_parameters() {
 
 prog=$(basename $0)
 if [[ ${prog} == "${APP_NAME}" ]]; then
-  [ "${1}" == "bash" ] && \
-    prog=bash && \
-    shift
+  prog=""
+  [[ "${1}" == "bash" ]] && \
+    RUN_MODE="-it" &&  prog="bash" &&  shift
+  [[ "${1}" == "service" ]] && \
+    RUN_MODE="" && shift
   [[ "${1}" == "help" ]] && list_options && exit 1
 fi
 
@@ -117,19 +121,20 @@ prepare_docker_env_parameters
 prepare_docker_volume_parameters
 prepare_user_volume_parameters
 
-echo "Starting ${prog}..."
-if [ "${prog}" != "${APP_NAME}" ]; then
-  ${SUDO} docker run -it \
-    --net=host \
-    ${ENV_VARS} \
-    ${VOLUMES} \
-    --name=${APP_NAME} \
-    ${APP_REPO}/${IMG_NAME}:${TAG_NAME} ${prog} $@
+if [[ "${running}" == "true" ]]; then
+  echo "Already running."
+  exit 0
 else
-  ${SUDO} docker run -d \
-    --net=host \
-    ${ENV_VARS} \
-    ${VOLUMES} \
-    --name=${APP_NAME} \
-    ${APP_REPO}/${IMG_NAME}:${TAG_NAME} >/dev/null
+  echo "Starting ${prog}..."
+  if [[ "${prog}" != "${APP_NAME}" ]]; then
+    ${SUDO} docker run \
+      --network=host \
+      --log-opt max-size=2m \
+      --log-opt max-file=2 \
+      ${RUN_MODE} \
+      ${ENV_VARS} \
+      ${VOLUMES} \
+      --name=${APP_NAME} \
+      ${APP_REPO}/${IMG_NAME}:${TAG_NAME} ${prog} $@
+  fi
 fi

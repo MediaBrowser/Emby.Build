@@ -3,7 +3,7 @@ set -e
 
 PACKAGE_NAME=$1
 PACKAGE_NAME=${PACKAGE_NAME-embymagick}
-VERSION="8:6.9.2-8"
+VERSION="8:7.0.3-6"
 
 build_imagemagick() {
   prep_source

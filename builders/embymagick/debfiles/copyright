@@ -234,6 +234,7 @@ Copyright: 1998-2000, Scott K. Ellis
 	   2008-2010, Nelson A. de Oliveira
 	   2009-2013, Bastien ROUCARIÈS
 	   2011-2013, Vincent Fourmond
+       2016, Carlos Hernandez
 License: ImageMagick
 
 Files: debian/scripts/changelog.pl

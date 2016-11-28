@@ -25,19 +25,19 @@ sed -i -e s%"=\"TAG_NAME\""%"=\"${TAG_NAME}\""%1 /target/${APP_NAME}
 }
 
 install_service() {
+  RED='\033[0;31m'
+  NC='\033[0m'
   echo "Installing ${APP_NAME} Service..."
-  install -m 0755 /var/cache/systemd/${APP_NAME}.service /target/
-  sed -i -e s%":TAG_NAME"%":${TAG_NAME}"%1 /target/${APP_NAME}.service
-  sed -i -e s%"/IMG_NAME"%"/${IMG_NAME}"%1 /target/${APP_NAME}.service
-  echo "Please run: sudo systemctl daemon-reload"
-  echo "To start run: sudo systemctl start ${APP_NAME}"
+  install -m 0755 /var/cache/systemd/${APP_NAME}@.service /target/
+  echo -e "${RED}Please run: sudo systemctl daemon-reload"
+  echo -e "${RED}To start run: sudo systemctl start ${APP_NAME}@username${NC}"
 }
 
 if [ -z "$1" ]; then
   install_app
 else
   if [[ "$1" -eq "service" ]]; then
-    if [ -f /var/cache/systemd/${APP_NAME}.service ]; then
+    if [ -f /var/cache/systemd/${APP_NAME}@.service ]; then
       install_service
     fi
   fi

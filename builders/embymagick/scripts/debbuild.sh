@@ -3,7 +3,7 @@ set -e
 
 PACKAGE_NAME=$1
 PACKAGE_NAME=${PACKAGE_NAME-embymagick}
-VERSION="8:6.9.2-9"
+VERSION="8:7.0.3-6"
 
 build_imagemagick() {
   prep_source
@@ -40,12 +40,12 @@ produce_obsfiles() {
 create_changelog() {
   CODENAME=$(lsb_release -c | awk -F ":" '{print $2}')
   cd /var/cache/buildarea/imagemagick-source
-  DEBFULLNAME="HurricaneHrndz" \
+  DEBFULLNAME="Carlos Hernandez" \
     NAME="HurricaneHrndz" \
-    DEBEMAIL="hurricanehrndz@techbyte.ca" \
+    DEBEMAIL="carlos@techbyte.ca" \
     dch --create -v $VERSION \
-	--distribution $CODENAME \
-	--package $PACKAGE_NAME "Automatic build."
+  --distribution $CODENAME \
+  --package $PACKAGE_NAME "Automatic build."
 }
 
 build_package() {

@@ -9,7 +9,6 @@ NAME=emby-server
 CONF_FILE=/etc/${NAME}.conf
 DEFAULT_FILE=/etc/default/${NAME}
 SCRIPTNAME=/usr/bin/emby-server
-LOG_FILE=/var/log/${NAME}.log
 
 # Source Emby server default configuration
 . $DEFAULT_FILE
@@ -24,7 +23,7 @@ fi
 # Ensure the runas user has restart privilege to restart the service if not try to add the user to emby group. WARN on failure
 if [[ "$EMBY_USER" != "emby" ]]; then
   groups $EMBY_USER | grep -q emby
-  if [ $? -ne 0 ]; then
+  if [[ $? -ne 0 ]]; then
     if [[ $EUID -eq 0 ]]; then
       usermod -a -G emby $EMBY_USER
     else
@@ -51,8 +50,11 @@ EMBY_PATH=$EMBY_DIR
 # path to mono bin
 MONO_EXEC=$MONO_BIN
 
+# umask
+UMASK=${UMASK:-002}
+
 # Mono environment variables
-MAGICK_LIBRARY_PATH=$(find /usr/lib/emby-server/ -maxdepth 1 -mindepth 1 -type d| grep -v bin | grep -v -e "/\.")
+MAGICK_LIBRARY_PATH=$(find /usr/lib/emby-server/ -maxdepth 1 -mindepth 1 -type d| grep -v bin | grep -v etc | grep -v -e "/\.")
 MONO_EXEC_ENV="$MONO_ENV ${MAGICK_LIBRARY_PATH:+"LD_LIBRARY_PATH=${MAGICK_LIBRARY_PATH}${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH"}"
 
 # Mono options
@@ -75,17 +77,23 @@ EMBY_OPTS="$PROGRAMDATA_OPT $FFMPEG_OPTS $FFPROBE_OPTS $RESTART_OPTS $EMBY_ADD_O
 PID_PATH=$(dirname $PIDFILE)
 
 # Exit if the mono-sgen not installed
-[[ -x $MONO_EXEC ]] || exit 0
+if [[ ! -x $MONO_EXEC ]]; then
+  if [[ -n "$(command -v mono-sgen)" ]]; then
+    MONO_EXEC=$(command -v mono-sgen)
+  else
+    MONO_EXEC=$(command -v mono)
+  fi
+fi
 
 # Create programdata  directory if not exist and ensure the emby user can write to it
 if [[ ! -d $PROGRAMDATA ]]; then
   if [[ $EUID -eq 0 ]]; then
     mkdir -p $PROGRAMDATA
   else
-      echo "WARNING: $EMBY_DATA directory does not exist."
-      echo "To solve this, if it is an upgrade verify that \"EMBY_DATA\" is set to the correct path in /etc/emby-server.conf."
-      echo "You may need to locate the path of your library files and set EMBY_DATA to that path."
-      echo "If this is an new installation please rerun last command with elevated permissions."
+    echo "WARNING: $EMBY_DATA directory does not exist."
+    echo "To solve this, if it is an upgrade verify that \"EMBY_DATA\" is set to the correct path in /etc/emby-server.conf."
+    echo "You may need to locate the path of your library files and set EMBY_DATA to that path."
+    echo "If this is an new installation please rerun last command with elevated permissions."
   fi
 fi
 
@@ -104,11 +112,11 @@ fi
 case "$1" in
   start)
     echo $$ > $PIDFILE
-    exec su -s /bin/sh -c 'exec "$0" "$@"' $EMBY_USER -- \
-      env $MONO_EXEC_ENV $MONO_EXEC $MONO_EXEC_OPTS $EMBY_EXEC $EMBY_OPTS > $LOG_FILE 2>&1
+    exec su -s /bin/sh -c 'umask $0; exec "$1" "$@"' $EMBY_USER -- \
+      $UMASK env $MONO_EXEC_ENV $MONO_EXEC $MONO_EXEC_OPTS $EMBY_EXEC $EMBY_OPTS
     ;;
   clear)
-    [ -e $PIDFILE ] && rm -rf $PIDFILE
+    [[ -e $PIDFILE ]] && rm -rf $PIDFILE
     ;;
   *)
     echo "Usage: $SCRIPTNAME {start|clear}" >&2

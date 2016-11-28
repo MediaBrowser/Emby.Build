@@ -9,6 +9,7 @@ SUFFIX=""
 build_emby() {
   prep_source
   build_package
+  produce_obsfiles
 }
 
 prep_debfiles() {
@@ -32,7 +33,7 @@ prep_debfiles() {
 }
 
 prep_source() {
-  [[ -d /var/cache/buildarea/emby-source ]] && rm -rf /var/cache/buildarea/emby-source
+  [[ -d /var/cache/buildarea/emby-server${SUFFIX}-${VERSION} ]] && rm -rf /var/cache/buildarea/emby-server${SUFFIX}-${VERSION}
   if [[ "$PACKAGE_NAME" == "emby-server-dev" ]]; then
     _version=$(curl -sL https://github.com/MediaBrowser/Emby/releases.atom | grep "<title>" | grep "dev" | grep -v "note" | sed -e s%".*>\(.*\)<.*"%"\1"% | head -1 | awk -F- '{print $1}')
     VERSION=${_version}~dev
@@ -46,28 +47,25 @@ prep_source() {
     VERSION=${_version}
   fi
   curl -L https://github.com/MediaBrowser/Emby/archive/$_version.tar.gz -o /tmp/source.tar.gz
-  mkdir -p /var/cache/buildarea/emby-source
-  tar xvf /tmp/source.tar.gz --strip-components=1  -C /var/cache/buildarea/emby-source
-  cp /tmp/source.tar.gz /var/cache/buildarea/emby-server${SUFFIX}-${VERSION}.tar.gz
-  cd /var/cache/buildarea/emby-source
+  mkdir -p /var/cache/buildarea/emby-server${SUFFIX}-${VERSION}
+  tar xvf /tmp/source.tar.gz --strip-components=1  -C /var/cache/buildarea/emby-server${SUFFIX}-${VERSION}
+  cd /var/cache/buildarea/
+  tar czvf /var/cache/buildarea/emby-server${SUFFIX}-${VERSION}.tar.gz emby-server${SUFFIX}-${VERSION}
+  cd /var/cache/buildarea/emby-server${SUFFIX}-${VERSION}
 
   # debianize source
   prep_debfiles
-  mv /var/cache/buildarea/debfiles /var/cache/buildarea/emby-source/debian
+  mv /var/cache/buildarea/debfiles /var/cache/buildarea/emby-server${SUFFIX}-${VERSION}/debian
   create_changelog
-  produce_obsfiles
+  tar czvf /var/cache/buildarea/debian.tar.gz -C /var/cache/buildarea/emby-server${SUFFIX}-${VERSION} debian
+
 }
 
 produce_obsfiles() {
-# deliver deb files for obs
-mkdir -p /pkg/obs
-#cp /var/cache/buildarea/emby-source/debian/emby /pkg/obs/debian.emby
-#cp /var/cache/buildarea/emby-source/debian/emby-server.conf /pkg/obs/debian.emby-server.conf
-#cp /var/cache/buildarea/emby-source/debian/${PACKAGE_NAME}.emby-server.service /pkg/obs/debian.${PACKAGE_NAME}.emby-server.service
-#cp /var/cache/buildarea/emby-source/debian/${PACKAGE_NAME}.emby-server.default /pkg/obs/debian.${PACKAGE_NAME}.emby-server.default
-#cp /var/cache/buildarea/emby-source/debian/restart.sh /pkg/obs/debian.restart.sh
-
-tar -zcvf /pkg/obs/debian.tar.gz debian
+  # deliver deb files for obs
+  mkdir -p /pkg/obs
+  cp /var/cache/buildarea/emby-server${SUFFIX}-${VERSION}.tar.gz /pkg/obs/
+  cp /var/cache/buildarea/debian.tar.gz /pkg/obs/
 }
 
 create_changelog() {
@@ -78,7 +76,7 @@ create_changelog() {
 }
 
 build_package() {
-  cd /var/cache/buildarea/emby-source
+  cd /var/cache/buildarea/emby-server${SUFFIX}-${VERSION}
   debuild -uc -us
 }
 

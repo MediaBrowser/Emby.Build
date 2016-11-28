@@ -39,7 +39,7 @@ RUN zypper --non-interactive ar -f -n repo-emby http://download.opensuse.org/rep
 	curl \
 	tar \
 	xz \
- && zypper --non-interactive al dbus-1 kbd kmod systemd systemd-presets-branding-openSUSE udev \
+ && zypper --non-interactive al dbus-1 kbd kmod systemd systemd-presets-branding-openSUSE udev openSUSE-release-ftp \
  && zypper cc --all \
  && rm -rf /var/cache/zypp* \
  && rm -rf /tmp/* \

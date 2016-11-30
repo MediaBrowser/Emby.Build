@@ -30,7 +30,7 @@ RUN zypper --non-interactive ar -f -n repo-emby http://download.opensuse.org/rep
 	xz \
  && curl -sL https://github.com/just-containers/s6-overlay/releases/download/v${s6_overlay_version}/s6-overlay-amd64.tar.gz -o /tmp/s6-overlay-amd64.tar.gz \
  && tar zxf /tmp/s6-overlay-amd64.tar.gz -C / \
- && curl -sL http://johnvansickle.com/ffmpeg/releases/ffmpeg-release-64bit-static.tar.xz -o /tmp/ffmpeg.tar.xz \
+ && curl -sL http://johnvansickle.com/ffmpeg/releases/ffmpeg-3.1.4-64bit-static.tar.xz -o /tmp/ffmpeg.tar.xz \
  && tar -C /bin --extract --file=/tmp/ffmpeg.tar.xz --wildcards "*/ffmpeg" --strip-components=1  \
  && tar -C /bin --extract --file=/tmp/ffmpeg.tar.xz --wildcards "*/ffprobe" --strip-components=1  \
  && rpm -e --nodeps --allmatches --noscripts \

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<image schemaversion="6.1" name="emby-docker-guest">
+<image schemaversion="6.1" name="emby-server-docker-guest">
   <description type="system">
     <author>Carlos Hernandez</author>
     <contact>carlos@techbyte.ca</contact>

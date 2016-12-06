@@ -7,7 +7,7 @@ current_s6_overlay := $(shell curl -sSL https://github.com/just-containers/s6-ov
 tumbleweed_root = "https://github.com/openSUSE/docker-containers/blob/master/openSUSE-Tumbleweed/root.tar.bz2?raw=true"
 container_dir := $(shell dirname $(current_dir))
 
-%: all
+%:: all
 
 
 all: clean build

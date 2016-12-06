@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<image schemaversion="6.1" name="openSUSE-Tumbleweed-docker-guest">
+<image schemaversion="6.1" name="emby-docker-guest">
   <description type="system">
-    <author>Flavio Castelli</author>
-    <contact>fcastelli@suse.com</contact>
-    <specification>openSUSE Tumbleweed docker container</specification>
+    <author>Carlos Hernandez</author>
+    <contact>carlos@techbyte.ca</contact>
+    <specification>Emby docker container</specification>
   </description>
   <preferences>
     <type image="docker" container="tumbleweed">

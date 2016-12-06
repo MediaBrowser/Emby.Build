@@ -31,10 +31,9 @@ build:
 	tar -C $(current_dir)/root -xf s6-overlay-armhf.tar.gz
 	cp $(current_dir)/04-ffmpeg-onetime $(current_dir)/root/etc/cont-init.d/
 	rm $(current_dir)/root.tar.bz2
-	cp $(current_dir)/emby.repo $(current_dir)/root/etc/zypp/repos.d/
-#	rm $(current_dir)/root/etc/zypp/repos.d/*
-#	cp $(current_dir)/oss.repo $(current_dir)/root/etc/zypp/repos.d/
-	tar -C $(current_dir)/root -cjf $(current_dir)/root.tar.bz2 .
+	rm $(current_dir)/root/etc/zypp/repos.d/*
+	cp $(current_dir)/*.repo $(current_dir)/root/etc/zypp/repos.d/
+	tar -cjf $(current_dir)/root.tar.bz2 --owner 0 --group 0 -C $(current_dir)/root .
 	@ if [[ -d $(current_dir)/root ]]; then \
 		rm -r $(current_dir)/root; \
 	  fi

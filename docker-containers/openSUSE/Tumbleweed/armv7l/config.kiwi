@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<image schemaversion="6.1" name="Emby-tumbleweed-docker-guest">
+<image schemaversion="6.1" name="openSUSE-Tumbleweed-docker-guest">
   <description type="system">
-    <author>Carlos Hernandez</author>
-    <contact>hurricanehrndz@techbyte.ca</contact>
-    <specification>Emby Base Image based on openSUSE Tumbleweed docker container</specification>
+    <author>Flavio Castelli</author>
+    <contact>fcastelli@suse.com</contact>
+    <specification>openSUSE Tumbleweed docker container</specification>
   </description>
   <preferences>
     <type image="docker" container="tumbleweed">
@@ -21,19 +21,12 @@
     <locale>en_US</locale>
     <keytable>us.map.gz</keytable>
     <hwclock>utc</hwclock>
-    <timezone>US/Eastern</timezone>
   </preferences>
   <users group="root">
-    <user password="linux" pwdformat="plain" home="/root" name="root"/>
+    <user home="/root" name="root"/>
   </users>
   <repository type="rpm-md" alias="repo-tumbleweed-ports-arm">
     <source path="obs://openSUSE:Factory:ARM/standard"/>
-  </repository>
-  <repository type="rpm-md" alias="repo-tumbleweed-ports-ppc">
-    <source path="obs://openSUSE:Factory:PowerPC/standard"/>
-  </repository>
-  <repository type="rpm-md" alias="repo-oss">
-    <source path="obs://openSUSE:Factory/snapshot"/>
   </repository>
   <repository type="rpm-md" alias="repo-emby">
     <source path="obs://home:emby/openSUSE_Factory_ARM"/>
@@ -46,11 +39,6 @@
     <package name="openSUSE-build-key"/>
     <package name="openSUSE-release"/>
     <package name="openSUSE-release-mini"/>
-    <package name="embymagick"/>
-    <package name="mono-core"/>
-    <package name="mono-wcf"/>
-    <package name="sqlite"/>
-    <package name="sudo"/>
   </packages>
   <packages type="bootstrap">
     <package name="ncurses-utils"/>
@@ -61,13 +49,14 @@
     <package name="glibc-locale"/>
     <package name="pkg-config"/>
     <package name="sg3_utils"/>
+    <package name="emby-server"/>
+    <package name="mono-core"/>
   </packages>
   <packages type="delete">
     <package name="aaa_base"/>
     <package name="dbus-1"/>
     <package name="dracut"/>
     <package name="fipscheck"/>
-    <package name="glibc-locale"/>
     <package name="kbd"/>
     <package name="kmod"/>
     <package name="ncurses-utils"/>

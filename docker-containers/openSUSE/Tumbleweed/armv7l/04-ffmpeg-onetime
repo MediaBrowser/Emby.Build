@@ -1,0 +1,5 @@
+#!/usr/bin/with-contenv bash
+# vim:set ft=sh sw=2 sts=2 st=2 et:
+
+curl -sL https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-armhf-32bit-static.tar.xz | \
+  tar -C /bin --extract -J --wildcards "*/ffmpeg" --wildcards "*/ffprobe" --strip-components=1

@@ -54,8 +54,11 @@ MONO_EXEC=$MONO_BIN
 UMASK=${UMASK:-002}
 
 # Mono environment variables
-MAGICK_LIBRARY_PATH=$(find /usr/lib/emby-server/ -maxdepth 1 -mindepth 1 -type d| grep -v bin | grep -v etc | grep -v -e "/\.")
-MONO_EXEC_ENV="$MONO_ENV ${MAGICK_LIBRARY_PATH:+"LD_LIBRARY_PATH=${MAGICK_LIBRARY_PATH}${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH"}"
+MAGICK_HOME_ENV="MAGICK_HOME=${EMBY_PATH}"
+EMBY_LIBRARY_PATH=$(find /usr/lib/emby-server/ -maxdepth 1 -mindepth 1 -type d| grep -v bin | grep -v etc | grep -v -e "/\.")
+MAGICK_CODER_FILTER_PATH_ENV="MAGICK_CODER_FILTER_PATH=$(find ${EMBY_LIBRARY_PATH} -type d -name "filters" | grep EmbyMagick)"
+MAGICK_CODER_MODULE_PATH_ENV="MAGICK_CODER_MODULE_PATH=$(find ${EMBY_LIBRARY_PATH} -type d -name "coders" | grep EmbyMagick)"
+MONO_EXEC_ENV="$MONO_ENV ${EMBY_LIBRARY_PATH:+"LD_LIBRARY_PATH=${EMBY_LIBRARY_PATH}${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH"}"
 
 # Mono options
 MONO_EXEC_OPTS=$MONO_OPTS
@@ -113,7 +116,8 @@ case "$1" in
   start)
     echo $$ > $PIDFILE
     exec su -s /bin/sh -c 'umask $0; exec "$1" "$@"' $EMBY_USER -- \
-      $UMASK env $MONO_EXEC_ENV $MONO_EXEC $MONO_EXEC_OPTS $EMBY_EXEC $EMBY_OPTS
+      $UMASK env $MAGICK_HOME_ENV $MAGICK_CODER_FILTER_PATH_ENV $MAGICK_CODER_MODULE_PATH_ENV \
+      $MONO_EXEC_ENV $MONO_EXEC $MONO_EXEC_OPTS $EMBY_EXEC $EMBY_OPTS
     ;;
   clear)
     [[ -e $PIDFILE ]] && rm -rf $PIDFILE

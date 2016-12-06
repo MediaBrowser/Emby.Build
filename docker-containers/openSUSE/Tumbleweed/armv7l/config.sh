@@ -54,7 +54,7 @@ sed -i 's/.*installRecommends.*/installRecommends = no/g' /etc/zypp/zypper.conf
 #======================================
 # Remove locale files
 #--------------------------------------
-(cd /usr/share/locale && find -name '*.mo' | xargs rm)
+(cd /usr/share/locale && ls | grep -ve "en_US*" | xargs rm -rf && find -name '*.mo' | grep -ve "en_US*" | xargs rm -rf)
 
 
 exit 0

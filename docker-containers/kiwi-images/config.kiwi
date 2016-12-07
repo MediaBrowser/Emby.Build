@@ -38,16 +38,34 @@
     <package name="openSUSE-release-mini"/>
   </packages>
   <packages type="bootstrap">
-    <package name="ncurses-utils"/>
     <package name="acl"/>
+    <package name="at"/>
+    <package name="curl"/>
+    <package name="dejavu-fonts"/>
     <package name="dracut"/>
     <package name="elfutils"/>
+    <package name="emby-server"/>
+    <package name="embymagick"/>
     <package name="filesystem"/>
     <package name="glibc-locale"/>
+    <package name="libembysqlite3-0"/>
+    <package name="libHX28"/>
+    <package name="mono-core"/>
+    <package name="mono-data"/>
+    <package name="mono-data-sqlite"/>
+    <package name="mono-extras"/>
+    <package name="mono-mvc"/>
+    <package name="mono-wcf"/>
+    <package name="mono-web"/>
+    <package name="mono-winfxcore"/>
+    <package name="ncurses-utils"/>
     <package name="pkg-config"/>
     <package name="sg3_utils"/>
-    <package name="emby-server"/>
-    <package name="mono-core"/>
+    <package name="sudo"/>
+    <package name="tar"/>
+    <package name="tar"/>
+    <package name="timezone"/>
+    <package name="xz"/>
   </packages>
   <packages type="delete">
     <package name="aaa_base"/>

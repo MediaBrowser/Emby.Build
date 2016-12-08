@@ -22,7 +22,7 @@ install_app() {
 
   if [[ "${UMASK}" != "002" ]]; then
     echo "Updating application umask to ${UMASK}..."
-    sed -i -e s%"\(UMASK=\).*"%"\1\"${UMASK}\""%1 /target/${APP_NAME}
+    sed -i -e s%"^\(UMASK=\).*$"%"\1\"${UMASK}\""%1 /target/${APP_NAME}
   fi
 
   if [[ "${EDGE}" != "0" ]]; then

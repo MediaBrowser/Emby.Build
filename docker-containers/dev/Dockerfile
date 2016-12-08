@@ -1,6 +1,6 @@
 # Emby Server
 FROM emby/emby-base
-ENV APP_NAME="emby-server" IMG_NAME="embyserver" TAG_NAME="dev" PKG_NAME="emby-server-dev"
+ENV APP_NAME="emby-server" IMG_NAME="embyserver" TAG_NAME="dev" PKG_NAME="emby-server-dev" EDGE=0 UMASK=002
 
 RUN zypper --gpg-auto-import-keys ref \
  && zypper --non-interactive in $PKG_NAME \

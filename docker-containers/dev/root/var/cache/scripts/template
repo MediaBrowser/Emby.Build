@@ -8,6 +8,7 @@ APP_USER=${APP_USER:-$USER}
 APP_REPO=${APP_REPO:-emby}
 APP_CONFIG=${APP_CONFIG:-"/home/${APP_USER}/.${APP_NAME}"}
 EDGE=${EDGE:-0}
+UMASK=${UMASK:-002}
 RUN_MODE="-d"
 
 ( id -Gn | grep -q docker ) || [[ $EUID == 0 ]] || SUDO=sudo
@@ -53,6 +54,7 @@ prepare_docker_env_parameters() {
   ENV_VARS+=" --env=APP_GID=${APP_GID}"
   ENV_VARS+=" --env=APP_USER=${APP_USER}"
   ENV_VARS+=" --env=EDGE=${EDGE}"
+  ENV_VARS+=" --env=UMASK=${UMASK}"
   if [[ -f /etc/timezone ]]; then
     ENV_VARS+=" --env=TZ=$(cat /etc/timezone)"
   else

@@ -7,6 +7,7 @@ APP_NAME="emby-server"
 APP_USER=${APP_USER:-$USER}
 APP_REPO=${APP_REPO:-emby}
 APP_CONFIG=${APP_CONFIG:-"/home/${APP_USER}/.${APP_NAME}"}
+EDGE=${EDGE:-0}
 RUN_MODE="-d"
 
 ( id -Gn | grep -q docker ) || [[ $EUID == 0 ]] || SUDO=sudo
@@ -51,10 +52,11 @@ prepare_docker_env_parameters() {
   ENV_VARS+=" --env=APP_UID=${APP_UID}"
   ENV_VARS+=" --env=APP_GID=${APP_GID}"
   ENV_VARS+=" --env=APP_USER=${APP_USER}"
-  if [ -f /etc/timezone ]; then
+  ENV_VARS+=" --env=EDGE=${EDGE}"
+  if [[ -f /etc/timezone ]]; then
     ENV_VARS+=" --env=TZ=$(cat /etc/timezone)"
   else
-    [ ! -z "${TIMEZONE}" ] && ENV_VARS+=" --env=TZ=${TIMEZONE}"
+    [[ ! -z "${TIMEZONE}" ]] && ENV_VARS+=" --env=TZ=${TIMEZONE}"
   fi
 }
 
@@ -73,68 +75,105 @@ prepare_docker_volume_parameters() {
 }
 
 prepare_user_volume_parameters() {
-  # Ensure emby data directory exist.
-  if [ ! -d "${APP_CONFIG}" ]; then
-    echo "Error, Emby data directory: ${APP_CONFIG} does not exist."
+  # Ensure app config directory exist.
+  if [[ ! -d "${APP_CONFIG}" ]]; then
+    echo "Error, ${APP_NAME} data directory: ${APP_CONFIG} does not exist."
     exit 1
   fi
 
-  if [ ! -e "${APP_CONFIG}/.embydockervolumes" ]; then
+  if [[ -f "${APP_CONFIG}/.embydockervolumes" ]]; then
+    mv "${APP_CONFIG}/.embydockervolumes" "${APP_CONFIG}/.${APP_NAME}.volumes"
+  fi
+
+  if [[ ! -e "${APP_CONFIG}/.${APP_NAME}.volumes" ]]; then
     declare -a user_volumes
-    echo "We could not find existing settings for your media files."
-    echo "Pleae enter the parent directories of your media files, one entry per line."
-    echo "Enter \"done\" when finished"
-    while read mediapath; do
-      if [ "$mediapath" == "done" ]; then
+    echo "No existing user volumes for: ${APP_NAME}."
+    echo "Pleae enter full paths you want accessible from within the container"
+    echo "Enter one entry per line."
+    echo "Enter \"done\" or "Ctrl+D" when finished"
+    while read hostpath; do
+      if [[ "$hostpath" == "done" ]]; then
         break
       fi
-      if [ ! -d "$mediapath" ]; then
-        echo "Sorry, $mediapath is not a valid path."
+      if [[ ! -d "$hostpath" ]]; then
+        echo "Sorry, $hostpath is not a valid path."
       else
-        user_volumes+=("$mediapath")
+        user_volumes+=("$hostpath")
       fi
     done < /dev/stdin
 
     for user_volume in "${user_volumes[@]}"; do
-      echo "${user_volume}" >> "${APP_CONFIG}/.embydockervolumes"
+      echo "${user_volume}" >> "${APP_CONFIG}/.${APP_NAME}.volumes"
     done
   fi
 
   # setup user volumes
   while read user_volume; do
     VOLUMES+=" --volume=${user_volume}:${user_volume}"
-  done < "${APP_CONFIG}/.embydockervolumes"
+  done < "${APP_CONFIG}/.${APP_NAME}.volumes"
 }
-
-prog=$(basename $0)
-if [[ ${prog} == "${APP_NAME}" ]]; then
-  prog=""
-  [[ "${1}" == "bash" ]] && \
-    RUN_MODE="-it" &&  prog="bash" &&  shift
-  [[ "${1}" == "service" ]] && \
-    RUN_MODE="" && shift
-  [[ "${1}" == "help" ]] && list_options && exit 1
-fi
 
 cleanup_stopped_instances
 prepare_docker_env_parameters
 prepare_docker_volume_parameters
 prepare_user_volume_parameters
 
-if [[ "${running}" == "true" ]]; then
-  echo "Already running."
-  exit 0
-else
-  echo "Starting ${prog}..."
-  if [[ "${prog}" != "${APP_NAME}" ]]; then
-    ${SUDO} docker run \
-      --network=host \
-      --log-opt max-size=2m \
-      --log-opt max-file=2 \
-      ${RUN_MODE} \
-      ${ENV_VARS} \
-      ${VOLUMES} \
-      --name=${APP_NAME} \
-      ${APP_REPO}/${IMG_NAME}:${TAG_NAME} ${prog} $@
+if [[ "${running}" != "true" ]]; then
+  case "$1" in
+    "")
+      ;;
+    "bash")
+      RUN_MODE="-it" && prog="bash" && shift
+      ;;
+    "service")
+      RUN_MODE="" && shift
+      ;;
+    "help")
+      list_options && exit 1
+      ;;
+    *)
+      echo "${APP_NAME} not started yet."
+      echo "Ignoring all arguments!"
+      set --
+      ;;
+  esac
+
+  if [[ -z "${prog}" ]]; then
+    msg="Starting $APP_NAME"
+  else
+    msg="Starting ${prog} in ${APP_NAME} docker"
   fi
+
+  echo "${msg}..."
+  ${SUDO} docker run \
+    --log-opt max-size=2m \
+    --log-opt max-file=2 \
+    ${RUN_MODE} \
+    ${ENV_VARS} \
+    ${VOLUMES} \
+    --name=${APP_NAME} \
+    ${APP_REPO}/${IMG_NAME}:${TAG_NAME} ${prog} $@
+else
+  case "$1" in
+    "update")
+      docker exec -it ${APP_NAME} update
+      ;;
+    "stop")
+      docker stop ${APP_NAME}
+      ;;
+    "status")
+      echo "${APP_NAME} is running."
+      echo "UpTime: $(ps -p $(pgrep -u ${APP_UID} -f mono-sgen) -o etime=)"
+      ;;
+    "logs")
+      docker logs ${APP_NAME}
+      ;;
+    "console")
+      docker exec -it ${APP_NAME} bash
+      ;;
+    *)
+      echo "Already running."
+      ;;
+  esac
+  exit 0
 fi

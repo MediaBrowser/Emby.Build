@@ -45,6 +45,8 @@
     <package name="dracut"/>
     <package name="elfutils"/>
     <package name="filesystem"/>
+    <package name="gcc"/>
+    <package name="gcc-c++"/>
     <package name="git-core"/>
     <package name="glibc-devel"/>
     <package name="glibc-devel-static"/>

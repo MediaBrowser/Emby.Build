@@ -5,7 +5,7 @@ SHELL := /bin/bash
 current_dir := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 current_s6_overlay := $(shell curl -sSL https://github.com/just-containers/s6-overlay/releases.atom | sed -n s/"^\(\s\+<title>\)\(v[^<]*\).*$$"/"\2"/p | head -1)
 tumbleweed_root = "https://github.com/openSUSE/docker-containers/blob/master/openSUSE-Tumbleweed/root.tar.bz2?raw=true"
-container_dir := $(shell dirname $(current_dir))
+container_dir := $(shell dirname $(shell dirname $(current_dir)))
 
 %:: all
 
@@ -26,10 +26,9 @@ endif
 build:
 	curl -sSL ${tumbleweed_root} -o root.tar.bz2
 	curl -sSOL https://github.com/just-containers/s6-overlay/releases/download/$(current_s6_overlay)/s6-overlay-armhf.tar.gz
-	cp -r $(container_dir)/stable/root $(current_dir)
+	mkdir -p $(current_dir)/root
 	tar -C $(current_dir)/root -xf root.tar.bz2
 	tar -C $(current_dir)/root -xf s6-overlay-armhf.tar.gz
-	cp $(current_dir)/04-ffmpeg-onetime $(current_dir)/root/etc/cont-init.d/
 	rm $(current_dir)/root.tar.bz2
 	rm $(current_dir)/root/etc/zypp/repos.d/*
 	cp $(current_dir)/*.repo $(current_dir)/root/etc/zypp/repos.d/

@@ -26,7 +26,7 @@ endif
 build:
 	curl -sSL ${tumbleweed_root} -o root.tar.bz2
 	curl -sSOL https://github.com/just-containers/s6-overlay/releases/download/$(current_s6_overlay)/s6-overlay-armhf.tar.gz
-	cp -r $(container_dir)/stable/root $(current_dir)
+	cp -r $(container_dir)/base/root $(current_dir)
 	tar -C $(current_dir)/root -xf root.tar.bz2
 	tar -C $(current_dir)/root -xf s6-overlay-armhf.tar.gz
 	rm $(current_dir)/root.tar.bz2

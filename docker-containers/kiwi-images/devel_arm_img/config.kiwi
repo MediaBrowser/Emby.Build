@@ -56,7 +56,6 @@
     <package name="ncurses-utils"/>
     <package name="pkg-config"/>
     <package name="python"/>
-    <package name="qemu-arm"/>
     <package name="sg3_utils"/>
     <package name="sudo"/>
     <package name="tar"/>

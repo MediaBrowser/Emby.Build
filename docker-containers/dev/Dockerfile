@@ -10,5 +10,4 @@ RUN zypper --gpg-auto-import-keys ref \
 VOLUME [ "/config" ]
 EXPOSE 8096 8920 7359/udp 1900/udp
 
-COPY root /
 ENTRYPOINT ["/init"]

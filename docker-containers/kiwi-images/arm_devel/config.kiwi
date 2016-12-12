@@ -38,8 +38,10 @@
     <package name="openSUSE-release-mini"/>
   </packages>
   <packages type="bootstrap">
-    <namedCollection name="devel_basis"/>
     <package name="acl"/>
+    <package name="autoconf"/>
+    <package name="automake"/>
+    <package name="binutils"/>
     <package name="cmake"/>
     <package name="curl"/>
     <package name="dracut"/>
@@ -51,9 +53,12 @@
     <package name="glibc-devel"/>
     <package name="glibc-devel-static"/>
     <package name="glibc-locale"/>
+    <package name="libstdc++-devel"/>
     <package name="libtool"/>
+    <package name="make"/>
     <package name="mercurial"/>
     <package name="ncurses-utils"/>
+    <package name="patch"/>
     <package name="pkg-config"/>
     <package name="python"/>
     <package name="sg3_utils"/>

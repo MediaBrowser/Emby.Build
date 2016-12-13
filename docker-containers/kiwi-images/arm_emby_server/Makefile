@@ -32,6 +32,7 @@ build:
 	rm $(current_dir)/root.tar.bz2
 	rm $(current_dir)/root/etc/zypp/repos.d/*
 	cp $(current_dir)/*.repo $(current_dir)/root/etc/zypp/repos.d/
+	cp $(current_dir)/*-onetime $(current_dir)/root/etc/cont-init.d/
 	tar -cjf $(current_dir)/root.tar.bz2 --owner 0 --group 0 -C $(current_dir)/root .
 	@ if [[ -d $(current_dir)/root ]]; then \
 		rm -r $(current_dir)/root; \

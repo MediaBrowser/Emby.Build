@@ -2,12 +2,13 @@
 # vim:set ft=sh sw=2 sts=2 st=2 et:
 
 APP_USER=${APP_USER:-appuser}
+APP_GCONFIG=${APP_GCONFIG:-/config}
 UMASK=${UMASK:-002}
 
 echo "EMBY_USER=${APP_USER}" >> /etc/emby-server.conf
 echo "EMBY_GROUP=${APP_USER}" >> /etc/emby-server.conf
 echo "UMASK=${UMASK}" >> /etc/emby-server.conf
-echo "EMBY_DATA=/config" >> /etc/emby-server.conf
+echo "EMBY_DATA=${APP_GCONFIG}" >> /etc/emby-server.conf
 echo "Cmnd_Alias S6_SVC = /bin/s6-svc" >> /etc/sudoers.d/dockers
 echo "${APP_USER} ALL=(ALL) NOPASSWD: S6_SVC" >> /etc/sudoers.d/dockers
 echo "Defaults!S6_SVC !requiretty" >> /etc/sudoers.d/dockers

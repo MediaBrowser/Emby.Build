@@ -285,7 +285,8 @@ passing any or all of the following environment variable:
 * APP_USER     - Name of user the service will run as.\[4\]
 * APP_UID      - UID assigned to APP_USER upon creation, or will query APP_USER's ID.\[3\]
 * APP_GID      - GID assigned to APP_USER upon creation, or will query APP_USER's GID.\[3\]
-* APP_CONFIG   - Location where application will store it's settings and database on host.\[1\]
+* APP_CONFIG   - Location where application will store settings and database on host.\[1\]
+* APP_GCONFIG  - Location where application will store settings and database within guest.\[4\]
 * UMASK        - umask assigned to service, default set to 002.\[4\]
 * EDGE         - Update the containerized service, default set to 0(Off).\[4\]
 

@@ -1,0 +1,4 @@
+#!/usr/bin/with-contenv sh
+# vim:set ft=sh sw=2 sts=2 st=2 et:
+
+ls /etc/zypp/repos.d/  | grep -v "$(uname -a )" | grep -v emby | xargs -I {}  rm {} ;

@@ -1,0 +1,63 @@
+#!/bin/bash
+
+APP_USER=${APP_USER:-appuser}
+
+install_app() {
+  echo "Installing ${APP_NAME}..."
+  install -m 0755 /var/cache/scripts/template /target/${APP_NAME}
+  if [[ -n "${APP_REPO}" ]]; then
+    echo "Updating image repo to ${APP_REPO}..."
+    sed -i -e s%"-hurricane"%"-${APP_REPO}"%1 /target/${APP_NAME}
+  fi
+
+  if [[ "${APP_USER}" != "appuser" ]] && [[ -n "${APP_USER}" ]]; then
+    echo "Updating user to ${APP_USER}..."
+    sed -i -e s%"^\(APP_USER=\)\${APP_USER:-\$USER}"%"\1${APP_USER}"%1 /target/${APP_NAME}
+  fi
+
+  if [[ -n "${APP_CONFIG}" ]]; then
+    echo "Updating data directory to ${APP_CONFIG}..."
+    sed -i -e s%"\(APP_CONFIG=\).*"%"\1\"${APP_CONFIG}\""%1 /target/${APP_NAME}
+  fi
+
+  if [[ -n "${APP_GCONFIG}" ]]; then
+    echo "Updating container data directory to ${APP_GCONFIG}..."
+    sed -i -e s%"^\(APP_GCONFIG=\).*"%"\1\"${APP_GCONFIG}\""%1 /target/${APP_NAME}
+  fi
+
+  if [[ "${UMASK}" != "002" ]]; then
+    echo "Updating application umask to ${UMASK}..."
+    sed -i -e s%"^\(UMASK=\).*$"%"\1\"${UMASK}\""%1 /target/${APP_NAME}
+  fi
+
+  if [[ "${EDGE}" != "0" ]]; then
+    echo "Enabling updates on start-up..."
+    sed -i -e s%"^\(EDGE=\).*$"%"\1\"${EDGE}\""%1 /target/${APP_NAME}
+  fi
+
+  sed -i -e s%"=\"IMG_NAME\""%"=\"${IMG_NAME}\""%1 /target/${APP_NAME}
+  sed -i -e s%"=\"TAG_NAME\""%"=\"${TAG_NAME}\""%1 /target/${APP_NAME}
+}
+
+install_service() {
+  RED='\033[0;31m'
+  NC='\033[0m'
+  echo "Installing ${APP_NAME} Service..."
+  install -m 0755 /var/cache/systemd/template@.service /target/${APP_NAME}@.service
+  sed -i -e s%":TAG_NAME"%":${TAG_NAME}"%1 /target/${APP_NAME}.service
+  sed -i -e s%"/IMG_NAME"%"/${IMG_NAME}"%1 /target/${APP_NAME}.service
+  sed -i -e s%"APP_NAME"%"${APP_NAME}"%1 /target/${APP_NAME}.service
+  sed -i -e s%"APP_REPO"%"${APP_REPO}"%1 /target/${APP_NAME}.service
+  echo -e "${RED}Please run: sudo systemctl daemon-reload"
+  echo -e "${RED}To start run: sudo systemctl start ${APP_NAME}@\$USERNAME${NC}"
+}
+
+if [[ -z "$1" ]]; then
+  install_app
+else
+  if [[ "$1" -eq "service" ]]; then
+    if [[ -f /var/cache/systemd/template@.service ]]; then
+      install_service
+    fi
+  fi
+fi

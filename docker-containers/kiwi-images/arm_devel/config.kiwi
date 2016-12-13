@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<image schemaversion="6.1" name="emby-server-docker-guest">
+<image schemaversion="6.1" name="arm-devel-guest">
   <description type="system">
     <author>Carlos Hernandez</author>
     <contact>carlos@techbyte.ca</contact>
-    <specification>Emby docker container</specification>
+    <specification>Development container for compiling via qemu</specification>
   </description>
   <preferences>
     <type image="docker" container="tumbleweed">

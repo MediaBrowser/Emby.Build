@@ -7,4 +7,7 @@ ADD rootfs.tar.xz /
 
 VOLUME [ "/config" ]
 
+COPY qemu
+COPY binfmt
+
 ENTRYPOINT ["/init"]

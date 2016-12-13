@@ -11,15 +11,21 @@ armv7 aarch64:
 	curl -sSL http://download.opensuse.org/repositories/home:/emby:/docker/images/$(img_name) -o rootfs.tar.xz
 	@ if [[ $(ARCH) ==  "armv7" ]]; then \
 		cp /usr/bin/qemu-arm-binfmt . \
+		sed s%"^COPY\sbinfmt$$"%"COPY qemu-arm-binfmt /usr/bin/"% Dockerfile
 		cp /usr/bin/qemu-arm . \
+		sed s%"^COPY\sqemu$$"%"COPY qemu-arm /usr/bin/"% Dockerfile
 	  else \
 	    cp /usr/bin/qemu-aarch64-binfmt . \
+		sed s%"^COPY\sbinfmt$$"%"COPY qemu-aarch64-binfmt /usr/bin/"% Dockerfile
 	    cp /usr/bin/qemu-aarch64 . \
+		sed s%"^COPY\sqemu$$"%"COPY qemu-aarch64 /usr/bin/"% Dockerfile
 	  fi
-	docker build --rm=true --tag=emby/devel:$(ARCH) .
-	docker push emby/devel:$(ARCH)
-	docker rmi emby/devel:$(ARCH)
+	docker build --rm=true --tag=emby/qemu-builder:$(ARCH) .
+	docker push emby/qemu-builder:$(ARCH)
+	docker rmi emby/qemu-builder:$(ARCH)
 	rm rootfs.tar.xz
+	git clean -f -d
+	git reset --hard HEAD
 
 end:
 	@echo "Done!"

@@ -43,7 +43,7 @@ install_service() {
   RED='\033[0;31m'
   NC='\033[0m'
   echo "Installing ${APP_NAME} Service..."
-  install -m 0755 /var/cache/systemd/template@.service /target/${APP_NAME}@.service
+  install -m 0644 /var/cache/systemd/template@.service /target/${APP_NAME}@.service
   sed -i -e s%":TAG_NAME"%":${TAG_NAME}"%1 /target/${APP_NAME}.service
   sed -i -e s%"/IMG_NAME"%"/${IMG_NAME}"%1 /target/${APP_NAME}.service
   sed -i -e s%"APP_NAME"%"${APP_NAME}"%1 /target/${APP_NAME}.service

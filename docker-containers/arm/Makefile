@@ -1,11 +1,11 @@
 #!/usr/bin/make -f
 
-all: armv7l aarch64
-.PHONY: all armv7l aarch64 end
+all: armv7 aarch64
+.PHONY: all armv7 aarch64 end
 
-armv7l: ARCH := "armv7l"
+armv7: ARCH := "armv7"
 aarch64: ARCH := "aarch64"
-armv7l aarch64:
+armv7 aarch64:
 	@echo "Building $(ARCH)"
 	$(eval img_name := $(shell curl -s http://download.opensuse.org/repositories/home:/emby:/docker/images/ --list-only | grep "emby" | sed -n s%".*>\(.*${ARCH}-.*tar.xz\)</a>.*"%"\1"%p | sort -i | head -1))
 	curl -sSL http://download.opensuse.org/repositories/home:/emby:/docker/images/$(img_name) -o rootfs.tar.xz

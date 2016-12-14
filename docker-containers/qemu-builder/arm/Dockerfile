@@ -5,7 +5,7 @@ ENV LANG="en_US.UTF-8"
 
 ADD rootfs.tar.xz /
 
-COPY usr/ /
+COPY usr/ /usr/
 
 ENTRYPOINT ["/init"]
 WORKDIR /var/tmp/build-root

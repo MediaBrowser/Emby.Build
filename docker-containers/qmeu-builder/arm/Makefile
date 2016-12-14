@@ -1,5 +1,8 @@
 #!/usr/bin/make -f
 
+SHELL := /bin/bash
+
+repo := "http://download.opensuse.org/tumbleweed/repo/oss/suse/x86_64"
 all: armv7 aarch64
 .PHONY: all armv7 aarch64 end
 
@@ -7,25 +10,22 @@ armv7: ARCH := "armv7"
 aarch64: ARCH := "aarch64"
 armv7 aarch64:
 	@echo "Building $(ARCH)"
-	$(eval img_name := $(shell curl -s http://download.opensuse.org/repositories/home:/emby:/docker/images/ --list-only | grep devel | sed -n s%".*>\(.*${ARCH}-.*tar.xz\)</a>.*"%"\1"%p | sort -i | head -1))
-	curl -sSL http://download.opensuse.org/repositories/home:/emby:/docker/images/$(img_name) -o rootfs.tar.xz
+	$(eval img_name := $(shell curl -s http://download.opensuse.org/repositories/home:/emby:/docker/images/ --list-only | grep devel | sed -n s%".*>\(.*${ARCH}.*-.*tar.xz\)</a>.*"%"\1"%p | sort -i | head -1))
+	curl -L http://download.opensuse.org/repositories/home:/emby:/docker/images/$(img_name) -o rootfs.tar.xz
+	$(eval rpm_name := $(shell curl -s $(repo)/ --list-only | grep qemu-linux | sed -n s%".*>\(qemu-linux-.*rpm\)</a>.*"%"\1"%p))
+	curl -L $(repo)/$(rpm_name) -o qemu-linux-user.rpm
 	@ if [[ $(ARCH) ==  "armv7" ]]; then \
-		cp /usr/bin/qemu-arm-binfmt . \
-		sed s%"^COPY\sbinfmt$$"%"COPY qemu-arm-binfmt /usr/bin/"% Dockerfile
-		cp /usr/bin/qemu-arm . \
-		sed s%"^COPY\sqemu$$"%"COPY qemu-arm /usr/bin/"% Dockerfile
+		rpm2cpio qemu-linux-user.rpm | cpio -idmv "*qemu-arm*"; \
 	  else \
-	    cp /usr/bin/qemu-aarch64-binfmt . \
-		sed s%"^COPY\sbinfmt$$"%"COPY qemu-aarch64-binfmt /usr/bin/"% Dockerfile
-	    cp /usr/bin/qemu-aarch64 . \
-		sed s%"^COPY\sqemu$$"%"COPY qemu-aarch64 /usr/bin/"% Dockerfile
+		rpm2cpio qemu-linux-user.rpm | cpio -idmv "*qemu-aarch*"; \
 	  fi
 	docker build --rm=true --tag=emby/qemu-builder:$(ARCH) .
 	docker push emby/qemu-builder:$(ARCH)
 	docker rmi emby/qemu-builder:$(ARCH)
 	rm rootfs.tar.xz
-	git clean -f -d
-	git reset --hard HEAD
+	rm qemu-linux-user.rpm
+	rm -rf root/
+	rm -rf usr/
 
 end:
 	@echo "Done!"

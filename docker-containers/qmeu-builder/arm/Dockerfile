@@ -5,9 +5,6 @@ ENV LANG="en_US.UTF-8"
 
 ADD rootfs.tar.xz /
 
-VOLUME [ "/config" ]
-
-COPY qemu
-COPY binfmt
+COPY usr/ /
 
 ENTRYPOINT ["/init"]

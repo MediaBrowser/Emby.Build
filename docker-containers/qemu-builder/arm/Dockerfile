@@ -1,4 +1,4 @@
-# Emby Server
+# Qemu Builder for arm archs
 FROM scratch
 MAINTAINER Carlos Hernandez <carlos@techbyte.ca>
 ENV LANG="en_US.UTF-8"

@@ -14,6 +14,7 @@ armv7 aarch64:
 	docker push emby/embyserver:$(ARCH)
 	docker rmi emby/embyserver:$(ARCH)
 	rm rootfs.tar.xz
+	git reset --hard
 
 end:
 	@echo "Done!"

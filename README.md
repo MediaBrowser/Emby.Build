@@ -45,7 +45,7 @@ This subfolder contains all necessary files to build a [Docker](https://www.dock
 * latest - latest stable release  
 * beta - latest beta release  
 * dev  - latest dev release  
-* armv7l - latest stable release for armv7 or armhf
+* armv7 - latest stable release for armv7 or armhf  
 * aarch64 - latest stable release for armv8 or aarch64  
 
 ## Contributing:

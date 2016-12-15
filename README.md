@@ -253,7 +253,7 @@ You can find the template for this container on GitHub. Located [here](https://g
 
 Please navigate to the Docker settings page on unRAID's Web-UI and under repositories add:
 ```
-https://github.com/hurricanehrndz/container-templates/tree/master/unraid-templates/emby
+https://github.com/MediaBrowser/Emby.Build/tree/master/unraid-templates/emby
 ```
 For more information on adding templates to unRAID please visit the [unRAID forums](https://lime-technology.com/forum/).
 

@@ -1,7 +1,7 @@
 #!/usr/bin/with-contenv sh
 # vim:set ft=sh sw=2 sts=2 st=2 et:
 
-find /etc/zypp/repos.d/ -type f | grep -v "$(uname -a )" | grep -v emby | xargs -I {} rm {} ;
+find /etc/zypp/repos.d/ -type f | grep -v emby | grep -v "$(uname -a )" | xargs -I {} rm {} ;
 
 # grab source
 if [[ -d "/var/tmp/source/build-root" ]]; then

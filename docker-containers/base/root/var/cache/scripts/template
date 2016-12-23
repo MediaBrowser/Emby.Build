@@ -151,6 +151,7 @@ if [[ "${running}" != "true" ]]; then
   ${SUDO} docker run \
     --log-opt max-size=2m \
     --log-opt max-file=2 \
+    --net=host \
     ${RUN_MODE} \
     ${ENV_VARS} \
     ${VOLUMES} \

@@ -1,7 +1,7 @@
 FROM opensuse/amd64:tumbleweed
 MAINTAINER Carlos Hernandez <carlos@techbyte.ca>
 
-ENV LANG="en_US.UTF-8" s6_overlay_version="1.18.1.5"
+ENV LANG="en_US.UTF-8" s6_overlay_version="1.19.1.1"
 
 RUN zypper --non-interactive ar -f -n repo-emby http://download.opensuse.org/repositories/home:emby/openSUSE_Tumbleweed repo-emby \
  && zypper --gpg-auto-import-keys ref \
@@ -28,9 +28,9 @@ RUN zypper --non-interactive ar -f -n repo-emby http://download.opensuse.org/rep
 	tar \
 	timezone \
 	xz \
- && curl -sL https://github.com/just-containers/s6-overlay/releases/download/v${s6_overlay_version}/s6-overlay-amd64.tar.gz -o /tmp/s6-overlay-amd64.tar.gz \
- && tar zxf /tmp/s6-overlay-amd64.tar.gz -C / \
- && curl -sL http://johnvansickle.com/ffmpeg/releases/ffmpeg-3.2.4-64bit-static.tar.xz -o /tmp/ffmpeg.tar.xz \
+ && curl -L https://github.com/just-containers/s6-overlay/releases/download/v${s6_overlay_version}/s6-overlay-amd64.tar.gz -o /tmp/s6-overlay-amd64.tar.gz \
+ && tar zvxf /tmp/s6-overlay-amd64.tar.gz -C / \
+ && curl -L http://johnvansickle.com/ffmpeg/releases/ffmpeg-3.2.4-64bit-static.tar.xz -o /tmp/ffmpeg.tar.xz \
  && tar -C /bin --extract --file=/tmp/ffmpeg.tar.xz --wildcards "*/ffmpeg" --strip-components=1  \
  && tar -C /bin --extract --file=/tmp/ffmpeg.tar.xz --wildcards "*/ffprobe" --strip-components=1  \
  && rpm -e --nodeps --allmatches --noscripts \

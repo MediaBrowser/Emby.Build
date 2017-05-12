@@ -63,19 +63,11 @@ MONO_EXEC_ENV="$MONO_ENV ${EMBY_LIBRARY_PATH:+"LD_LIBRARY_PATH=${EMBY_LIBRARY_PA
 # Mono options
 MONO_EXEC_OPTS=$MONO_OPTS
 
-# ffmpeg
-FFMPEG_BIN=$(command -v ffmpeg)
-[[ -n "$FFMPEG_BIN" ]] && FFMPEG_OPTS="-ffmpeg $FFMPEG_BIN"
-
-# ffprobe
-FFPROBE_BIN=$(command -v ffprobe)
-[[ -n "$FFPROBE_BIN" ]] && FFPROBE_OPTS="-ffprobe $FFPROBE_BIN"
-
 # restart function
 RESTART_OPTS="-restartpath ${EMBY_PATH}/restart.sh"
 
 # Emby options
-EMBY_OPTS="$PROGRAMDATA_OPT $FFMPEG_OPTS $FFPROBE_OPTS $RESTART_OPTS $EMBY_ADD_OPTS"
+EMBY_OPTS="$PROGRAMDATA_OPT $RESTART_OPTS $EMBY_ADD_OPTS"
 
 PID_PATH=$(dirname $PIDFILE)
 

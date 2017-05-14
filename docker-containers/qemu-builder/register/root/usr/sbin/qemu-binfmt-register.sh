@@ -33,16 +33,19 @@ fi
 
 
 if [[ $# -gt 0 ]]; then
-  while getopts ":r" opt; do
-    case $opt in
-      r)
+  options=$(getopt -o r -l remove -- "$@")
+  eval set -- "$options"
+  while true ; do
+    case "$1" in
+      -r|--remove)
         unregister
         ;;
-      \?)
-        echo "Invalid option: -$OPTARG" >&2
+      *)
+        break
         ;;
     esac
+    shift
   done
 else
-  exec /usr/sbin/qemu-binfmt-conf.sh
+  exec /usr/sbin/qemu-binfmt-conf.sh -c yes
 fi

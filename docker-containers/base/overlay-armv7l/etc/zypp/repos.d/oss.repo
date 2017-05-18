@@ -1,0 +1,8 @@
+[oss]
+name=openSUSE-Tumbleweed-Oss
+enabled=1
+autorefresh=1
+baseurl=http://download.opensuse.org/ports/armv7hl/tumbleweed/repo/oss/
+path=/
+type=yast2
+keeppackages=0

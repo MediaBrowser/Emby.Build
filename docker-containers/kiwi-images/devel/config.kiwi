@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<image schemaversion="6.1" name="arm-devel-guest">
+  <description type="system">
+    <author>Carlos Hernandez</author>
+    <contact>carlos@techbyte.ca</contact>
+    <specification>Development container for compiling via qemu</specification>
+  </description>
+  <preferences>
+    <type image="docker" container="tumbleweed">
+      <machine>
+        <vmdisk/>
+        <vmnic interface="eth0" mode="veth"/>
+      </machine>
+    </type>
+    <version>1.0.3</version>
+    <packagemanager>zypper</packagemanager>
+    <rpm-check-signatures>false</rpm-check-signatures>
+    <rpm-force>true</rpm-force>
+    <rpm-excludedocs>true</rpm-excludedocs>
+    <locale>en_US</locale>
+    <keytable>us.map.gz</keytable>
+    <hwclock>utc</hwclock>
+  </preferences>
+  <users group="root">
+    <user home="/root" name="root"/>
+  </users>
+  <repository>
+    <source path="obsrepositories:/"/>
+  </repository>
+  <packages type="image">
+    <package name="ca-certificates"/>
+    <package name="ca-certificates-mozilla"/>
+    <package name="coreutils"/>
+    <package name="iputils"/>
+    <package name="openSUSE-build-key"/>
+    <package name="openSUSE-release"/>
+    <package name="openSUSE-release-mini"/>
+  </packages>
+  <packages type="bootstrap">
+    <package name="acl"/>
+    <package name="autoconf"/>
+    <package name="automake"/>
+    <package name="binutils"/>
+    <package name="cmake"/>
+    <package name="curl"/>
+    <package name="dracut"/>
+    <package name="elfutils"/>
+    <package name="filesystem"/>
+    <package name="gcc"/>
+    <package name="gcc-c++"/>
+    <package name="git-core"/>
+    <package name="glibc-devel"/>
+    <package name="glibc-devel-static"/>
+    <package name="glibc-locale"/>
+    <package name="libstdc++-devel"/>
+    <package name="libtool"/>
+    <package name="make"/>
+    <package name="mercurial"/>
+    <package name="ncurses-utils"/>
+    <package name="patch"/>
+    <package name="pkg-config"/>
+    <package name="python"/>
+    <package name="s6"/>
+    <package name="s6-overlay"/>
+    <package name="s6-portable-utils"/>
+    <package name="s6-rc"/>
+    <package name="sg3_utils"/>
+    <package name="sudo"/>
+    <package name="tar"/>
+    <package name="timezone"/>
+    <package name="xz"/>
+  </packages>
+  <packages type="delete">
+    <package name="aaa_base"/>
+    <package name="dbus-1"/>
+    <package name="dracut"/>
+    <package name="fipscheck"/>
+    <package name="kbd"/>
+    <package name="kmod"/>
+    <package name="ncurses-utils"/>
+    <package name="pinentry"/>
+    <package name="sg3_utils"/>
+    <package name="systemd"/>
+    <package name="systemd-presets-branding-openSUSE"/>
+    <package name="systemd-sysvinit"/>
+    <package name="udev"/>
+  </packages>
+</image>

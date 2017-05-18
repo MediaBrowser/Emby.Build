@@ -1,9 +1,0 @@
-#!/usr/bin/with-contenv sh
-# vim:set ft=sh sw=2 sts=2 st=2 et:
-
-find /etc/zypp/repos.d/ -type f | grep -v emby | grep -v "$(uname -a )" | xargs -I {} rm {} ;
-
-# grab source
-if [[ -d "/var/tmp/source/build-root" ]]; then
-  cp -R /var/tmp/source/build-root /var/tmp/
-fi

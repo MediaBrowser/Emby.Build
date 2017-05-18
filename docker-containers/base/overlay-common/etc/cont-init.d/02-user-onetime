@@ -1,0 +1,56 @@
+#!/usr/bin/with-contenv bash
+# vim:set ft=sh sw=2 sts=2 st=2 et:
+
+APP_UID=${APP_UID:-1000}
+APP_GID=${APP_GID:-1000}
+
+APP_USER=${APP_USER:-appuser}
+APP_CONFIG=${APP_CONFIG:-/config}
+
+# del emby user and group
+userdel -f emby 2> /dev/null
+groupdel emby 2> /dev/null
+
+if getent group ${APP_GID} > /dev/null; then
+  groupdel ${APP_GID} 2> /dev/null
+fi
+
+# add USER GID
+if ! getent group ${APP_USER} > /dev/null; then
+  groupadd -f -g ${APP_GID} ${APP_USER} > /dev/null 2>&1
+fi
+
+if getent passwd ${APP_UID} > /dev/null; then
+  userdel ${APP_UID} 2> /dev/null
+fi
+
+# create user with APP_UID
+if ! getent passwd ${APP_USER} > /dev/null; then
+  useradd --system \
+    --shell /bin/false \
+    --no-create-home \
+    --uid ${APP_UID} \
+    --gid ${APP_GID} \
+    --comment 'Emby Server' ${APP_USER} > /dev/null 2>&1
+fi
+
+# ensure the group emby exist no matter what
+if ! getent group emby  > /dev/null; then
+  groupadd -f emby > /dev/null 2>&1
+fi
+
+CURR_SID=$(stat -c"%u:%g" ${APP_CONFIG})
+if [[ "$CURR_SID" != "$APP_UID:$APP_GID" ]] ; then
+  chown -R $APP_UID:$APP_GID ${APP_CONFIG}
+fi
+
+# dri permissions
+if [[ -e /dev/dri ]]; then
+  for dev_dri in /dev/dri/*; do
+    video_gid=$(stat -c %g ${dev_dri})
+    if ! getent group ${video_gid}  > /dev/null; then
+      groupadd -f -g ${video_gid} embyvideo
+    fi
+    usermod -aG ${video_gid} emby
+  done
+fi

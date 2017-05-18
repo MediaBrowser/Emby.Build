@@ -4,8 +4,8 @@ MAINTAINER HurricaneHrndz <carlos@techbyte.ca>
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update \
  && apt-get install -y wget \
- && wget -qO - http://download.opensuse.org/repositories/home:hurricanehernandez:emby-server/xUbuntu_16.04/Release.key | apt-key add - \
- && echo 'deb http://download.opensuse.org/repositories/home:/hurricanehernandez:/emby-server/xUbuntu_16.04/ /' >> /etc/apt/sources.list.d/emby-server.list \
+ && wget -qO - http://download.opensuse.org/repositories/home:emby:emby-server/xUbuntu_16.04/Release.key | apt-key add - \
+ && echo 'deb http://download.opensuse.org/repositories/home:/emby:/emby-server/xUbuntu_16.04/ /' >> /etc/apt/sources.list.d/emby-server.list \
  && apt-get update \
  && apt-get upgrade -y \
  && apt-get install -y \

@@ -1,7 +1,8 @@
 [home_emby]
-name=emby's Home Project (openSUSE_Factory_ARM)
-type=rpm-md
-baseurl=http://download.opensuse.org/repositories/home:/emby/openSUSE_Factory_ARM/
-gpgcheck=1
-gpgkey=http://download.opensuse.org/repositories/home:/emby/openSUSE_Factory_ARM//repodata/repomd.xml.key
+name=emby's Home Project (openSUSE_Tumbleweed)
 enabled=1
+autorefresh=0
+baseurl=http://download.opensuse.org/repositories/home:/emby/openSUSE_Tumbleweed/
+type=rpm-md
+gpgcheck=1
+gpgkey=http://download.opensuse.org/repositories/home:/emby/openSUSE_Tumbleweed//repodata/repomd.xml.key

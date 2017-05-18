@@ -1,52 +1,29 @@
-all: build
+#!/usr/bin/make -f
 
-APP_NAME="emby-server"
-IMG_NAME="embyserver"
-TAG_NAME="latest"
+SHELL := /bin/bash
+IMG_NAME := embyserver
+IMG_REPO := emby
 
-ifndef APP_REPO
-APP_REPO=${USER}
-endif
+.PHONY: all armv7 aarch64 x86_64 end
+all: armv7 aarch64 x86_64
 
-ENV_VARS= \
-		  --env="APP_REPO=${APP_REPO}" \
-		  --env="APP_USER=${USER}" \
-		  --env="APP_UID=$(shell id -u)" \
-		  --env="APP_GID=$(shell id -g)" \
-		  --env="IMG_NAME=${IMG_NAME}" \
-		  --env="TAG_NAME=${TAG_NAME}"
+x86_64: ARCH := x86_64
+armv7: ARCH := armv7
+aarch64: ARCH := aarch64
+x86_64 armv7 aarch64:
+	@ echo "Building emby-server  image for $(ARCH)"
+	$(eval BUILDDIR := /var/tmp/$(IMG_REPO)_$(IMG_NAME)_$(ARCH))
+	@ if  [[ -d $(BUILDDIR) ]]; then \
+		rm -rf $(BUILDDIR); \
+	fi
+	mkdir -p $(BUILDDIR)
+	cp Dockerfile $(BUILDDIR)
+	sed -i s'%\(emby/emby-base[:]\).*%\1$(ARCH)%' $(BUILDDIR)/Dockerfile
+	cd $(BUILDDIR) && \
+	docker build --build-arg ARCH=$(ARCH) --rm=true --tag=$(IMG_REPO)/$(IMG_NAME):$(ARCH) .
+	@ if [[ $(ARCH) ==  "x86_64" ]]; then \
+		docker tag $(IMG_REPO)/$(IMG_NAME):$(ARCH) $(IMG_REPO)/$(IMG_NAME):latest; \
+	fi
 
-ifdef APP_CONFIG
-INSTL_VARS= \
-			--env="APP_CONFIG=${APP_CONFIG}"
-endif
-
-help:
-	@echo ""
-	@echo "-- Help Menu"
-	@echo ""
-	@echo "   1. make build             - build the ${APP_NAME} base image"
-	@echo "   2. make clean             - remove the ${APP_NAME} base image and containers"
-	@echo "   3. make install           - install ${APP_NAME} wrapper script for docker"
-	@echo "   4. make ${APP_NAME}       - build ${APP_NAME} image and run"
-	@echo ""
-
-clean:
-	@docker rm -f `docker ps -a | grep "${APP_REPO}/${IMG_NAME}" | awk '{print $$1}'` > /dev/null 2>&1 || exit 0
-	@docker rmi `docker images  | grep -e "${APP_REPO}/${IMG_NAME}.*${TAG_NAME}" | awk '{print $$3}'` > /dev/null 2>&1 || exit 0
-
-build:
-	@docker build --rm=true --tag=${APP_REPO}/${IMG_NAME}:${TAG_NAME} .
-
-instl uninstl: clean build
-	@docker run -it --rm \
-		-v /usr/local/bin:/target \
-		${ENV_VARS} \
-		${INSTL_VARS} \
-		${APP_REPO}/${IMG_NAME}:${TAG_NAME} $@
-
-service: build
-	@docker run -it --rm \
-		-v /etc/systemd/system:/target \
-		${ENV_VARS} \
-		${APP_REPO}/${IMG_NAME}:${TAG_NAME} instl service
+end:
+	@echo "Done!"

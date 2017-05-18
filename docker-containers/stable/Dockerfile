@@ -1,6 +1,7 @@
 # Emby Server
-FROM emby/emby-base
-ENV APP_NAME="emby-server" IMG_NAME="embyserver" TAG_NAME="latest" PKG_NAME="emby-server" EDGE=0 UMASK=002
+FROM emby/emby-base:x86_64
+ARG ARCH=latest
+ENV APP_NAME="emby-server" IMG_NAME="embyserver" TAG_NAME="${ARCH}" PKG_NAME="emby-server" EDGE=0 UMASK=002
 
 RUN zypper --gpg-auto-import-keys ref \
  && zypper --non-interactive in $PKG_NAME \

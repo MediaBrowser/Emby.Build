@@ -7,13 +7,13 @@ IMG_REPO := "emby"
 root_repo := "http://download.opensuse.org/repositories/home:/emby:/docker/images/"
 qemu_repo := "http://download.opensuse.org/tumbleweed/repo/oss/suse/x86_64"
 
-all: armv7l aarch64 x86_64
-.PHONY: all armv7l aarch64 x86_64 end
+all: armv7 aarch64 x86_64
+.PHONY: all armv7 aarch64 x86_64 end
 
-armv7l: ARCH := "armv7l"
+armv7: ARCH := "armv7"
 aarch64: ARCH := "aarch64"
 x86_64: ARCH := "x86_64"
-armv7l aarch64 x86_64:
+armv7 aarch64 x86_64:
 	@ echo "Building emby base image for $(ARCH)"
 	$(eval BUILDDIR := /var/tmp/$(IMG_REPO)_$(IMG_NAME)_$(ARCH))
 	@ if  [[ -d $(BUILDDIR) ]]; then \
@@ -26,7 +26,7 @@ armv7l aarch64 x86_64:
 	mkdir -p $(BUILDDIR)/usr/bin
 	$(eval rpm_name := $(shell curl -s $(qemu_repo)/ --list-only | grep qemu-linux | sed -n s%".*>\(qemu-linux-.*rpm\)</a>.*"%"\1"%p | tail -1))
 	curl -L $(qemu_repo)/$(rpm_name) -o $(BUILDDIR)/qemu-linux-user.rpm
-	@ if [[ $(ARCH) ==  "armv7l" ]]; then \
+	@ if [[ $(ARCH) ==  "armv7" ]]; then \
 		rpm2cpio $(BUILDDIR)/qemu-linux-user.rpm | cpio -D $(BUILDDIR) -idmv "*qemu-arm" "*qemu-arm-*"; \
 		if [[ ! -e /proc/sys/fs/binfmt_misc/qemu-arm ]]; then \
 			docker run --rm --privileged emby/qemu-builder:register; \
@@ -43,7 +43,7 @@ armv7l aarch64 x86_64:
 	@ if [[ $(ARCH) ==  "x86_64" ]]; then \
 		curl -L https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-64bit-static.tar.xz -o $(BUILDDIR)/ffmpeg.tar.xz; \
 	else \
-		curl -L https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-armhf-static.tar.xz -o $(BUILDDIR)/ffmpeg.tar.xz; \
+		curl -L https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-armhf-32bit-static.tar.xz -o $(BUILDDIR)/ffmpeg.tar.xz; \
 	fi
 	tar -C $(BUILDDIR)/usr/bin -xf $(BUILDDIR)/ffmpeg.tar.xz --wildcards "*/ffmpeg" --strip-components=1
 	tar -C $(BUILDDIR)/usr/bin -xf $(BUILDDIR)/ffmpeg.tar.xz --wildcards "*/ffprobe" --strip-components=1

@@ -46,6 +46,7 @@
     <package name="elfutils"/>
     <package name="embymagick"/>
     <package name="filesystem"/>
+    <package name="glibc-devel"/>
     <package name="glibc-locale"/>
     <package name="libembysqlite3-0"/>
     <package name="libHX28"/>

@@ -1,6 +1,6 @@
 all: build
 
-IMG_NAME="qemu-builder:register"
+IMG_NAME="qemu-register"
 
 ifndef APP_REPO
 APP_REPO=emby

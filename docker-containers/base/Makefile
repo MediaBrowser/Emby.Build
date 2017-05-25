@@ -8,7 +8,7 @@ root_repo := "http://download.opensuse.org/repositories/home:/emby:/docker/image
 qemu_repo := "http://download.opensuse.org/tumbleweed/repo/oss/suse/x86_64"
 
 all: armv7 aarch64 x86_64
-.PHONY: all armv7 aarch64 x86_64 end
+.PHONY: all armv7 aarch64 x86_64 clean end
 
 armv7: ARCH := "armv7"
 aarch64: ARCH := "aarch64"
@@ -29,13 +29,13 @@ armv7 aarch64 x86_64:
 	@ if [[ $(ARCH) ==  "armv7" ]]; then \
 		rpm2cpio $(BUILDDIR)/qemu-linux-user.rpm | cpio -D $(BUILDDIR) -idmv "*qemu-arm" "*qemu-arm-*"; \
 		if [[ ! -e /proc/sys/fs/binfmt_misc/qemu-arm ]]; then \
-			docker run --rm --privileged emby/qemu-builder:register; \
+			docker run --rm --privileged emby/qemu-register:latest; \
 		fi \
 	fi
 	@ if [[ $(ARCH) ==  "aarch64" ]]; then \
 		rpm2cpio $(BUILDDIR)/qemu-linux-user.rpm | cpio -D $(BUILDDIR) -idmv "*qemu-aarch*"; \
 		if [[ ! -e /proc/sys/fs/binfmt_misc/qemu-aarch64 ]]; then \
-			docker run --rm --privileged emby/qemu-builder:register; \
+			docker run --rm --privileged emby/qemu-register:latest; \
 		fi \
 	fi
 	$(eval rootfs_file := $(shell curl -s $(root_repo) --list-only | sed -n s%".*>\(emby-base.*${ARCH}.*-.*tar.xz\)</a>.*"%"\1"%p | sort -i | head -1))
@@ -49,12 +49,14 @@ armv7 aarch64 x86_64:
 	tar -C $(BUILDDIR)/usr/bin -xf $(BUILDDIR)/ffmpeg.tar.xz --wildcards "*/ffprobe" --strip-components=1
 	cd $(BUILDDIR) && \
 	docker build --build-arg ARCH=$(ARCH) --rm=true --tag=$(IMG_REPO)/$(IMG_NAME):$(ARCH) .
+	docker push $(IMG_REPO)/$(IMG_NAME):$(ARCH)
 	@ if [[ $(ARCH) ==  "x86_64" ]]; then \
 		docker tag $(IMG_REPO)/$(IMG_NAME):$(ARCH) $(IMG_REPO)/$(IMG_NAME):latest; \
+		docker push $(IMG_REPO)/$(IMG_NAME):$(ARCH)
 	fi
 
-	#rm -rf $(BUILDDIR)
-	#docker push $(IMG_REPO)/$(IMG_NAME):$(ARCH)
+clean:
+	rm -rf $(BUILDDIR)
 
 end:
 	@echo "Done!"

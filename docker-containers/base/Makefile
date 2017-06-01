@@ -49,14 +49,13 @@ armv7 aarch64 x86_64:
 	tar -C $(BUILDDIR)/usr/bin -xf $(BUILDDIR)/ffmpeg.tar.xz --wildcards "*/ffprobe" --strip-components=1
 	cd $(BUILDDIR) && \
 	docker build --build-arg ARCH=$(ARCH) --rm=true --tag=$(IMG_REPO)/$(IMG_NAME):$(ARCH) .
-	docker push $(IMG_REPO)/$(IMG_NAME):$(ARCH)
 	@ if [[ $(ARCH) ==  "x86_64" ]]; then \
 		docker tag $(IMG_REPO)/$(IMG_NAME):$(ARCH) $(IMG_REPO)/$(IMG_NAME):latest; \
-		docker push $(IMG_REPO)/$(IMG_NAME):$(ARCH)
 	fi
-
-clean:
 	rm -rf $(BUILDDIR)
+
+push:
+	docker push $(IMG_REPO)/$(IMG_NAME)
 
 end:
 	@echo "Done!"

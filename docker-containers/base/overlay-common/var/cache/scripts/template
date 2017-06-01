@@ -39,7 +39,7 @@ cleanup_stopped_instances() {
   for c in $(${SUDO} docker ps -a -q)
   do
     image=$(${SUDO} docker inspect --format="{{.Config.Image}}" ${c})
-    if [[ ${image} == "${APP_REPO}/${IMG_NAME}:${TAG_NAME}" ]]; then
+    if [[ $(echo "${image}" | grep -c -e "${APP_REPO}/embyserver.*${TAG_NAME}") -gt 0 ]]; then
       running=$(${SUDO} docker inspect --format="{{.State.Running}}" ${c})
       if [[ ${running} != true ]]; then
         echo "Cleaning up stopped ${APP_NAME} instances..."

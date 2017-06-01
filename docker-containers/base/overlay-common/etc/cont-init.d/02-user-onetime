@@ -51,6 +51,6 @@ if [[ -e /dev/dri ]]; then
     if ! getent group ${video_gid}  > /dev/null; then
       groupadd -f -g ${video_gid} embyvideo
     fi
-    usermod -aG ${video_gid} emby
+    usermod -aG ${video_gid} ${APP_USER}
   done
 fi

@@ -2,11 +2,16 @@
 # vim:set ft=sh sw=2 sts=2 st=2 et:
 
 EDGE=${EDGE:-0}
+STABLE=${STABLE:-1}
 
 if [[ $EDGE -eq 1 ]]; then
   echo "Updating ${APP_NAME}..."
-  zypper --quiet --non-interactive ref &> /dev/null
-  zypper --quiet --non-interactive up --no-recommends ${PKG_NAME} &> /dev/null
-  zypper cc --all &> /dev/null
-  rm -rf /var/cache/zypp*
+  if [[ $STABLE -eq 1 ]]; then
+    RELEASE_VERSION=$(curl -sL https://github.com/mediaBrowser/Emby/releases.atom | grep -A 1 -e 'link.*alternate' | grep -e '    <' | sed 'N;s/\n/ /' | grep -v 'beta' | head -1 | sed 's%.*/tag/\([^"]*\).*%\1%')
+  else
+    RELEASE_VERSION=$(curl -sL https://github.com/mediaBrowser/Emby/releases.atom | grep -A 1 -e 'link.*alternate' | grep -e '    <' | sed 'N;s/\n/ /' | grep 'beta' | head -1 | sed 's%.*/tag/\([^"]*\).*%\1%')
+  fi
+  curl -o /var/tmp/emby.zip -L https://github.com/MediaBrowser/Emby/releases/download/${RELEASE_VERSION}/Emby.Mono.zip
+  mkdir /usr/lib/emby-server/bin
+  unzip /var/tmp/emby.zip -d /usr/lib/emby-server/bin
 fi

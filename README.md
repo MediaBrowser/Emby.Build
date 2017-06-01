@@ -42,11 +42,23 @@ This subfolder contains all necessary files to build a [Docker](https://www.dock
 
 ## Supported Tags:
 
+#### Image - emby/embyserver
 * latest - latest stable release  
-* beta - latest beta release  
-* dev  - latest dev release  
+* x86_64 - latest stable release for x86_64  
 * armv7 - latest stable release for armv7 or armhf  
 * aarch64 - latest stable release for armv8 or aarch64  
+* x86_64_${VERSION} - $VERSION stable release for x86_64  
+* armv7_${VERSION} - $VERSION stable release for armv7 or armhf  
+* aarch64_${VERSION} - $VERSION stable release for armv8 or aarch64  
+
+#### Image - emby/embyserver_beta
+* latest - latest beta release  
+* x86_64 - latest beta release for x86_64  
+* armv7 - latest beta release for armv7 or armhf  
+* aarch64 - latest beta release for armv8 or aarch64  
+* x86_64_${VERSION} - $VERSION beta release for x86_64  
+* armv7_${VERSION} - $VERSION beta release for armv7 or armhf  
+* aarch64_${VERSION} - $VERSION beta release for armv8 or aarch64  
 
 ## Contributing:
 

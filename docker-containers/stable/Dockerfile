@@ -1,8 +1,13 @@
 # Emby Server
 FROM emby/emby-base:x86_64
-ARG ARCH=latest
-ENV APP_NAME="emby-server" IMG_NAME="embyserver" TAG_NAME="${ARCH}" PKG_NAME="emby-server" EDGE=0 UMASK=002
+ARG ARCH
+ENV APP_NAME="emby-server" IMG_NAME="embyserver" TAG_NAME="${ARCH}" EDGE=0 UMASK=002
 
+RUN VERSION=$(curl -sL https://github.com/mediaBrowser/Emby/releases.atom | grep -A 1 -e 'link.*alternate' | grep -e '    <' | sed 'N;s/\n/ /' | grep -v 'beta' | head -1 | sed 's%.*/tag/\([^"]*\).*%\1%') \
+ && echo "Downloading version: $VERSION" \
+ && curl -o /var/tmp/emby.zip -L https://github.com/MediaBrowser/Emby/releases/download/${VERSION}/Emby.Mono.zip \
+ && mkdir -p /usr/lib/emby-server/bin \
+ && unzip /var/tmp/emby.zip -d /usr/lib/emby-server/bin
 
 VOLUME [ "/config" ]
 EXPOSE 8096 8920 7359/udp 1900/udp

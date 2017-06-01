@@ -1,0 +1,11 @@
+#!/usr/bin/with-contenv bash
+# vim:set ft=sh sw=2 sts=2 st=2 et:
+
+APP_BIN_DIR="/usr/lib/emby-server/bin"
+
+imageWand="libEmbyMagickWand-6.Q8.so.2"
+imageCore="libEmbyMagickCore-6.Q8.so.2"
+sqlitelib="libembysqlite3.so.0"
+
+echo -e "<configuration>\n\t<dllmap dll=\"CORE_RL_Wand_.dll\" target=\"$imageWand\" os=\"linux\"/>\n\t<dllmap dll=\"CORE_RL_magick_.dll\" target=\"$imageCore\" os=\"linux\"/>\n</configuration>" > $APP_BIN_DIR/ImageMagickSharp.dll.config
+echo -e "<configuration>\n\t<dllmap dll=\"sqlite3\" target=\"$sqlitelib\" os=\"linux\"/>\n\t<dllmap dll=\"dl\" target=\"libdl.so.2\" os=\"linux\"/>\n</configuration>" > $APP_BIN_DIR/SQLitePCLRaw.provider.sqlite3.dll.config

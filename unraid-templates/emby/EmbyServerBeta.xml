@@ -10,9 +10,9 @@
     [b]/mnt[/b] : this path is used to add library locations to MediaBrowser.[br]
     [b][span style='color: #E80000;']This is beta.[/span][/b][br]
   </Description>
-  <Registry>https://registry.hub.docker.com/u/emby/embyserver/</Registry>
-  <GitHub>https://github.com/MediaBrowser/Emby.Build/tree/master/docker-containers/stable</GitHub>
-  <Repository>emby/embyserver:beta</Repository>
+  <Registry>https://registry.hub.docker.com/u/emby/embyserver_beta/</Registry>
+  <GitHub>https://github.com/MediaBrowser/Emby.Build/tree/master/docker-containers/beta</GitHub>
+  <Repository>emby/embyserver_beta:latest</Repository>
   <BindTime>true</BindTime>
   <Privileged>false</Privileged>
   <Environment>

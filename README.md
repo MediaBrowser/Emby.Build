@@ -220,14 +220,24 @@ for the various ways this can be achieved.
 
 In order to have the container periodically check and upgrade the embyserver binary
 one needs to add  a [`crontab`](https://en.wikipedia.org/wiki/Cron) entry. Like
-so:
+so, please keep in mind the command might need to be updated to reflect the
+container name:
 ```
 echo "0 2 * * * docker exec emby-server update" | sudo tee -a /var/spool/cron/crontabs/root
 ```
 or
 ```
+echo "0 2 * * * docker exec EmbyServer update" | sudo tee -a /var/spool/cron/crontabs/root
+```
+or
+```
+echo "0 2 * * * docker exec EmbyServerBeta update" | sudo tee -a /var/spool/cron/crontabs/root
+```
+or
+```
 echo "0 2 * * * emby-server update" | sudo tee -a /var/spool/cron/crontabs/root
 ```
+
 ## Removal:
 
 ```bash

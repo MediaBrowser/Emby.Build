@@ -7,11 +7,15 @@ STABLE=${STABLE:-1}
 if [[ $EDGE -eq 1 ]]; then
   echo "Updating ${APP_NAME}..."
   if [[ $STABLE -eq 1 ]]; then
-    RELEASE_VERSION=$(curl -sL https://github.com/mediaBrowser/Emby/releases.atom | grep -A 1 -e 'link.*alternate' | grep -e '    <' | sed 'N;s/\n/ /' | grep -v 'beta' | head -1 | sed 's%.*/tag/\([^"]*\).*%\1%')
+    VERSION=$(curl -sL https://github.com/mediaBrowser/Emby/releases.atom | grep -A 1 -e 'link.*alternate' | grep -e '    <' | sed 'N;s/\n/ /' | grep -v 'beta' | head -1 | sed 's%.*/tag/\([^"]*\).*%\1%')
   else
-    RELEASE_VERSION=$(curl -sL https://github.com/mediaBrowser/Emby/releases.atom | grep -A 1 -e 'link.*alternate' | grep -e '    <' | sed 'N;s/\n/ /' | grep 'beta' | head -1 | sed 's%.*/tag/\([^"]*\).*%\1%')
+    VERSION=$(curl -sL https://github.com/mediaBrowser/Emby/releases.atom | grep -A 1 -e 'link.*alternate' | grep -e '    <' | sed 'N;s/\n/ /' | grep 'beta' | head -1 | sed 's%.*/tag/\([^"]*\).*%\1%')
   fi
-  curl -o /var/tmp/emby.zip -L https://github.com/MediaBrowser/Emby/releases/download/${RELEASE_VERSION}/Emby.Mono.zip
-  mkdir /usr/lib/emby-server/bin
+  echo "Found version: $VERSION"
+  curl -o /var/tmp/emby.zip -L https://github.com/MediaBrowser/Emby/releases/download/${VERSION}/Emby.Mono.zip
+  rm -rf /usr/lib/emby-server/bin
+  mkdir -p /usr/lib/emby-server/bin
   unzip /var/tmp/emby.zip -d /usr/lib/emby-server/bin
+  source /etc/cont-init.d/04-fix_dllmaps-onetime
+  rm /var/tmp/emby.zip
 fi

@@ -20,6 +20,9 @@ x86_64 armv7 aarch64:
 	mkdir -p $(BUILDDIR)
 	cp Dockerfile $(BUILDDIR)
 	sed -i s'%\(emby/emby-base[:]\).*%\1$(ARCH)%' $(BUILDDIR)/Dockerfile
+	@ if [[ ! -e /proc/sys/fs/binfmt_misc/qemu-arm  || ! -e /proc/sys/fs/binfmt_misc/qemu-aarch64 ]]; then \
+		docker run --rm --privileged emby/qemu-register:latest; \
+	fi
 	cd $(BUILDDIR) && \
 	docker build --build-arg ARCH=$(ARCH) --rm=true --tag=$(IMG_REPO)/$(IMG_NAME):$(ARCH) .
 	docker tag $(IMG_REPO)/$(IMG_NAME):$(ARCH) $(IMG_REPO)/$(IMG_NAME):$(ARCH)_$(VERSION)

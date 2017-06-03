@@ -29,6 +29,7 @@ x86_64 armv7 aarch64:
 	@ if [[ $(ARCH) ==  "x86_64" ]]; then \
 		docker tag $(IMG_REPO)/$(IMG_NAME):$(ARCH) $(IMG_REPO)/$(IMG_NAME):latest; \
 	fi
+	rm -rf $(BUILDDIR)
 
 push:
 	docker push $(IMG_REPO)/$(IMG_NAME)

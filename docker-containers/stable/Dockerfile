@@ -10,7 +10,7 @@ RUN VERSION=$(curl -sL https://github.com/mediaBrowser/Emby/releases.atom | grep
  && rm -rf /usr/lib/emby-server/bin \
  && mkdir -p /usr/lib/emby-server/bin \
  && unzip /var/tmp/emby.zip -d /usr/lib/emby-server/bin \
- && rm -rf /var/tmp/emby.zip \
+ && rm -rf /var/tmp/emby.zip
 
 VOLUME [ "/config" ]
 EXPOSE 8096 8920 7359/udp 1900/udp

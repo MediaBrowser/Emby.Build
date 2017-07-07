@@ -54,6 +54,7 @@
     <package name="mono-data-4.8.1-2.1"/>
     <package name="mono-data-sqlite-4.8.1-2.1"/>
     <package name="mono-extras-4.8.1-2.1"/>
+    <package name="mono-locale-extras-4.8.1-2.1"/>
     <package name="mono-mvc-4.8.1-2.1"/>
     <package name="mono-wcf-4.8.1-2.1"/>
     <package name="mono-web-4.8.1-2.1"/>

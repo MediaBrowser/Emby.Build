@@ -16,6 +16,8 @@ if [[ $EDGE -eq 1 ]]; then
   rm -rf /usr/lib/emby-server/bin
   mkdir -p /usr/lib/emby-server/bin
   unzip /var/tmp/emby.zip -d /usr/lib/emby-server/bin
+  curl -L https://raw.githubusercontent.com/MediaBrowser/Emby.Build/master/builders/emby-server/debfiles/restart.sh -o /usr/lib/emby-server/restart.sh
+  chmod 0755 /usr/lib/emby-server/restart.sh
   source /etc/cont-init.d/04-fix_dllmaps-onetime
   rm /var/tmp/emby.zip
 fi

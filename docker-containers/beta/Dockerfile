@@ -10,6 +10,8 @@ RUN VERSION=$(curl -sL https://github.com/mediaBrowser/Emby/releases.atom | grep
  && rm -rf /usr/lib/emby-server/bin \
  && mkdir -p /usr/lib/emby-server/bin \
  && unzip /var/tmp/emby.zip -d /usr/lib/emby-server/bin \
+ && curl -L https://raw.githubusercontent.com/MediaBrowser/Emby.Build/master/builders/emby-server/debfiles/restart.sh -o /usr/lib/emby-server/restart.sh \
+ && chmod 0755 /usr/lib/emby-server/restart.sh \
  && rm -rf /var/tmp/emby.zip
 
 VOLUME [ "/config" ]

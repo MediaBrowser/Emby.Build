@@ -78,9 +78,9 @@ prepare_docker_volume_parameters() {
 
   # hardware volumes
   if [[ -e "/dev/dri/" ]]; then
-    for dev in /dev/dri/* ; do
+    while IFS= read -r dev; do
       VOLUMES+=" --device=$dev:$dev"
-    done
+    done < <(find /dev/dri -maxdepth 1 ! -type d)
   fi
 }
 

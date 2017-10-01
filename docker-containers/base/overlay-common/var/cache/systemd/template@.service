@@ -1,6 +1,7 @@
 [Unit]
 Description=Emby Media Server for %i
 After=docker.service
+DefaultDependencies=no
 
 [Service]
 Type=simple

@@ -1,6 +1,9 @@
 #!/usr/bin/make -f
 SHELL:=/usr/bin/env bash
 
+IMG_NAME := emby-base
+IMG_REPO := emby
+
 .PHONY: all
 all: armv7 aarch64 x86_64
 

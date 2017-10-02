@@ -12,7 +12,10 @@ RUN VERSION=$(curl -sL https://github.com/mediaBrowser/Emby/releases.atom | grep
  && unzip /var/tmp/emby.zip -d /usr/lib/emby-server/bin \
  && curl -L https://raw.githubusercontent.com/MediaBrowser/Emby.Build/master/builders/emby-server/debfiles/restart.sh -o /usr/lib/emby-server/restart.sh \
  && chmod 0755 /usr/lib/emby-server/restart.sh \
- && rm -rf /var/tmp/emby.zip
+ && rm -rf /var/tmp/emby.zip \
+ && gawk -i inplace -F: '{ if ( $1 == "root" ) print}' /etc/passwd \
+ && gawk -i inplace -F: '{ if ( $1 == "root" ) print}' /etc/group \
+ && gawk -i inplace '{print $0; exit; }' /etc/shadow
 
 VOLUME [ "/config" ]
 EXPOSE 8096 8920 7359/udp 1900/udp

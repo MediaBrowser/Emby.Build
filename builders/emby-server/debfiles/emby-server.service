@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 ExecStart=/usr/bin/emby-server start
-Restart=on-abort
+Restart=on-failure
 TimeoutSec=20
 ExecStopPost=/usr/bin/emby-server clear
 

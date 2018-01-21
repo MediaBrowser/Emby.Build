@@ -17,12 +17,16 @@
   <Privileged>false</Privileged>
   <Environment>
     <Variable>
-      <Name>APP_UID</Name>
-      <Value>99</Value>
+      <Name>UID</Name>
+      <Value>2</Value>
     </Variable>
     <Variable>
-      <Name>APP_GID</Name>
-      <Value>100</Value>
+      <Name>GID</Name>
+      <Value>2</Value>
+    </Variable>
+    <Variable>
+      <Name>GIDLIST</Name>
+      <Value>2</Value>
     </Variable>
   </Environment>
   <Networking>

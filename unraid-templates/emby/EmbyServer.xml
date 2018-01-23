@@ -5,13 +5,12 @@
   <Name>EmbyServer</Name>
   <Description>
     Emby Server is a home media server built on top of other popular open source technologies such as Service Stack, jQuery, jQuery mobile, and Mono. Bringing together movies, music, television and more in one dazzling interface.[br][br]
-    [b][span style='color: #E80000;']Directions:[/span][/b][br]
-    [b]/config[/b] : set this path to where you wish MediaBrowser to store it's configuration.[br]
-    [b]/mnt[/b] : this path is used to add library locations to MediaBrowser.[br]
+    [b][span style='color: #E80000;']Directories:[/span][/b][br]
+    [b]/config[/b] : this path is used to store Emby's configuration.[br]
+    [b]/mnt[/b] : this path is used to add library locations to Emby.[br]
   </Description>
   <Registry>https://registry.hub.docker.com/u/emby/embyserver/</Registry>
-  <GitHub>https://github.com/MediaBrowser/Emby.Build/tree/master/docker-containers/stable</GitHub>
-  <Repository>emby/embyserver</Repository>
+  <Repository>emby/embyserver:latest</Repository>
   <BindTime>true</BindTime>
   <Privileged>false</Privileged>
   <Environment>

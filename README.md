@@ -1,5 +1,5 @@
 # Emby-Server
-![Alt text](http://i.imgur.com/MHQCm40.png "")
+![Alt text](https://i.imgur.com/MHQCm40.png "")
 - [Introduction](#introduction)
   - [Supported Tags](#supported-tags)
   - [Contributing](#contributing)

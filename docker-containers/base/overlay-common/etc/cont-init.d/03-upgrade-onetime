@@ -7,7 +7,8 @@ STABLE=${STABLE:-1}
 if [[ $EDGE -eq 1 ]]; then
   echo "Updating ${APP_NAME}..."
   if [[ $STABLE -eq 1 ]]; then
-    VERSION=$(curl -sL https://github.com/mediaBrowser/Emby/releases.atom | grep -A 1 -e 'link.*alternate' | grep -e '    <' | sed 'N;s/\n/ /' | grep -v 'beta' | head -1 | sed 's%.*/tag/\([^"]*\).*%\1%')
+    URL=$(curl -I https://github.com/MediaBrowser/Emby/releases/latest | perl -n -e '/^Location: (.*)$/ && print "$1\n"')
+    VERSION=$(basename $URL | tr -d '\r')  
   else
     VERSION=$(curl -sL https://github.com/mediaBrowser/Emby/releases.atom | grep -A 1 -e 'link.*alternate' | grep -e '    <' | sed 'N;s/\n/ /' | grep 'beta' | head -1 | sed 's%.*/tag/\([^"]*\).*%\1%')
   fi
